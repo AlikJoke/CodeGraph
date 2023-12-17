@@ -1,9 +1,6 @@
 package ru.joke.cdgraph.core.std.jms;
 
-import ru.joke.cdgraph.core.CodeGraphDataSource;
-import ru.joke.cdgraph.core.GraphNode;
-import ru.joke.cdgraph.core.GraphNodeRelation;
-import ru.joke.cdgraph.core.GraphTag;
+import ru.joke.cdgraph.core.*;
 import ru.joke.cdgraph.core.std.AbstractCodeGraph;
 import ru.joke.cdgraph.core.std.SimpleGraphNode;
 import ru.joke.cdgraph.core.std.SimpleGraphNodeRelation;
@@ -27,6 +24,8 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
     public static final String MAIN_CLASS_TAG = "main-class";
     public static final String VERSION_TAG = "version";
 
+    private static final String MODULE_INFO_CLASS = "module-info.class";
+
     public JavaModuleCodeGraph(@Nonnull CodeGraphDataSource dataSource) {
         super(dataSource);
     }
@@ -36,7 +35,8 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
 
         final Map<String, GraphNode> nodes = new HashMap<>();
 
-        for (final File moduleConfig : dataSource) {
+        final List<File> moduleConfigs = dataSource.find(MODULE_INFO_CLASS::equals);
+        for (final File moduleConfig : moduleConfigs) {
             final ModuleDescriptor descriptor = parseModuleConfig(moduleConfig);
 
             final Set<GraphTag> tags = collectModuleTags(descriptor);
@@ -122,10 +122,13 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
     }
 
     private ModuleDescriptor parseModuleConfig(@Nonnull File config) {
+
         try (final InputStream is = new FileInputStream(config)) {
             return ModuleDescriptor.read(is);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CodeGraphDataSourceException(e);
+        } finally {
+            config.delete();
         }
     }
 }
