@@ -16,10 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.lang.module.ModuleReference;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class JavaModuleCodeGraph extends AbstractCodeGraph {
@@ -66,23 +64,32 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
             final ModuleDescriptor.Requires dependency,
             final Map<String, GraphNode> nodesMap) {
 
-        final GraphNode targetNode = nodesMap.computeIfAbsent(
-                dependency.name(),
-                nodeId -> buildDependentNode(dependency)
-        );
+        final GraphNode targetNode = nodesMap.get(dependency.name()) == null
+                ? buildDependentNode(dependency, nodesMap)
+                : nodesMap.get(dependency.name());
 
         return new SimpleGraphNodeRelation(sourceNode, targetNode, REQUIRES_TYPE, collectRelationTags(dependency));
     }
 
-    private GraphNode buildDependentNode(final ModuleDescriptor.Requires dependency) {
+    private GraphNode buildDependentNode(
+            final ModuleDescriptor.Requires dependency,
+            final Map<String, GraphNode> nodesMap) {
 
         final ModuleFinder finder = ModuleFinder.ofSystem();
-        final Set<GraphTag> tags =
-                finder.find(dependency.name())
-                        .map(dependencyDescriptor -> collectModuleTags(dependencyDescriptor.descriptor()))
-                        .orElseGet(HashSet::new);
+        final var module = finder
+                            .find(dependency.name())
+                            .map(ModuleReference::descriptor);
+        final Set<GraphTag> tags = module
+                                    .map(this::collectModuleTags)
+                                    .orElseGet(HashSet::new);
 
-        return new SimpleGraphNode(dependency.name(), new HashSet<>(), tags);
+        final GraphNode sourceNode = new SimpleGraphNode(dependency.name(), new HashSet<>(), tags);
+        module.map(ModuleDescriptor::requires)
+                .stream()
+                .flatMap(Set::stream)
+                .map(relationDependency -> buildRelation(sourceNode, relationDependency, nodesMap))
+                .forEach(sourceNode.dependencies()::add);
+        return sourceNode;
     }
 
     private Set<GraphTag> collectRelationTags(final ModuleDescriptor.Requires dependency) {

@@ -19,7 +19,7 @@ public abstract class AbstractCodeGraph implements CodeGraph {
 
         final Set<String> allNodeIds = new HashSet<>(nodesMap.keySet());
         nodesMap.values()
-                    .forEach(node -> removeDependentNodes(node, allNodeIds));
+                    .forEach(node -> removeDependentNodesFromMap(node, allNodeIds));
 
         if (allNodeIds.size() != 1) {
             throw new CodeGraphConfigurationException("Found more than 1 root module: " + allNodeIds.size());
@@ -36,7 +36,7 @@ public abstract class AbstractCodeGraph implements CodeGraph {
 
     protected abstract Map<String, GraphNode> buildNodesMap(@Nonnull CodeGraphDataSource dataSource);
 
-    private void removeDependentNodes(final GraphNode node, final Set<String> allNodesIds) {
+    private void removeDependentNodesFromMap(final GraphNode node, final Set<String> allNodesIds) {
         node.dependencies()
                 .forEach(dependency -> allNodesIds.remove(dependency.target().id()));
     }
