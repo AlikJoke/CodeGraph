@@ -9,7 +9,7 @@ public interface GraphNode {
     String id();
 
     @Nonnull
-    Set<GraphNodeRelation> dependencies();
+    Set<GraphNodeRelation> relations();
 
     @Nonnull
     Set<GraphTag> tags();

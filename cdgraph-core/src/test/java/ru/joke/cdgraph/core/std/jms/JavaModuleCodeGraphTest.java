@@ -3,81 +3,67 @@ package ru.joke.cdgraph.core.std.jms;
 import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.*;
 
-import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.joke.cdgraph.core.std.util.TestUtil.*;
 
 public class JavaModuleCodeGraphTest {
 
-    private static final String TEST_MODULE_1 = "ru.joke.cdgraph.test_modules1";
-    private static final String TEST_MODULE_2 = "ru.joke.cdgraph.test_modules2";
-    private static final String TEST_MODULE_3 = "ru.joke.cdgraph.test_modules3";
-
-    private static final String TEST_MODULE_1_PATH = "modules/module-info1.class";
-    private static final String TEST_MODULE_2_PATH = "modules/module-info2.class";
-    private static final String TEST_MODULE_3_PATH = "modules/module-info3.class";
-
     @Test
     public void testSingleModule() {
-        final CodeGraphDataSource dataSource = createCodeGraph(TEST_MODULE_1_PATH);
+        final CodeGraphDataSource dataSource = createCodeGraphDatasource(TEST_MODULE_1_PATH);
 
         final CodeGraph graph = new JavaModuleCodeGraph(dataSource);
 
-        assertNotNull(graph.rootNode(), "Root node must be not null");
-        makeTestModule1Checks(graph.rootNode());
+        assertNotNull(graph.findRootNode(), "Root node must be not null");
+        makeTestModule1Checks(graph.findRootNode());
     }
 
     @Test
     public void testTwoModules() {
-        final CodeGraphDataSource dataSource = createCodeGraph(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH);
+        final CodeGraphDataSource dataSource = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH);
 
         final CodeGraph graph = new JavaModuleCodeGraph(dataSource);
-        makeTestModule2Checks(graph.rootNode());
+        makeTestModule2Checks(graph.findRootNode());
     }
 
     @Test
     public void testThreeModules() {
 
-        final CodeGraphDataSource dataSource = createCodeGraph(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
+        final CodeGraphDataSource dataSource = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
 
         final CodeGraph graph = new JavaModuleCodeGraph(dataSource);
 
-        assertNotNull(graph.rootNode(), "Root node must be not null");
-        assertEquals(TEST_MODULE_3, graph.rootNode().id(), "Root node id must be equal");
-        assertEquals(3, graph.rootNode().dependencies().size(), "Module should be dependent from 3 modules");
+        assertNotNull(graph.findRootNode(), "Root node must be not null");
+        assertEquals(TEST_MODULE_3, graph.findRootNode().id(), "Root node id must be equal");
+        assertEquals(3, graph.findRootNode().relations().size(), "Module should be dependent from 3 modules");
 
-        makeNodeTagsChecks(graph.rootNode());
+        makeNodeTagsChecks(graph.findRootNode());
 
         final Map<String, GraphNodeRelation> dependenciesByTarget =
-                graph.rootNode().dependencies()
+                graph.findRootNode().relations()
                         .stream()
                         .collect(Collectors.toMap(relation -> relation.target().id(), Function.identity()));
         final GraphNodeRelation baseModuleRelation = dependenciesByTarget.get(Object.class.getModule().getName());
         final GraphNodeRelation sqlModuleRelation = dependenciesByTarget.get(Connection.class.getModule().getName());
         final GraphNodeRelation test2ModuleRelation = dependenciesByTarget.get(TEST_MODULE_2);
 
-        makeBaseModuleDependencyChecks(baseModuleRelation, graph.rootNode(), true);
+        makeBaseModuleDependencyChecks(baseModuleRelation, graph.findRootNode(), true);
         makeTestModule2Checks(test2ModuleRelation.target());
         makeTestModuleDependencyChecks(test2ModuleRelation, TEST_MODULE_3, Set.of(ModuleDescriptor.Requires.Modifier.TRANSITIVE));
-        makeSqlModuleDependencyChecks(sqlModuleRelation, graph.rootNode());
+        makeSqlModuleDependencyChecks(sqlModuleRelation, graph.findRootNode());
     }
 
     @Test
     public void testNoModules() {
-        final CodeGraphDataSource dataSource = createCodeGraph();
+        final CodeGraphDataSource dataSource = createCodeGraphDatasource();
         assertThrows(CodeGraphConfigurationException.class, () -> new JavaModuleCodeGraph(dataSource));
     }
 
@@ -85,12 +71,12 @@ public class JavaModuleCodeGraphTest {
 
         assertNotNull(test2ModuleNode, "Root node must be not null");
         assertEquals(TEST_MODULE_2, test2ModuleNode.id(), "Root node id must be equal");
-        assertEquals(3, test2ModuleNode.dependencies().size(), "Module should be dependent from 3 modules");
+        assertEquals(3, test2ModuleNode.relations().size(), "Module should be dependent from 3 modules");
 
         makeNodeTagsChecks(test2ModuleNode);
 
         final var dependenciesByTarget =
-                test2ModuleNode.dependencies()
+                test2ModuleNode.relations()
                                 .stream()
                                 .collect(Collectors.toMap(relation -> relation.target().id(), Function.identity()));
         final GraphNodeRelation baseModuleRelation = dependenciesByTarget.get(Object.class.getModule().getName());
@@ -122,11 +108,11 @@ public class JavaModuleCodeGraphTest {
 
     private void makeTestModule1Checks(final GraphNode testModule1Node) {
         assertEquals(TEST_MODULE_1, testModule1Node.id(), "Root node id must be equal");
-        assertEquals(1, testModule1Node.dependencies().size(), "Module should dependent only from base module");
+        assertEquals(1, testModule1Node.relations().size(), "Module should dependent only from base module");
         makeNodeTagsChecks(testModule1Node);
 
         final Map<String, GraphNodeRelation> dependenciesByTarget =
-                testModule1Node.dependencies()
+                testModule1Node.relations()
                                 .stream()
                                 .collect(Collectors.toMap(relation -> relation.target().id(), Function.identity()));
         final GraphNodeRelation dependencyRelation = dependenciesByTarget.get(Object.class.getModule().getName());
@@ -139,10 +125,10 @@ public class JavaModuleCodeGraphTest {
         assertEquals(rootNode, sqlModuleRelation.source(), "Source node must be equal to root");
 
         assertEquals(JavaModuleCodeGraph.REQUIRES_TYPE, sqlModuleRelation.type(), "Relation type must be equal");
-        assertFalse(sqlModuleRelation.target().dependencies().isEmpty(), "Dependencies for system target module must be empty");
+        assertFalse(sqlModuleRelation.target().relations().isEmpty(), "Dependencies for system target module must be empty");
 
         final Map<String, GraphNodeRelation> dependenciesByTarget =
-                sqlModuleRelation.target().dependencies()
+                sqlModuleRelation.target().relations()
                                             .stream()
                                             .collect(Collectors.toMap(relation -> relation.target().id(), Function.identity()));
         final GraphNodeRelation baseModuleRelation = dependenciesByTarget.get(Object.class.getModule().getName());
@@ -165,7 +151,7 @@ public class JavaModuleCodeGraphTest {
         assertEquals(rootNode, baseModuleRelation.source(), "Source node must be equal to root");
 
         assertEquals(JavaModuleCodeGraph.REQUIRES_TYPE, baseModuleRelation.type(), "Relation type must be equal");
-        assertTrue(baseModuleRelation.target().dependencies().isEmpty(), "Dependencies for target module must be empty");
+        assertTrue(baseModuleRelation.target().relations().isEmpty(), "Dependencies for target module must be empty");
 
         final Map<String, Object> relationTags =
                 baseModuleRelation.tags()
@@ -191,29 +177,5 @@ public class JavaModuleCodeGraphTest {
 
         final Boolean openTagValue = (Boolean) rootNodeTagsMap.get(ModuleDescriptor.Modifier.OPEN.name().toLowerCase());
         assertTrue(openTagValue, "Root module must be open");
-    }
-
-    private CodeGraphDataSource createCodeGraph(final String... modulePath) {
-        return new CodeGraphDataSource() {
-            @Override
-            @Nonnull
-            public List<File> find(@Nonnull Predicate<String> filter) {
-                try {
-                    final List<File> result = new ArrayList<>(modulePath.length);
-                    for (final String path : modulePath) {
-                        final URL moduleDescriptorUrl = getClass().getClassLoader().getResource(path);
-                        final File moduleDescriptorFile = new File(moduleDescriptorUrl.getFile());
-                        final Path tempCopyFilePath = Files.createTempFile(UUID.randomUUID().toString(), null);
-                        Files.copy(moduleDescriptorFile.toPath(), tempCopyFilePath, StandardCopyOption.REPLACE_EXISTING);
-
-                        result.add(tempCopyFilePath.toFile());
-                    }
-
-                    return result;
-                } catch (IOException ex) {
-                    throw new CodeGraphDataSourceException(ex);
-                }
-            }
-        };
     }
 }

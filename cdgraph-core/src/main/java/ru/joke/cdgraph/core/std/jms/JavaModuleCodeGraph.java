@@ -53,7 +53,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
                                 .map(dependency -> buildRelation(sourceNode, dependency, nodes))
                                 .collect(Collectors.toSet());
 
-            sourceNode.dependencies().addAll(relations);
+            sourceNode.relations().addAll(relations);
         }
 
         return nodes;
@@ -67,6 +67,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
         final GraphNode targetNode = nodesMap.get(dependency.name()) == null
                 ? buildDependentNode(dependency, nodesMap)
                 : nodesMap.get(dependency.name());
+        nodesMap.putIfAbsent(targetNode.id(), targetNode);
 
         return new SimpleGraphNodeRelation(sourceNode, targetNode, REQUIRES_TYPE, collectRelationTags(dependency));
     }
@@ -88,7 +89,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
                 .stream()
                 .flatMap(Set::stream)
                 .map(relationDependency -> buildRelation(sourceNode, relationDependency, nodesMap))
-                .forEach(sourceNode.dependencies()::add);
+                .forEach(sourceNode.relations()::add);
         return sourceNode;
     }
 

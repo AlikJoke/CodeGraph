@@ -14,6 +14,11 @@ public record SimpleGraphNodeRelation(
         @Nonnull Set<GraphTag> tags) implements GraphNodeRelation {
 
     @Override
+    public String toString() {
+        return "SimpleGraphNodeRelation{" + "source=" + source.id() + ", target=" + target.id() + ", type='" + type + '\'' + ", tags=" + tags + '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

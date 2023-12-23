@@ -9,7 +9,7 @@ import java.util.Set;
 
 public record SimpleGraphNode(
         @Nonnull String id,
-        @Nonnull Set<GraphNodeRelation> dependencies,
+        @Nonnull Set<GraphNodeRelation> relations,
         @Nonnull Set<GraphTag> tags) implements GraphNode {
 
     @Override
