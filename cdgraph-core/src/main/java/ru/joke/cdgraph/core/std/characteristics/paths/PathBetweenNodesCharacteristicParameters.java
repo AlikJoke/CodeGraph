@@ -5,11 +5,11 @@ import ru.joke.cdgraph.core.CodeGraphCharacteristicParameters;
 
 import javax.annotation.Nonnull;
 
-public record ShortestPathBetweenNodesCharacteristicParameters(
+public record PathBetweenNodesCharacteristicParameters(
         @Nonnull String sourceNodeId,
         @Nonnull String targetNodeId) implements CodeGraphCharacteristicParameters {
 
-    public ShortestPathBetweenNodesCharacteristicParameters {
+    public PathBetweenNodesCharacteristicParameters {
 
         if (sourceNodeId.equals(targetNodeId)) {
             throw new CodeGraphCharacteristicConfigurationException("Source and target can not be the same");

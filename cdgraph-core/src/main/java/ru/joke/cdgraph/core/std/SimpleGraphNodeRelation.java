@@ -11,7 +11,7 @@ public record SimpleGraphNodeRelation(
         @Nonnull GraphNode source,
         @Nonnull GraphNode target,
         @Nonnull String type,
-        @Nonnull Set<GraphTag> tags) implements GraphNodeRelation {
+        @Nonnull Set<GraphTag<?>> tags) implements GraphNodeRelation {
 
     @Override
     public String toString() {

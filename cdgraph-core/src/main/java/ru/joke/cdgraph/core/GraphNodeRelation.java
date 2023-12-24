@@ -15,5 +15,5 @@ public interface GraphNodeRelation {
     String type();
 
     @Nonnull
-    Set<GraphTag> tags();
+    Set<GraphTag<?>> tags();
 }

@@ -2,11 +2,11 @@ package ru.joke.cdgraph.core;
 
 import javax.annotation.Nonnull;
 
-public interface GraphTag {
+public interface GraphTag<T> {
 
     @Nonnull
     String name();
 
     @Nonnull
-    Object value();
+    T value();
 }

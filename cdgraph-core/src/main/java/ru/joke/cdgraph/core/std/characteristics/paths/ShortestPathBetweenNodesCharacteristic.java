@@ -12,17 +12,17 @@ import java.util.*;
  *
  * @author Alik
  */
-public final class ShortestPathBetweenNodesCharacteristic implements CodeGraphCharacteristic<ShortestPathBetweenNodes> {
+public final class ShortestPathBetweenNodesCharacteristic implements CodeGraphCharacteristic<PathBetweenNodes> {
 
-    private final ShortestPathBetweenNodesCharacteristicParameters parameters;
+    private final PathBetweenNodesCharacteristicParameters parameters;
 
-    public ShortestPathBetweenNodesCharacteristic(@Nonnull ShortestPathBetweenNodesCharacteristicParameters parameters) {
+    public ShortestPathBetweenNodesCharacteristic(@Nonnull PathBetweenNodesCharacteristicParameters parameters) {
         this.parameters = parameters;
     }
 
     @Nonnull
     @Override
-    public CodeGraphCharacteristicResult<ShortestPathBetweenNodes> compute(@Nonnull CodeGraph graph) {
+    public CodeGraphCharacteristicResult<PathBetweenNodes> compute(@Nonnull CodeGraph graph) {
         final var sourceNode = graph.findNodeById(this.parameters.sourceNodeId())
                                     .orElseThrow(() -> new CodeGraphComputationException("Node '" + this.parameters.sourceNodeId() + "' not found"));
         if (graph.findNodeById(this.parameters.targetNodeId()).isEmpty()) {
@@ -35,7 +35,7 @@ public final class ShortestPathBetweenNodesCharacteristic implements CodeGraphCh
         return buildComputationResult(sourceNode, relationsInPath);
     }
 
-    private CodeGraphCharacteristicResult<ShortestPathBetweenNodes> buildComputationResult(
+    private CodeGraphCharacteristicResult<PathBetweenNodes> buildComputationResult(
             final GraphNode sourceNode,
             final List<GraphNodeRelation> relationsInPath) {
 
@@ -48,7 +48,7 @@ public final class ShortestPathBetweenNodesCharacteristic implements CodeGraphCh
                 .map(GraphNodeRelation::target)
                 .forEach(nodesInPath::add);
 
-        final var resultData = new ShortestPathBetweenNodes(relationsInPath, nodesInPath);
+        final var resultData = new PathBetweenNodes(relationsInPath, nodesInPath);
         return new SimpleCodeGraphCharacteristicResult<>(resultData) {
             @Override
             public String toJson() {

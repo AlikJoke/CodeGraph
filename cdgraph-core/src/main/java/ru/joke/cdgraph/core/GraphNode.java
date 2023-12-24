@@ -12,5 +12,5 @@ public interface GraphNode {
     Set<GraphNodeRelation> relations();
 
     @Nonnull
-    Set<GraphTag> tags();
+    Set<GraphTag<?>> tags();
 }

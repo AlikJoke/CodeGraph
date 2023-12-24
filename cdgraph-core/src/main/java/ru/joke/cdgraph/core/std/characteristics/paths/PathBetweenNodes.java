@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record ShortestPathBetweenNodes(
+public record PathBetweenNodes(
         @Nonnull List<GraphNodeRelation> relationsInPath,
         @Nonnull List<GraphNode> nodesInPath) {
 
@@ -17,6 +17,6 @@ public record ShortestPathBetweenNodes(
                                 .stream()
                                 .map(GraphNode::id)
                                 .collect(Collectors.joining(" -> "));
-        return "ShortestPathBetweenNodes: [%s]".formatted(path);
+        return "PathBetweenNodes: [%s]".formatted(path);
     }
 }

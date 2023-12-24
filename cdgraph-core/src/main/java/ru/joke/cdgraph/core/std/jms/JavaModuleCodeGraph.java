@@ -39,7 +39,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
         for (final File moduleConfig : moduleConfigs) {
             final ModuleDescriptor descriptor = parseModuleConfig(moduleConfig);
 
-            final Set<GraphTag> tags = collectModuleTags(descriptor);
+            final Set<GraphTag<?>> tags = collectModuleTags(descriptor);
             final GraphNode sourceNode = nodes.computeIfAbsent(
                     descriptor.name(),
                     nodeId -> new SimpleGraphNode(nodeId, new HashSet<>(), new HashSet<>())
@@ -80,7 +80,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
         final var module = finder
                             .find(dependency.name())
                             .map(ModuleReference::descriptor);
-        final Set<GraphTag> tags = module
+        final Set<GraphTag<?>> tags = module
                                     .map(this::collectModuleTags)
                                     .orElseGet(HashSet::new);
 
@@ -93,30 +93,30 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
         return sourceNode;
     }
 
-    private Set<GraphTag> collectRelationTags(final ModuleDescriptor.Requires dependency) {
+    private Set<GraphTag<?>> collectRelationTags(final ModuleDescriptor.Requires dependency) {
 
-        final Set<GraphTag> relationTags = new HashSet<>(dependency.modifiers().size() + 1);
+        final Set<GraphTag<?>> relationTags = new HashSet<>(dependency.modifiers().size() + 1);
         dependency.rawCompiledVersion()
-                    .ifPresent(version -> relationTags.add(new SimpleGraphTag(VERSION_TAG, version)));
+                    .ifPresent(version -> relationTags.add(new SimpleGraphTag<>(VERSION_TAG, version)));
         dependency.modifiers()
                     .stream()
-                    .map(modifier -> new SimpleGraphTag(modifier.name().toLowerCase(), true))
+                    .map(modifier -> new SimpleGraphTag<>(modifier.name().toLowerCase(), true))
                     .forEach(relationTags::add);
 
         return relationTags;
     }
 
-    private Set<GraphTag> collectModuleTags(final ModuleDescriptor descriptor) {
+    private Set<GraphTag<?>> collectModuleTags(final ModuleDescriptor descriptor) {
 
-        final Set<GraphTag> tags = new HashSet<>(2 + descriptor.modifiers().size());
+        final Set<GraphTag<?>> tags = new HashSet<>(2 + descriptor.modifiers().size());
 
         descriptor.mainClass()
-                    .ifPresent(cls -> tags.add(new SimpleGraphTag(MAIN_CLASS_TAG, cls)));
+                    .ifPresent(cls -> tags.add(new SimpleGraphTag<>(MAIN_CLASS_TAG, cls)));
         descriptor.rawVersion()
-                    .ifPresent(version -> tags.add(new SimpleGraphTag(VERSION_TAG, version)));
+                    .ifPresent(version -> tags.add(new SimpleGraphTag<>(VERSION_TAG, version)));
         descriptor.modifiers()
                     .stream()
-                    .map(modifier -> new SimpleGraphTag(modifier.name().toLowerCase(), true))
+                    .map(modifier -> new SimpleGraphTag<>(modifier.name().toLowerCase(), true))
                     .forEach(tags::add);
 
         return tags;

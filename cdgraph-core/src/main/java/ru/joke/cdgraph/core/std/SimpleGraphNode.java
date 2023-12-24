@@ -10,7 +10,7 @@ import java.util.Set;
 public record SimpleGraphNode(
         @Nonnull String id,
         @Nonnull Set<GraphNodeRelation> relations,
-        @Nonnull Set<GraphTag> tags) implements GraphNode {
+        @Nonnull Set<GraphTag<?>> tags) implements GraphNode {
 
     @Override
     public boolean equals(Object o) {
