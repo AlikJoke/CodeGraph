@@ -5,14 +5,15 @@ import ru.joke.cdgraph.core.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.CodeGraphComputationException;
 import ru.joke.cdgraph.core.std.characteristics.SimpleCodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.std.characteristics.SingleNodeCharacteristicParameters;
 
 import javax.annotation.Nonnull;
 
 public final class DependenciesCountCharacteristic implements CodeGraphCharacteristic<DependenciesCount> {
 
-    private final DependenciesCountCharacteristicParameters parameters;
+    private final SingleNodeCharacteristicParameters parameters;
 
-    public DependenciesCountCharacteristic(@Nonnull DependenciesCountCharacteristicParameters parameters) {
+    public DependenciesCountCharacteristic(@Nonnull SingleNodeCharacteristicParameters parameters) {
         this.parameters = parameters;
     }
 

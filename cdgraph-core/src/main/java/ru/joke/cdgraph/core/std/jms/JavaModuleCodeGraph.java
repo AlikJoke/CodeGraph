@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 
 public final class JavaModuleCodeGraph extends AbstractCodeGraph {
 
-    public static final String REQUIRES_TYPE = "requires";
-
     public static final String MAIN_CLASS_TAG = "main-class";
     public static final String VERSION_TAG = "version";
 
@@ -69,7 +67,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
                 : nodesMap.get(dependency.name());
         nodesMap.putIfAbsent(targetNode.id(), targetNode);
 
-        return new SimpleGraphNodeRelation(sourceNode, targetNode, REQUIRES_TYPE, collectRelationTags(dependency));
+        return new SimpleGraphNodeRelation(sourceNode, targetNode, GraphNodeRelation.RelationType.REQUIRES, collectRelationTags(dependency));
     }
 
     private GraphNode buildDependentNode(

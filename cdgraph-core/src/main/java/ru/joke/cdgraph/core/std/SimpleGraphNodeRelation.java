@@ -10,7 +10,7 @@ import java.util.Set;
 public record SimpleGraphNodeRelation(
         @Nonnull GraphNode source,
         @Nonnull GraphNode target,
-        @Nonnull String type,
+        @Nonnull RelationType type,
         @Nonnull Set<GraphTag<?>> tags) implements GraphNodeRelation {
 
     @Override

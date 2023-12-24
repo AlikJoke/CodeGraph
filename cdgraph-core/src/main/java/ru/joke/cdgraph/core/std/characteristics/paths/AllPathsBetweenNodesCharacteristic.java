@@ -1,13 +1,15 @@
 package ru.joke.cdgraph.core.std.characteristics.paths;
 
-import ru.joke.cdgraph.core.*;
-import ru.joke.cdgraph.core.std.characteristics.SimpleCodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.CodeGraph;
+import ru.joke.cdgraph.core.CodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.CodeGraphComputationException;
+import ru.joke.cdgraph.core.GraphNodeRelation;
 
 import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
-public final class AllPathsBetweenNodesCharacteristic implements CodeGraphCharacteristic<List<PathBetweenNodes>> {
+public final class AllPathsBetweenNodesCharacteristic extends AbstractMultiplePathsBetweenNodesCharacteristic {
 
     private final PathBetweenNodesCharacteristicParameters parameters;
 
@@ -37,53 +39,22 @@ public final class AllPathsBetweenNodesCharacteristic implements CodeGraphCharac
 
         final List<GraphNodeRelation> relationsInPath = new ArrayList<>();
         relationsInPath.add(relation);
-        if (!relation.target().id().equals(this.parameters.targetNodeId())) {
-            scanRelations(relation, relationsInPath, allPaths);
-        } else {
+        if (relation.target().id().equals(this.parameters.targetNodeId())) {
             allPaths.add(relationsInPath);
+        } else {
+            scanRelations(relation, relationsInPath, allPaths);
         }
-    }
-
-    private CodeGraphCharacteristicResult<List<PathBetweenNodes>> buildComputationResult(final List<List<GraphNodeRelation>> allPaths) {
-
-        final var resultPaths = allPaths
-                                    .stream()
-                                    .sorted(Comparator.comparingInt(List::size))
-                                    .map(this::createOneResultPath)
-                                    .toList();
-
-        return new SimpleCodeGraphCharacteristicResult<>(resultPaths) {
-            @Override
-            public String toJson() {
-                final var nodesIdsInPath =
-                        get().stream()
-                                .map(path -> path.nodesInPath()
-                                                    .stream()
-                                                    .map(GraphNode::id)
-                                                    .toList()
-                                )
-                                .collect(Collectors.toList());
-                return gson.toJson(nodesIdsInPath);
-            }
-        };
-    }
-
-    private PathBetweenNodes createOneResultPath(final List<GraphNodeRelation> path) {
-
-        final List<GraphNode> nodesInPath = new ArrayList<>(1 + path.size());
-        nodesInPath.add(path.get(0).source());
-
-        path.stream()
-                .map(GraphNodeRelation::target)
-                .forEach(nodesInPath::add);
-
-        return new PathBetweenNodes(path, nodesInPath);
     }
 
     private boolean scanRelations(
             final GraphNodeRelation relation,
             final List<GraphNodeRelation> relationsInPath,
             final List<List<GraphNodeRelation>> allPaths) {
+
+        if (relation.type() == GraphNodeRelation.RelationType.PROVIDED) {
+            relationsInPath.remove(relation);
+            return false;
+        }
 
         for (final GraphNodeRelation nextRelation : relation.target().relations()) {
 

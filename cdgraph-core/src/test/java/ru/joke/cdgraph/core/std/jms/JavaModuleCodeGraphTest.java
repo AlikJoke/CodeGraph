@@ -95,7 +95,7 @@ public class JavaModuleCodeGraphTest {
             final Set<ModuleDescriptor.Requires.Modifier> expectedDependencyModifiers) {
 
         assertEquals(expectedSourceModule, testModuleRelation.source().id(), "Source module must be equal");
-        assertEquals(JavaModuleCodeGraph.REQUIRES_TYPE, testModuleRelation.type(), "Relation type must be equal");
+        assertEquals(GraphNodeRelation.RelationType.REQUIRES, testModuleRelation.type(), "Relation type must be equal");
         final Map<String, Object> relationTags =
                 testModuleRelation.tags()
                                     .stream()
@@ -124,7 +124,7 @@ public class JavaModuleCodeGraphTest {
         assertNotNull(sqlModuleRelation, "Sql relation must be not null");
         assertEquals(rootNode, sqlModuleRelation.source(), "Source node must be equal to root");
 
-        assertEquals(JavaModuleCodeGraph.REQUIRES_TYPE, sqlModuleRelation.type(), "Relation type must be equal");
+        assertEquals(GraphNodeRelation.RelationType.REQUIRES, sqlModuleRelation.type(), "Relation type must be equal");
         assertFalse(sqlModuleRelation.target().relations().isEmpty(), "Dependencies for system target module must be empty");
 
         final Map<String, GraphNodeRelation> dependenciesByTarget =
@@ -150,7 +150,7 @@ public class JavaModuleCodeGraphTest {
         assertNotNull(baseModuleRelation, "Target module must be base module");
         assertEquals(rootNode, baseModuleRelation.source(), "Source node must be equal to root");
 
-        assertEquals(JavaModuleCodeGraph.REQUIRES_TYPE, baseModuleRelation.type(), "Relation type must be equal");
+        assertEquals(GraphNodeRelation.RelationType.REQUIRES, baseModuleRelation.type(), "Relation type must be equal");
         assertTrue(baseModuleRelation.target().relations().isEmpty(), "Dependencies for target module must be empty");
 
         final Map<String, Object> relationTags =

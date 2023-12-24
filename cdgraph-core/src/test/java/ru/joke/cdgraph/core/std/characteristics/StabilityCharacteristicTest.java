@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.CodeGraph;
 import ru.joke.cdgraph.core.CodeGraphComputationException;
 import ru.joke.cdgraph.core.std.characteristics.factors.StabilityCharacteristic;
-import ru.joke.cdgraph.core.std.characteristics.factors.StabilityCharacteristicParameters;
 import ru.joke.cdgraph.core.std.jms.JavaModuleCodeGraph;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +13,7 @@ public class StabilityCharacteristicTest {
 
     @Test
     public void testWhenNodeNotFoundThenException() {
-        final var params = new StabilityCharacteristicParameters("test");
+        final var params = new SingleNodeCharacteristicParameters("test");
         final var characteristic = new StabilityCharacteristic(params);
 
         final var codeGraph = new JavaModuleCodeGraph(createCodeGraphDatasource(TEST_MODULE_2_PATH, TEST_MODULE_3_PATH));
@@ -34,7 +33,7 @@ public class StabilityCharacteristicTest {
 
     private void makeStabilityChecks(final double expectedStability, final String moduleId, final CodeGraph codeGraph) {
 
-        final var params = new StabilityCharacteristicParameters(moduleId);
+        final var params = new SingleNodeCharacteristicParameters(moduleId);
         final var characteristic = new StabilityCharacteristic(params);
         final var result = characteristic.compute(codeGraph);
 

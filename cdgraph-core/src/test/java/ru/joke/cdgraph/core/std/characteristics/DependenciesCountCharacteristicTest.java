@@ -3,7 +3,6 @@ package ru.joke.cdgraph.core.std.characteristics;
 import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.CodeGraphComputationException;
 import ru.joke.cdgraph.core.std.characteristics.counters.DependenciesCountCharacteristic;
-import ru.joke.cdgraph.core.std.characteristics.counters.DependenciesCountCharacteristicParameters;
 import ru.joke.cdgraph.core.std.jms.JavaModuleCodeGraph;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +12,7 @@ public class DependenciesCountCharacteristicTest {
 
     @Test
     public void testWhenNodeNotFoundThenException() {
-        final var params = new DependenciesCountCharacteristicParameters("test");
+        final var params = new SingleNodeCharacteristicParameters("test");
         final var characteristic = new DependenciesCountCharacteristic(params);
 
         final var codeGraph = new JavaModuleCodeGraph(createCodeGraphDatasource(TEST_MODULE_2_PATH, TEST_MODULE_3_PATH));
@@ -22,7 +21,7 @@ public class DependenciesCountCharacteristicTest {
 
     @Test
     public void testNodeDependencies() {
-        final var params = new DependenciesCountCharacteristicParameters(TEST_MODULE_2);
+        final var params = new SingleNodeCharacteristicParameters(TEST_MODULE_2);
         final var characteristic = new DependenciesCountCharacteristic(params);
 
         final var codeGraph = new JavaModuleCodeGraph(createCodeGraphDatasource(TEST_MODULE_2_PATH, TEST_MODULE_3_PATH));

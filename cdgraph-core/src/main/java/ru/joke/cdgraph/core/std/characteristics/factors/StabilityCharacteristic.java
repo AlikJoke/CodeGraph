@@ -5,14 +5,15 @@ import ru.joke.cdgraph.core.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.CodeGraphComputationException;
 import ru.joke.cdgraph.core.std.characteristics.SimpleCodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.std.characteristics.SingleNodeCharacteristicParameters;
 
 import javax.annotation.Nonnull;
 
 public final class StabilityCharacteristic implements CodeGraphCharacteristic<Stability> {
 
-    private final StabilityCharacteristicParameters parameters;
+    private final SingleNodeCharacteristicParameters parameters;
 
-    public StabilityCharacteristic(@Nonnull StabilityCharacteristicParameters parameters) {
+    public StabilityCharacteristic(@Nonnull SingleNodeCharacteristicParameters parameters) {
         this.parameters = parameters;
     }
 

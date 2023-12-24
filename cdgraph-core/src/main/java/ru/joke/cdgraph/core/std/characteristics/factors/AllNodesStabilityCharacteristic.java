@@ -5,6 +5,7 @@ import ru.joke.cdgraph.core.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.GraphNode;
 import ru.joke.cdgraph.core.std.characteristics.SimpleCodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.std.characteristics.SingleNodeCharacteristicParameters;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -25,7 +26,7 @@ public final class AllNodesStabilityCharacteristic implements CodeGraphCharacter
     }
 
     private Stability computeCharacteristic(final String nodeId, final CodeGraph graph) {
-        final var params = new StabilityCharacteristicParameters(nodeId);
+        final var params = new SingleNodeCharacteristicParameters(nodeId);
         final var characteristic = new StabilityCharacteristic(params);
         return characteristic.compute(graph).get();
     }

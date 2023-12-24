@@ -83,7 +83,9 @@ public final class ShortestPathBetweenNodesCharacteristic implements CodeGraphCh
                     return createRelationsTraceFromSourceToTarget(relation.target(), relationsByTarget);
                 }
 
-                newFrontNodes.add(relation.target());
+                if (relation.type() != GraphNodeRelation.RelationType.PROVIDED) {
+                    newFrontNodes.add(relation.target());
+                }
             }
         }
 

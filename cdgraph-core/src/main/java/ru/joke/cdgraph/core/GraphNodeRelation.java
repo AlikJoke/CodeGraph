@@ -12,8 +12,21 @@ public interface GraphNodeRelation {
     GraphNode target();
 
     @Nonnull
-    String type();
+    RelationType type();
 
     @Nonnull
     Set<GraphTag<?>> tags();
+
+    enum RelationType {
+
+        REQUIRES,
+
+        PROVIDED,
+
+        COMPILE,
+
+        RUNTIME,
+
+        SYSTEM
+    }
 }
