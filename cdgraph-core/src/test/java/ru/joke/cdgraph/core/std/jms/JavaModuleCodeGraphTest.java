@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.joke.cdgraph.core.std.AbstractCodeGraph.*;
 import static ru.joke.cdgraph.core.std.util.TestUtil.*;
 
 public class JavaModuleCodeGraphTest {
@@ -101,7 +102,7 @@ public class JavaModuleCodeGraphTest {
                                     .stream()
                                     .collect(Collectors.toMap(GraphTag::name, GraphTag::value));
         assertEquals(1 + expectedDependencyModifiers.size(), relationTags.size(), "Count of tags of relation must be equal");
-        assertNotNull(relationTags.get(JavaModuleCodeGraph.VERSION_TAG), "Version tag for relation must present");
+        assertNotNull(relationTags.get(VERSION_TAG), "Version tag for relation must present");
         expectedDependencyModifiers
                 .forEach(modifier -> assertTrue((Boolean) relationTags.get(modifier.name().toLowerCase()), "Tag must present for relation"));
     }
@@ -139,7 +140,7 @@ public class JavaModuleCodeGraphTest {
                                     .stream()
                                     .collect(Collectors.toMap(GraphTag::name, GraphTag::value));
         assertEquals(1, relationTags.size(), "Count of tags of relation must be equal");
-        assertNotNull(relationTags.get(JavaModuleCodeGraph.VERSION_TAG), "Version tag for relation must present");
+        assertNotNull(relationTags.get(VERSION_TAG), "Version tag for relation must present");
     }
 
     private void makeBaseModuleDependencyChecks(
@@ -162,20 +163,23 @@ public class JavaModuleCodeGraphTest {
         final Boolean mandatedTagValue = (Boolean) relationTags.get(ModuleDescriptor.Requires.Modifier.MANDATED.name().toLowerCase());
         assertTrue(mandatedTagValue != null && mandatedTagValue, "Target module relation must be mandated");
         if (hasVersionTag) {
-            assertNotNull(relationTags.get(JavaModuleCodeGraph.VERSION_TAG), "Version tag for relation must present");
+            assertNotNull(relationTags.get(VERSION_TAG), "Version tag for relation must present");
         }
     }
 
     private void makeNodeTagsChecks(final GraphNode rootNode) {
 
-        assertEquals(2, rootNode.tags().size(), "Root node tags count must be equal");
+        assertEquals(3, rootNode.tags().size(), "Root node tags count must be equal");
         final Map<String, Object> rootNodeTagsMap =
                 rootNode.tags()
                         .stream()
                         .collect(Collectors.toMap(GraphTag::name, GraphTag::value));
-        assertNotNull(rootNodeTagsMap.get(JavaModuleCodeGraph.VERSION_TAG), "Version tag must present");
+        assertNotNull(rootNodeTagsMap.get(VERSION_TAG), "Version tag must present");
 
         final Boolean openTagValue = (Boolean) rootNodeTagsMap.get(ModuleDescriptor.Modifier.OPEN.name().toLowerCase());
         assertTrue(openTagValue, "Root module must be open");
+
+        final Boolean sourceModule = (Boolean) rootNodeTagsMap.get(SOURCE_MODULE_TAG);
+        assertTrue(sourceModule, "Root module must be source");
     }
 }

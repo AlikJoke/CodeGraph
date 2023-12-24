@@ -1,5 +1,6 @@
 package ru.joke.cdgraph.core.std.ds;
 
+import ru.joke.cdgraph.core.ClassesMetadataReader;
 import ru.joke.cdgraph.core.CodeGraphDataSource;
 import ru.joke.cdgraph.core.CodeGraphDataSourceException;
 
@@ -16,23 +17,30 @@ import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class CodeGraphJarDataSource implements CodeGraphDataSource {
+public final class CodeGraphJarDataSource implements CodeGraphDataSource {
 
     private final Path dataSourcePath;
+    private final ClassesMetadataReader metadataReader;
 
-    public CodeGraphJarDataSource(@Nonnull Path dataSourcePath) {
+    public CodeGraphJarDataSource(
+            @Nonnull Path dataSourcePath,
+            @Nonnull ClassesMetadataReader metadataReader) {
         this.dataSourcePath = dataSourcePath;
+        this.metadataReader = metadataReader;
     }
 
     @Nonnull
     @Override
-    public List<File> find(@Nonnull Predicate<String> filter) {
+    public List<Configuration> find(@Nonnull Predicate<String> descriptorFileFilter) {
 
         try (final JarFile jar = new JarFile(this.dataSourcePath.toFile())) {
             return jar
                     .stream()
-                    .filter(entry -> filter.test(entry.getName()))
+                    .filter(entry -> descriptorFileFilter.test(entry.getName()))
                     .map(entry -> convertEntryToFile(jar, entry))
+                    .findAny()
+                    .map(file -> new Configuration(file, metadataReader.read(jar)))
+                    .stream()
                     .toList();
         } catch (IOException e) {
             throw new CodeGraphDataSourceException(e);

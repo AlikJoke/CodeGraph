@@ -11,11 +11,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public abstract class TestUtil {
+
+    public static final String TEST_JAR_PATH = "/ds/test-modules3.jar";
 
     public static final String TEST_MODULE_1 = "ru.joke.cdgraph.test_modules1";
     public static final String TEST_MODULE_2 = "ru.joke.cdgraph.test_modules2";
@@ -32,7 +36,7 @@ public abstract class TestUtil {
         return new CodeGraphDataSource() {
             @Override
             @Nonnull
-            public List<File> find(@Nonnull Predicate<String> filter) {
+            public List<Configuration> find(@Nonnull Predicate<String> filter) {
                 try {
                     final List<File> result = new ArrayList<>(modulePath.length);
                     for (final String path : modulePath) {
@@ -44,7 +48,10 @@ public abstract class TestUtil {
                         result.add(tempCopyFilePath.toFile());
                     }
 
-                    return result;
+                    return result
+                            .stream()
+                            .map(config -> new Configuration(config, Collections.emptySet()))
+                            .collect(Collectors.toList());
                 } catch (IOException ex) {
                     throw new CodeGraphDataSourceException(ex);
                 }

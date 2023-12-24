@@ -20,9 +20,7 @@ import java.util.stream.Collectors;
 public final class JavaModuleCodeGraph extends AbstractCodeGraph {
 
     public static final String MAIN_CLASS_TAG = "main-class";
-    public static final String VERSION_TAG = "version";
-
-    private static final String MODULE_INFO_CLASS = "module-info.class";
+    public static final String MODULE_INFO_CLASS = "module-info.class";
 
     public JavaModuleCodeGraph(@Nonnull CodeGraphDataSource dataSource) {
         super(dataSource);
@@ -33,17 +31,20 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
 
         final Map<String, GraphNode> nodes = new HashMap<>();
 
-        final List<File> moduleConfigs = dataSource.find(MODULE_INFO_CLASS::equals);
-        for (final File moduleConfig : moduleConfigs) {
-            final ModuleDescriptor descriptor = parseModuleConfig(moduleConfig);
+        final List<CodeGraphDataSource.Configuration> moduleConfigs = dataSource.find(MODULE_INFO_CLASS::equals);
+        moduleConfigs.forEach(moduleConfig -> {
+            final ModuleDescriptor descriptor = parseModuleConfig(moduleConfig.descriptor());
 
-            final Set<GraphTag<?>> tags = collectModuleTags(descriptor);
+            final Set<GraphTag<?>> moduleTags = collectModuleTags(descriptor, true);
             final GraphNode sourceNode = nodes.computeIfAbsent(
                     descriptor.name(),
-                    nodeId -> new SimpleGraphNode(nodeId, new HashSet<>(), new HashSet<>())
+                    nodeId -> new SimpleGraphNode(nodeId, new HashSet<>(), new HashSet<>(moduleTags.size() + 1))
             );
 
-            sourceNode.tags().addAll(tags);
+            sourceNode.tags().addAll(moduleTags);
+
+            final var classesMetadataTags = collectModuleClassesMetadataTags(moduleConfig.classesMetadata());
+            sourceNode.tags().addAll(classesMetadataTags);
 
             final Set<GraphNodeRelation> relations =
                     descriptor.requires()
@@ -52,7 +53,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
                                 .collect(Collectors.toSet());
 
             sourceNode.relations().addAll(relations);
-        }
+        });
 
         return nodes;
     }
@@ -79,8 +80,8 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
                             .find(dependency.name())
                             .map(ModuleReference::descriptor);
         final Set<GraphTag<?>> tags = module
-                                    .map(this::collectModuleTags)
-                                    .orElseGet(HashSet::new);
+                                        .map(m -> collectModuleTags(m, false))
+                                        .orElseGet(HashSet::new);
 
         final GraphNode sourceNode = new SimpleGraphNode(dependency.name(), new HashSet<>(), tags);
         module.map(ModuleDescriptor::requires)
@@ -104,7 +105,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
         return relationTags;
     }
 
-    private Set<GraphTag<?>> collectModuleTags(final ModuleDescriptor descriptor) {
+    private Set<GraphTag<?>> collectModuleTags(final ModuleDescriptor descriptor, final boolean isSourceModule) {
 
         final Set<GraphTag<?>> tags = new HashSet<>(2 + descriptor.modifiers().size());
 
@@ -116,6 +117,8 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
                     .stream()
                     .map(modifier -> new SimpleGraphTag<>(modifier.name().toLowerCase(), true))
                     .forEach(tags::add);
+
+        tags.add(new SimpleGraphTag<>(SOURCE_MODULE_TAG, isSourceModule));
 
         return tags;
     }

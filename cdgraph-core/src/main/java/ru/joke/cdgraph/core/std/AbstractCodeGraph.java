@@ -1,14 +1,15 @@
 package ru.joke.cdgraph.core.std;
 
-import ru.joke.cdgraph.core.CodeGraph;
-import ru.joke.cdgraph.core.CodeGraphConfigurationException;
-import ru.joke.cdgraph.core.CodeGraphDataSource;
-import ru.joke.cdgraph.core.GraphNode;
+import ru.joke.cdgraph.core.*;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
 public abstract class AbstractCodeGraph implements CodeGraph {
+
+    public static final String SOURCE_MODULE_TAG = "source";
+    public static final String VERSION_TAG = "version";
+    public static final String CLASSES_METADATA_TAG = "classes-metadata";
 
     protected final Map<String, GraphNode> nodes;
     protected final GraphNode rootNode;
@@ -47,6 +48,12 @@ public abstract class AbstractCodeGraph implements CodeGraph {
     }
 
     protected abstract Map<String, GraphNode> buildNodesMap(@Nonnull CodeGraphDataSource dataSource);
+
+    protected Set<GraphTag<?>> collectModuleClassesMetadataTags(@Nonnull Set<ClassMetadata> classesMetadata) {
+        return classesMetadata.isEmpty()
+                ? Collections.emptySet()
+                : Set.of(new SimpleGraphTag<>(CLASSES_METADATA_TAG, classesMetadata));
+    }
 
     private void removeDependentNodesFromMap(final GraphNode node, final Set<String> allNodesIds) {
         node.relations()
