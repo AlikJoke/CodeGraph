@@ -5,12 +5,13 @@ import ru.joke.cdgraph.core.GraphNodeRelation;
 import ru.joke.cdgraph.core.GraphTag;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 import java.util.Set;
 
 public record SimpleGraphNode(
         @Nonnull String id,
         @Nonnull Set<GraphNodeRelation> relations,
-        @Nonnull Set<GraphTag<?>> tags) implements GraphNode {
+        @Nonnull Map<String, GraphTag<?>> tags) implements GraphNode {
 
     @Override
     public boolean equals(Object o) {

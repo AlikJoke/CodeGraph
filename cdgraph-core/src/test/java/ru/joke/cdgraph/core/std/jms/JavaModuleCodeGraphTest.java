@@ -99,6 +99,7 @@ public class JavaModuleCodeGraphTest {
         assertEquals(GraphNodeRelation.RelationType.REQUIRES, testModuleRelation.type(), "Relation type must be equal");
         final Map<String, Object> relationTags =
                 testModuleRelation.tags()
+                                    .values()
                                     .stream()
                                     .collect(Collectors.toMap(GraphTag::name, GraphTag::value));
         assertEquals(1 + expectedDependencyModifiers.size(), relationTags.size(), "Count of tags of relation must be equal");
@@ -137,6 +138,7 @@ public class JavaModuleCodeGraphTest {
 
         final Map<String, Object> relationTags =
                 sqlModuleRelation.tags()
+                                    .values()
                                     .stream()
                                     .collect(Collectors.toMap(GraphTag::name, GraphTag::value));
         assertEquals(1, relationTags.size(), "Count of tags of relation must be equal");
@@ -156,6 +158,7 @@ public class JavaModuleCodeGraphTest {
 
         final Map<String, Object> relationTags =
                 baseModuleRelation.tags()
+                                    .values()
                                     .stream()
                                     .collect(Collectors.toMap(GraphTag::name, GraphTag::value));
         assertEquals(hasVersionTag ? 2 : 1, relationTags.size(), "Count of tags of relation must be equal");
@@ -172,6 +175,7 @@ public class JavaModuleCodeGraphTest {
         assertEquals(3, rootNode.tags().size(), "Root node tags count must be equal");
         final Map<String, Object> rootNodeTagsMap =
                 rootNode.tags()
+                        .values()
                         .stream()
                         .collect(Collectors.toMap(GraphTag::name, GraphTag::value));
         assertNotNull(rootNodeTagsMap.get(VERSION_TAG), "Version tag must present");

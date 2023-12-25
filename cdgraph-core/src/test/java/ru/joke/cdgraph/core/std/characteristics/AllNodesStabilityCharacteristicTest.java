@@ -2,7 +2,7 @@ package ru.joke.cdgraph.core.std.characteristics;
 
 import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.std.characteristics.factors.AllNodesStabilityCharacteristic;
-import ru.joke.cdgraph.core.std.characteristics.factors.Stability;
+import ru.joke.cdgraph.core.std.characteristics.factors.Factor;
 import ru.joke.cdgraph.core.std.jms.JavaModuleCodeGraph;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +29,7 @@ public class AllNodesStabilityCharacteristicTest {
         makeStabilityChecks(1 - (double) 4/6, resultMap.get(SQL_MODULE));
     }
 
-    private void makeStabilityChecks(final double expectedStability, final Stability actualStability) {
-        assertEquals(expectedStability, actualStability.stability(), "Stability factor must be equal");
+    private void makeStabilityChecks(final double expectedStability, final Factor actualStability) {
+        assertEquals(expectedStability, actualStability.factor(), "Stability factor must be equal");
     }
 }

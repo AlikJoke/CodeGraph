@@ -35,16 +35,16 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
         moduleConfigs.forEach(moduleConfig -> {
             final ModuleDescriptor descriptor = parseModuleConfig(moduleConfig.descriptor());
 
-            final Set<GraphTag<?>> moduleTags = collectModuleTags(descriptor, true);
+            final Map<String, GraphTag<?>> moduleTags = collectModuleTags(descriptor, true);
             final GraphNode sourceNode = nodes.computeIfAbsent(
                     descriptor.name(),
-                    nodeId -> new SimpleGraphNode(nodeId, new HashSet<>(), new HashSet<>(moduleTags.size() + 1))
+                    nodeId -> new SimpleGraphNode(nodeId, new HashSet<>(), new HashMap<>())
             );
 
-            sourceNode.tags().addAll(moduleTags);
+            sourceNode.tags().putAll(moduleTags);
 
             final var classesMetadataTags = collectModuleClassesMetadataTags(moduleConfig.classesMetadata());
-            sourceNode.tags().addAll(classesMetadataTags);
+            sourceNode.tags().putAll(classesMetadataTags);
 
             final Set<GraphNodeRelation> relations =
                     descriptor.requires()
@@ -79,9 +79,9 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
         final var module = finder
                             .find(dependency.name())
                             .map(ModuleReference::descriptor);
-        final Set<GraphTag<?>> tags = module
-                                        .map(m -> collectModuleTags(m, false))
-                                        .orElseGet(HashSet::new);
+        final Map<String, GraphTag<?>> tags = module
+                                                .map(m -> collectModuleTags(m, false))
+                                                .orElseGet(HashMap::new);
 
         final GraphNode sourceNode = new SimpleGraphNode(dependency.name(), new HashSet<>(), tags);
         module.map(ModuleDescriptor::requires)
@@ -92,33 +92,33 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
         return sourceNode;
     }
 
-    private Set<GraphTag<?>> collectRelationTags(final ModuleDescriptor.Requires dependency) {
+    private Map<String, GraphTag<?>> collectRelationTags(final ModuleDescriptor.Requires dependency) {
 
-        final Set<GraphTag<?>> relationTags = new HashSet<>(dependency.modifiers().size() + 1);
+        final Map<String, GraphTag<?>> relationTags = new HashMap<>();
         dependency.rawCompiledVersion()
-                    .ifPresent(version -> relationTags.add(new SimpleGraphTag<>(VERSION_TAG, version)));
+                    .ifPresent(version -> relationTags.put(VERSION_TAG, new SimpleGraphTag<>(VERSION_TAG, version)));
         dependency.modifiers()
                     .stream()
                     .map(modifier -> new SimpleGraphTag<>(modifier.name().toLowerCase(), true))
-                    .forEach(relationTags::add);
+                    .forEach(tag -> relationTags.put(tag.name(), tag));
 
         return relationTags;
     }
 
-    private Set<GraphTag<?>> collectModuleTags(final ModuleDescriptor descriptor, final boolean isSourceModule) {
+    private Map<String, GraphTag<?>> collectModuleTags(final ModuleDescriptor descriptor, final boolean isSourceModule) {
 
-        final Set<GraphTag<?>> tags = new HashSet<>(2 + descriptor.modifiers().size());
+        final Map<String, GraphTag<?>> tags = new HashMap<>();
 
         descriptor.mainClass()
-                    .ifPresent(cls -> tags.add(new SimpleGraphTag<>(MAIN_CLASS_TAG, cls)));
+                    .ifPresent(cls -> tags.put(MAIN_CLASS_TAG, new SimpleGraphTag<>(MAIN_CLASS_TAG, cls)));
         descriptor.rawVersion()
-                    .ifPresent(version -> tags.add(new SimpleGraphTag<>(VERSION_TAG, version)));
+                    .ifPresent(version -> tags.put(VERSION_TAG, new SimpleGraphTag<>(VERSION_TAG, version)));
         descriptor.modifiers()
                     .stream()
                     .map(modifier -> new SimpleGraphTag<>(modifier.name().toLowerCase(), true))
-                    .forEach(tags::add);
+                    .forEach(tag -> tags.put(tag.name(), tag));
 
-        tags.add(new SimpleGraphTag<>(SOURCE_MODULE_TAG, isSourceModule));
+        tags.put(SOURCE_MODULE_TAG, new SimpleGraphTag<>(SOURCE_MODULE_TAG, isSourceModule));
 
         return tags;
     }

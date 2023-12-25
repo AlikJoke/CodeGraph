@@ -38,6 +38,6 @@ public class StabilityCharacteristicTest {
         final var result = characteristic.compute(codeGraph);
 
         assertNotNull(result.get(), "Stability factor object must be not null");
-        assertEquals(expectedStability, result.get().stability(), "Stability factor must be equal");
+        assertEquals(expectedStability, result.get().factor(), "Stability factor must be equal");
     }
 }

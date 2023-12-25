@@ -1,7 +1,7 @@
 package ru.joke.cdgraph.core;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
+import java.util.Map;
 
 public interface GraphNodeRelation {
 
@@ -15,7 +15,7 @@ public interface GraphNodeRelation {
     RelationType type();
 
     @Nonnull
-    Set<GraphTag<?>> tags();
+    Map<String, GraphTag<?>> tags();
 
     enum RelationType {
 

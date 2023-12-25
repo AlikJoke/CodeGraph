@@ -49,10 +49,10 @@ public abstract class AbstractCodeGraph implements CodeGraph {
 
     protected abstract Map<String, GraphNode> buildNodesMap(@Nonnull CodeGraphDataSource dataSource);
 
-    protected Set<GraphTag<?>> collectModuleClassesMetadataTags(@Nonnull Set<ClassMetadata> classesMetadata) {
+    protected Map<String, GraphTag<?>> collectModuleClassesMetadataTags(@Nonnull Set<ClassMetadata> classesMetadata) {
         return classesMetadata.isEmpty()
-                ? Collections.emptySet()
-                : Set.of(new SimpleGraphTag<>(CLASSES_METADATA_TAG, classesMetadata));
+                ? Collections.emptyMap()
+                : Map.of(CLASSES_METADATA_TAG, new SimpleGraphTag<>(CLASSES_METADATA_TAG, classesMetadata));
     }
 
     private void removeDependentNodesFromMap(final GraphNode node, final Set<String> allNodesIds) {

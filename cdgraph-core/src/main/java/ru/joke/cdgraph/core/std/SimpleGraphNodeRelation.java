@@ -5,13 +5,13 @@ import ru.joke.cdgraph.core.GraphNodeRelation;
 import ru.joke.cdgraph.core.GraphTag;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
+import java.util.Map;
 
 public record SimpleGraphNodeRelation(
         @Nonnull GraphNode source,
         @Nonnull GraphNode target,
         @Nonnull RelationType type,
-        @Nonnull Set<GraphTag<?>> tags) implements GraphNodeRelation {
+        @Nonnull Map<String, GraphTag<?>> tags) implements GraphNodeRelation {
 
     @Override
     public String toString() {

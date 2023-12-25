@@ -9,7 +9,7 @@ import ru.joke.cdgraph.core.std.characteristics.SingleNodeCharacteristicParamete
 
 import javax.annotation.Nonnull;
 
-public final class StabilityCharacteristic implements CodeGraphCharacteristic<Stability> {
+public final class StabilityCharacteristic implements CodeGraphCharacteristic<Factor> {
 
     private final SingleNodeCharacteristicParameters parameters;
 
@@ -19,7 +19,7 @@ public final class StabilityCharacteristic implements CodeGraphCharacteristic<St
 
     @Nonnull
     @Override
-    public CodeGraphCharacteristicResult<Stability> compute(@Nonnull CodeGraph graph) {
+    public CodeGraphCharacteristicResult<Factor> compute(@Nonnull CodeGraph graph) {
         final var targetNode = graph.findNodeById(this.parameters.nodeId())
                                     .orElseThrow(() -> new CodeGraphComputationException("Node '" + this.parameters.nodeId() + "' not found"));
 
@@ -32,7 +32,6 @@ public final class StabilityCharacteristic implements CodeGraphCharacteristic<St
                                     .anyMatch(relation -> targetNode.equals(relation.target())))
                             .count();
         final double stability = 1 - (double) outputDependencies / (inputDependencies + outputDependencies);
-        return new SimpleCodeGraphCharacteristicResult<>(new Stability(stability));
+        return new SimpleCodeGraphCharacteristicResult<>(new Factor(stability));
     }
 }
-
