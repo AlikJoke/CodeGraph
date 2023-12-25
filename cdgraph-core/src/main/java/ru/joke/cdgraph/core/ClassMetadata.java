@@ -10,8 +10,6 @@ public record ClassMetadata(@Nonnull String className, @Nonnull ClassType classT
 
         ABSTRACT,
 
-        ENUM,
-
         ANNOTATION,
 
         CONCRETE;
