@@ -1,45 +1,26 @@
 package ru.joke.cdgraph.core.impl.characteristics;
 
 import org.junit.jupiter.api.Test;
-import ru.joke.cdgraph.core.CodeGraphCharacteristicConfigurationException;
-import ru.joke.cdgraph.core.CodeGraphComputationException;
+import ru.joke.cdgraph.core.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.impl.characteristics.paths.AllPathsBetweenNodesCharacteristic;
 import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenNodes;
 import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenNodesCharacteristicParameters;
-import ru.joke.cdgraph.core.impl.jms.JavaModuleCodeGraph;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.joke.cdgraph.core.impl.util.TestUtil.*;
 
-public class AllPathsBetweenNodesCharacteristicTest {
-
-    @Test
-    public void testWhenSourceNodeNotFoundThenException() {
-        testWhenOneOfNodeNotFound("test", SQL_MODULE);
-    }
-
-    @Test
-    public void testWhenTargetNodeNotFoundThenException() {
-        testWhenOneOfNodeNotFound(SQL_MODULE, "test");
-    }
-
-    @Test
-    public void testWhenTargetAndSourceAreSameThenException() {
-        assertThrows(
-                CodeGraphCharacteristicConfigurationException.class,
-                () -> new PathBetweenNodesCharacteristicParameters(SQL_MODULE, SQL_MODULE)
-        );
-    }
+public class AllPathsBetweenNodesCharacteristicTest extends PathBetweenNodesCharacteristicTestBase<List<PathBetweenNodes>> {
 
     @Test
     public void testWhenNoPathExistBetweenNodes() {
         final var params = new PathBetweenNodesCharacteristicParameters(TEST_MODULE_1, SQL_MODULE);
-        final var characteristic = new AllPathsBetweenNodesCharacteristic(params);
+        final var characteristic = createCharacteristic(params);
 
-        final var codeGraphDatasource = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH);
-        final var result = characteristic.compute(new JavaModuleCodeGraph(codeGraphDatasource));
+        final var codeGraph = createCodeGraph(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH);
+        final var result = characteristic.compute(codeGraph);
 
         final var paths = result.get();
         assertNotNull(paths, "Result object must be not null");
@@ -50,10 +31,10 @@ public class AllPathsBetweenNodesCharacteristicTest {
     @Test
     public void testWhenOnlyOnePathExist() {
         final var params = new PathBetweenNodesCharacteristicParameters(TEST_MODULE_3, TEST_MODULE_1);
-        final var characteristic = new AllPathsBetweenNodesCharacteristic(params);
+        final var characteristic = createCharacteristic(params);
 
-        final var codeGraphDatasource = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
-        final var result = characteristic.compute(new JavaModuleCodeGraph(codeGraphDatasource));
+        final var codeGraph = createCodeGraph(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
+        final var result = characteristic.compute(codeGraph);
 
         final var paths = result.get();
         assertNotNull(paths, "Result object must be not null");
@@ -78,10 +59,10 @@ public class AllPathsBetweenNodesCharacteristicTest {
     @Test
     public void testWhenMultiplePathsExists() {
         final var params = new PathBetweenNodesCharacteristicParameters(TEST_MODULE_3, BASE_MODULE);
-        final var characteristic = new AllPathsBetweenNodesCharacteristic(params);
+        final var characteristic = createCharacteristic(params);
 
-        final var codeGraphDatasource = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
-        final var result = characteristic.compute(new JavaModuleCodeGraph(codeGraphDatasource));
+        final var codeGraph = createCodeGraph(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
+        final var result = characteristic.compute(codeGraph);
 
         final var paths = result.get();
         assertNotNull(paths, "Result object must be not null");
@@ -123,11 +104,9 @@ public class AllPathsBetweenNodesCharacteristicTest {
         }
     }
 
-    private void testWhenOneOfNodeNotFound(final String sourceId, final String targetId) {
-        final var params = new PathBetweenNodesCharacteristicParameters(sourceId, targetId);
-        final var characteristic = new AllPathsBetweenNodesCharacteristic(params);
-
-        final var codeGraph = new JavaModuleCodeGraph(createCodeGraphDatasource(TEST_MODULE_2_PATH, TEST_MODULE_3_PATH));
-        assertThrows(CodeGraphComputationException.class, () -> characteristic.compute(codeGraph));
+    @Nonnull
+    @Override
+    protected CodeGraphCharacteristic<List<PathBetweenNodes>> createCharacteristic(@Nonnull PathBetweenNodesCharacteristicParameters parameters) {
+        return new AllPathsBetweenNodesCharacteristic(parameters);
     }
 }

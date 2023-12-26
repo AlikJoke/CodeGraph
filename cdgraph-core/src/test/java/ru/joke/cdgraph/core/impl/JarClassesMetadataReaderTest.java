@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_JAR_PATH;
+import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_JAR_3_PATH;
 
 public class JarClassesMetadataReaderTest {
 
@@ -23,7 +23,7 @@ public class JarClassesMetadataReaderTest {
     public void test() throws IOException {
         final JarClassesMetadataReader reader = new JarClassesMetadataReader();
 
-        final var jarUrl = getClass().getResource(TEST_JAR_PATH);
+        final var jarUrl = getClass().getResource(TEST_JAR_3_PATH);
         try (final JarFile jar = new JarFile(new File(jarUrl.getFile()))) {
             final var allMetadata = reader.read(jar);
 

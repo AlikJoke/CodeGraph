@@ -10,7 +10,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_JAR_PATH;
+import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_JAR_3_PATH;
 
 public class CodeGraphJarDataSourceTest {
 
@@ -20,7 +20,7 @@ public class CodeGraphJarDataSourceTest {
 
     @Test
     public void test() throws URISyntaxException {
-        final URL testJarUrl = getClass().getResource(TEST_JAR_PATH);
+        final URL testJarUrl = getClass().getResource(TEST_JAR_3_PATH);
         final CodeGraphDataSource ds = new CodeGraphJarDataSource(Path.of(testJarUrl.toURI()), new JarClassesMetadataReader());
 
         final var configs = ds.find(MODULE_INFO_CLASS::equals);

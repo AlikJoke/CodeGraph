@@ -1,43 +1,25 @@
 package ru.joke.cdgraph.core.impl.characteristics;
 
 import org.junit.jupiter.api.Test;
-import ru.joke.cdgraph.core.CodeGraphCharacteristicConfigurationException;
-import ru.joke.cdgraph.core.CodeGraphComputationException;
-import ru.joke.cdgraph.core.impl.characteristics.paths.ShortestPathBetweenNodesCharacteristic;
+import ru.joke.cdgraph.core.CodeGraphCharacteristic;
+import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenNodes;
 import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenNodesCharacteristicParameters;
-import ru.joke.cdgraph.core.impl.jms.JavaModuleCodeGraph;
+import ru.joke.cdgraph.core.impl.characteristics.paths.ShortestPathBetweenNodesCharacteristic;
+
+import javax.annotation.Nonnull;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.joke.cdgraph.core.impl.util.TestUtil.*;
-import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_MODULE_3_PATH;
 
-public class ShortestPathBetweenNodesCharacteristicTest {
-
-    @Test
-    public void testWhenSourceNodeNotFoundThenException() {
-        testWhenOneOfNodeNotFound("test", SQL_MODULE);
-    }
-
-    @Test
-    public void testWhenTargetNodeNotFoundThenException() {
-        testWhenOneOfNodeNotFound(SQL_MODULE, "test");
-    }
-
-    @Test
-    public void testWhenTargetAndSourceAreSameThenException() {
-        assertThrows(
-                CodeGraphCharacteristicConfigurationException.class,
-                () -> new PathBetweenNodesCharacteristicParameters(SQL_MODULE, SQL_MODULE)
-        );
-    }
+public class ShortestPathBetweenNodesCharacteristicTest extends PathBetweenNodesCharacteristicTestBase<PathBetweenNodes> {
 
     @Test
     public void testWhenNoPathExistBetweenNodes() {
         final var params = new PathBetweenNodesCharacteristicParameters(TEST_MODULE_1, SQL_MODULE);
-        final var characteristic = new ShortestPathBetweenNodesCharacteristic(params);
+        final var characteristic = createCharacteristic(params);
 
-        final var codeGraphDatasource = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH);
-        final var result = characteristic.compute(new JavaModuleCodeGraph(codeGraphDatasource));
+        final var codeGraph = createCodeGraph(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH);
+        final var result = characteristic.compute(codeGraph);
 
         assertNotNull(result.get(), "Result object must be not null");
         assertTrue(result.get().relationsInPath().isEmpty(), "Relations path must be empty");
@@ -48,10 +30,10 @@ public class ShortestPathBetweenNodesCharacteristicTest {
     @Test
     public void testWhenOnlyOnePathExist() {
         final var params = new PathBetweenNodesCharacteristicParameters(TEST_MODULE_3, TEST_MODULE_1);
-        final var characteristic = new ShortestPathBetweenNodesCharacteristic(params);
+        final var characteristic = createCharacteristic(params);
 
-        final var codeGraphDatasource = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
-        final var result = characteristic.compute(new JavaModuleCodeGraph(codeGraphDatasource));
+        final var codeGraph = createCodeGraph(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
+        final var result = characteristic.compute(codeGraph);
 
         assertNotNull(result.get(), "Result object must be not null");
 
@@ -74,10 +56,10 @@ public class ShortestPathBetweenNodesCharacteristicTest {
     @Test
     public void testWhenTwoPathsExistThenFoundShortest() {
         final var params = new PathBetweenNodesCharacteristicParameters(TEST_MODULE_3, SQL_MODULE);
-        final var characteristic = new ShortestPathBetweenNodesCharacteristic(params);
+        final var characteristic = createCharacteristic(params);
 
-        final var codeGraphDatasource = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
-        final var result = characteristic.compute(new JavaModuleCodeGraph(codeGraphDatasource));
+        final var codeGraph = createCodeGraph(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
+        final var result = characteristic.compute(codeGraph);
 
         assertNotNull(result.get(), "Result object must be not null");
 
@@ -94,11 +76,9 @@ public class ShortestPathBetweenNodesCharacteristicTest {
         assertEquals(SQL_MODULE, nodes.get(1).id(), "Second module must be equal");
     }
 
-    private void testWhenOneOfNodeNotFound(final String sourceId, final String targetId) {
-        final var params = new PathBetweenNodesCharacteristicParameters(sourceId, targetId);
-        final var characteristic = new ShortestPathBetweenNodesCharacteristic(params);
-
-        final var codeGraph = new JavaModuleCodeGraph(createCodeGraphDatasource(TEST_MODULE_2_PATH, TEST_MODULE_3_PATH));
-        assertThrows(CodeGraphComputationException.class, () -> characteristic.compute(codeGraph));
+    @Nonnull
+    @Override
+    protected CodeGraphCharacteristic<PathBetweenNodes> createCharacteristic(@Nonnull PathBetweenNodesCharacteristicParameters parameters) {
+        return new ShortestPathBetweenNodesCharacteristic(parameters);
     }
 }
