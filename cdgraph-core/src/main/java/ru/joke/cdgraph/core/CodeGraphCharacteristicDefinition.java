@@ -8,8 +8,5 @@ public interface CodeGraphCharacteristicDefinition<T extends CodeGraphCharacteri
     String id();
 
     @Nonnull
-    Class<T> characteristicClass();
-
-    @Nonnull
     T createParameterizedCharacteristic(@Nonnull K parameters);
 }

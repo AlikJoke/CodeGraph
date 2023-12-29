@@ -2,7 +2,7 @@ package ru.joke.cdgraph.core.impl.characteristics.factors;
 
 import ru.joke.cdgraph.core.*;
 import ru.joke.cdgraph.core.impl.characteristics.SimpleCodeGraphCharacteristicResult;
-import ru.joke.cdgraph.core.impl.characteristics.SingleNodeCharacteristicParameters;
+import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParameters;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -14,17 +14,17 @@ import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.SOURCE_MODULE_TAG;
 
 public final class AbstractnessCharacteristic implements CodeGraphCharacteristic<Factor> {
 
-    private final SingleNodeCharacteristicParameters parameters;
+    private final SingleModuleCharacteristicParameters parameters;
 
-    public AbstractnessCharacteristic(@Nonnull SingleNodeCharacteristicParameters parameters) {
+    public AbstractnessCharacteristic(@Nonnull SingleModuleCharacteristicParameters parameters) {
         this.parameters = parameters;
     }
 
     @Nonnull
     @Override
     public CodeGraphCharacteristicResult<Factor> compute(@Nonnull CodeGraph graph) {
-        final var targetNode = graph.findNodeById(this.parameters.nodeId())
-                                    .orElseThrow(() -> new CodeGraphComputationException("Node '" + this.parameters.nodeId() + "' not found"));
+        final var targetNode = graph.findNodeById(this.parameters.moduleId())
+                                    .orElseThrow(() -> new CodeGraphComputationException("Node '" + this.parameters.moduleId() + "' not found"));
 
         @SuppressWarnings("unchecked")
         final var isSourceTag = (GraphTag<Boolean>) targetNode.tags().get(SOURCE_MODULE_TAG);

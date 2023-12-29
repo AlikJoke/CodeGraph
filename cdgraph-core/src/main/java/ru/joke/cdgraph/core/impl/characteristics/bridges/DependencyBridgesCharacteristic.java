@@ -2,10 +2,10 @@ package ru.joke.cdgraph.core.impl.characteristics.bridges;
 
 import ru.joke.cdgraph.core.*;
 import ru.joke.cdgraph.core.impl.characteristics.SimpleCodeGraphCharacteristicResult;
-import ru.joke.cdgraph.core.impl.characteristics.SingleNodeCharacteristicParameters;
-import ru.joke.cdgraph.core.impl.characteristics.paths.AllPathsBetweenNodesCharacteristic;
-import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenNodes;
-import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenNodesCharacteristicParameters;
+import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParameters;
+import ru.joke.cdgraph.core.impl.characteristics.paths.AllPathsBetweenModulesCharacteristic;
+import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenModules;
+import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenModulesCharacteristicParameters;
 import ru.joke.cdgraph.core.impl.characteristics.paths.TransitiveChainsCharacteristic;
 
 import javax.annotation.Nonnull;
@@ -64,7 +64,7 @@ public final class DependencyBridgesCharacteristic implements CodeGraphCharacter
     private Set<GraphNode> findAllNodesInPathAfterBridgeRelation(final GraphNodeRelation bridgeCandidate, final CodeGraph graph) {
 
         final String targetNodeId = bridgeCandidate.target().id();
-        final var params = new SingleNodeCharacteristicParameters(targetNodeId);
+        final var params = new SingleModuleCharacteristicParameters(targetNodeId);
         final var transitiveChainsCharacteristic = new TransitiveChainsCharacteristic(params);
 
         final var allPathsFromTargetResult = transitiveChainsCharacteristic.compute(graph);
@@ -72,14 +72,14 @@ public final class DependencyBridgesCharacteristic implements CodeGraphCharacter
 
         return allPathsFromTarget
                 .stream()
-                .map(PathBetweenNodes::nodesInPath)
+                .map(PathBetweenModules::modulesInPath)
                 .flatMap(List::stream)
                 .collect(Collectors.toSet());
     }
 
     private boolean isNodeHasMultiplePathsFromRoot(final GraphNode targetNode, final GraphNode rootNode, final CodeGraph graph) {
-        final var pathsBetweenCharacteristicParameters = new PathBetweenNodesCharacteristicParameters(rootNode.id(), targetNode.id());
-        final var allPathsBetweenNodesCharacteristic = new AllPathsBetweenNodesCharacteristic(pathsBetweenCharacteristicParameters);
+        final var pathsBetweenCharacteristicParameters = new PathBetweenModulesCharacteristicParameters(rootNode.id(), targetNode.id());
+        final var allPathsBetweenNodesCharacteristic = new AllPathsBetweenModulesCharacteristic(pathsBetweenCharacteristicParameters);
 
         final var allPathsBetweenNodesResult = allPathsBetweenNodesCharacteristic.compute(graph);
         final var allPathsBetweenNodes = allPathsBetweenNodesResult.get();

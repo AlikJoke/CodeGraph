@@ -4,25 +4,25 @@ import ru.joke.cdgraph.core.CodeGraph;
 import ru.joke.cdgraph.core.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.CodeGraphComputationException;
 import ru.joke.cdgraph.core.GraphNodeRelation;
-import ru.joke.cdgraph.core.impl.characteristics.SingleNodeCharacteristicParameters;
+import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParameters;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TransitiveChainsCharacteristic extends AbstractMultiplePathsBetweenNodesCharacteristic {
+public final class TransitiveChainsCharacteristic extends AbstractMultiplePathsBetweenModulesCharacteristic {
 
-    private final SingleNodeCharacteristicParameters parameters;
+    private final SingleModuleCharacteristicParameters parameters;
 
-    public TransitiveChainsCharacteristic(@Nonnull final SingleNodeCharacteristicParameters parameters) {
+    public TransitiveChainsCharacteristic(@Nonnull final SingleModuleCharacteristicParameters parameters) {
         this.parameters = parameters;
     }
 
     @Nonnull
     @Override
-    public CodeGraphCharacteristicResult<List<PathBetweenNodes>> compute(@Nonnull CodeGraph graph) {
-        final var sourceNode = graph.findNodeById(this.parameters.nodeId())
-                                    .orElseThrow(() -> new CodeGraphComputationException("Node '" + this.parameters.nodeId() + "' not found"));
+    public CodeGraphCharacteristicResult<List<PathBetweenModules>> compute(@Nonnull CodeGraph graph) {
+        final var sourceNode = graph.findNodeById(this.parameters.moduleId())
+                                    .orElseThrow(() -> new CodeGraphComputationException("Node '" + this.parameters.moduleId() + "' not found"));
 
         final List<List<GraphNodeRelation>> chains = new ArrayList<>();
         sourceNode.relations()
