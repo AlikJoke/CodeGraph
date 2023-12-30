@@ -30,7 +30,7 @@ public class AbstractnessCharacteristicTest extends SingleNodeCharacteristicTest
     @Nonnull
     @Override
     protected CodeGraphCharacteristic<Factor> createCharacteristic(@Nonnull SingleModuleCharacteristicParameters parameters) {
-        return new AbstractnessCharacteristic(parameters);
+        return new AbstractnessCharacteristic("1", parameters);
     }
 
     @Nonnull

@@ -56,7 +56,7 @@ public abstract class TestUtil {
                     return result
                             .stream()
                             .map(config -> new Configuration(config, Collections.emptySet()))
-                            .collect(Collectors.toList());
+                            .toList();
                 } catch (IOException ex) {
                     throw new CodeGraphDataSourceException(ex);
                 }

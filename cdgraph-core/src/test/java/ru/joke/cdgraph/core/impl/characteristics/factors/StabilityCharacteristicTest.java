@@ -28,7 +28,7 @@ public class StabilityCharacteristicTest extends SingleNodeCharacteristicTestBas
     @Nonnull
     @Override
     protected CodeGraphCharacteristic<Factor> createCharacteristic(@Nonnull SingleModuleCharacteristicParameters parameters) {
-        return new StabilityCharacteristic(parameters);
+        return new StabilityCharacteristic("1", parameters);
     }
 
     @Nonnull

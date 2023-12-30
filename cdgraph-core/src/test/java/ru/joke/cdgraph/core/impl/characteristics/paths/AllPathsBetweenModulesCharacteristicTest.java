@@ -22,7 +22,6 @@ public class AllPathsBetweenModulesCharacteristicTest extends PathBetweenModules
         final var paths = result.get();
         assertNotNull(paths, "Result object must be not null");
         assertTrue(paths.isEmpty(), "Paths must be empty");
-        assertEquals("[]", result.toJson(), "Json must be equal for empty path");
     }
 
     @Test
@@ -104,6 +103,6 @@ public class AllPathsBetweenModulesCharacteristicTest extends PathBetweenModules
     @Nonnull
     @Override
     protected CodeGraphCharacteristic<List<PathBetweenModules>> createCharacteristic(@Nonnull PathBetweenModulesCharacteristicParameters parameters) {
-        return new AllPathsBetweenModulesCharacteristic(parameters);
+        return new AllPathsBetweenModulesCharacteristic("1", parameters);
     }
 }

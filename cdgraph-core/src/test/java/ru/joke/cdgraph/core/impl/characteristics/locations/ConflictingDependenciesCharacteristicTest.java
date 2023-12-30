@@ -25,7 +25,7 @@ public class ConflictingDependenciesCharacteristicTest {
     @Test
     public void testWhenNoConflictingDependencies() throws URISyntaxException {
         final CodeGraph codeGraph = createCodeGraphByJar(TEST_JAR_3_PATH, TEST_JAR_2_PATH);
-        final ConflictingDependenciesCharacteristic characteristic = new ConflictingDependenciesCharacteristic();
+        final ConflictingDependenciesCharacteristic characteristic = new ConflictingDependenciesCharacteristic("1");
 
         final var result = characteristic.compute(codeGraph);
         assertNotNull(result.get(), "Result of computing must be not null");
@@ -35,7 +35,7 @@ public class ConflictingDependenciesCharacteristicTest {
     @Test
     public void testWhenExistsConflictingDependencies() {
         final CodeGraph codeGraph = buildCodeGraph();
-        final ConflictingDependenciesCharacteristic characteristic = new ConflictingDependenciesCharacteristic();
+        final ConflictingDependenciesCharacteristic characteristic = new ConflictingDependenciesCharacteristic("1");
 
         final var result = characteristic.compute(codeGraph);
         final Set<ConflictingDependencies> allConflictingDependencies = result.get();

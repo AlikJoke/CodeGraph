@@ -21,7 +21,6 @@ public class ShortestPathBetweenModulesCharacteristicTest extends PathBetweenMod
         assertNotNull(result.get(), "Result object must be not null");
         assertTrue(result.get().relationsInPath().isEmpty(), "Relations path must be empty");
         assertTrue(result.get().modulesInPath().isEmpty(), "Nodes path must be empty");
-        assertEquals("[]", result.toJson(), "Json must be equal for empty path");
     }
 
     @Test
@@ -76,6 +75,6 @@ public class ShortestPathBetweenModulesCharacteristicTest extends PathBetweenMod
     @Nonnull
     @Override
     protected CodeGraphCharacteristic<PathBetweenModules> createCharacteristic(@Nonnull PathBetweenModulesCharacteristicParameters parameters) {
-        return new ShortestPathBetweenModulesCharacteristic(parameters);
+        return new ShortestPathBetweenModulesCharacteristic("1", parameters);
     }
 }

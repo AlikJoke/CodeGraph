@@ -14,7 +14,7 @@ public class ModuleClusteringCharacteristicTest {
     @Test
     public void testClusteringToTargetClustersCount() {
         final var params = new ModuleClusteringCharacteristicParameters(5, 7);
-        final var characteristic = new ModuleClusteringCharacteristic(params);
+        final var characteristic = new ModuleClusteringCharacteristic("1", params);
 
         final var ds = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
         final var codeGraph = new JavaModuleCodeGraph(ds);
@@ -45,7 +45,7 @@ public class ModuleClusteringCharacteristicTest {
     @Test
     public void testClusteringWithMinimalOptimizingFactor() {
         final var params = new ModuleClusteringCharacteristicParameters(1, 10);
-        final var characteristic = new ModuleClusteringCharacteristic(params);
+        final var characteristic = new ModuleClusteringCharacteristic("1", params);
 
         final var ds = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
         final var codeGraph = new JavaModuleCodeGraph(ds);

@@ -26,6 +26,6 @@ public class PackageLocationsCharacteristicTest extends LocationsCharacteristicT
     @Nonnull
     @Override
     protected CodeGraphCharacteristic<Set<GraphNode>> createCharacteristic(@Nonnull ResourceLocationsCharacteristicParameters parameters) {
-        return new PackageLocationsCharacteristic(parameters);
+        return new PackageLocationsCharacteristic("1", parameters);
     }
 }

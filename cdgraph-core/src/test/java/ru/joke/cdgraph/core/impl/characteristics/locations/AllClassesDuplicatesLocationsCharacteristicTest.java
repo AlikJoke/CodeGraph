@@ -13,7 +13,7 @@ public class AllClassesDuplicatesLocationsCharacteristicTest {
     @Test
     public void testSingleJarWithoutDuplicates() throws URISyntaxException {
         final var codeGraph = createCodeGraphByJar(TEST_JAR_3_PATH);
-        final var characteristic = new AllClassesDuplicatesLocationsCharacteristic();
+        final var characteristic = new AllClassesDuplicatesLocationsCharacteristic("1");
         final var result = characteristic.compute(codeGraph);
 
         final Set<ClassDuplicatesLocations> locations = result.get();
@@ -24,7 +24,7 @@ public class AllClassesDuplicatesLocationsCharacteristicTest {
     @Test
     public void testTwoJarWithDuplicates() throws URISyntaxException {
         final var codeGraph = createCodeGraphByJar(TEST_JAR_3_PATH, TEST_JAR_2_PATH);
-        final var characteristic = new AllClassesDuplicatesLocationsCharacteristic();
+        final var characteristic = new AllClassesDuplicatesLocationsCharacteristic("1");
         final var result = characteristic.compute(codeGraph);
 
         final Set<ClassDuplicatesLocations> locations = result.get();

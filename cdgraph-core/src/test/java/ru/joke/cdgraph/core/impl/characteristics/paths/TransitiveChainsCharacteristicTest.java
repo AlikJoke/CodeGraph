@@ -47,7 +47,7 @@ public class TransitiveChainsCharacteristicTest extends SingleNodeCharacteristic
     @Nonnull
     @Override
     protected CodeGraphCharacteristic<List<PathBetweenModules>> createCharacteristic(@Nonnull SingleModuleCharacteristicParameters parameters) {
-        return new TransitiveChainsCharacteristic(parameters);
+        return new TransitiveChainsCharacteristic("1", parameters);
     }
 
     @Nonnull

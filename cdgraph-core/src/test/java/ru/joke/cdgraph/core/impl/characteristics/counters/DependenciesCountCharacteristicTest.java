@@ -30,7 +30,7 @@ public class DependenciesCountCharacteristicTest extends SingleNodeCharacteristi
     @Nonnull
     @Override
     protected CodeGraphCharacteristic<DependenciesCount> createCharacteristic(@Nonnull SingleModuleCharacteristicParameters parameters) {
-        return new DependenciesCountCharacteristic(parameters);
+        return new DependenciesCountCharacteristic("1", parameters);
     }
 
     @Nonnull

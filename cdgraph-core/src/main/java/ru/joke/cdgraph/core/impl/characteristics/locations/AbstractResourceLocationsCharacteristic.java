@@ -1,10 +1,10 @@
 package ru.joke.cdgraph.core.impl.characteristics.locations;
 
-import com.google.gson.Gson;
 import ru.joke.cdgraph.core.*;
 import ru.joke.cdgraph.core.impl.characteristics.SimpleCodeGraphCharacteristicResult;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,6 +13,16 @@ import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.CLASSES_METADATA_TAG;
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.SOURCE_MODULE_TAG;
 
 abstract class AbstractResourceLocationsCharacteristic<T> implements CodeGraphCharacteristic<T> {
+
+    protected final String id;
+    protected final CodeGraphCharacteristicParameters parameters;
+
+    AbstractResourceLocationsCharacteristic(
+            @Nonnull String id,
+            @Nullable CodeGraphCharacteristicParameters parameters) {
+        this.id = id;
+        this.parameters = parameters;
+    }
 
     @Nonnull
     @Override
@@ -23,10 +33,10 @@ abstract class AbstractResourceLocationsCharacteristic<T> implements CodeGraphCh
                         .filter(this::isSourceModule)
                         .filter(this::doesModuleContainResource)
                         .collect(Collectors.toSet());
-        return new SimpleCodeGraphCharacteristicResult<>(transformResult(modulesWithResource)) {
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, transformResult(modulesWithResource)) {
             @Override
             public String toJson() {
-                return transformResultToJson(gson, get());
+                return toJson(transformResultToJsonFormat(get()));
             }
         };
     }
@@ -37,7 +47,7 @@ abstract class AbstractResourceLocationsCharacteristic<T> implements CodeGraphCh
     protected abstract T transformResult(@Nonnull Set<GraphNode> modules);
 
     @Nonnull
-    protected abstract String transformResultToJson(@Nonnull Gson gson, @Nonnull T result);
+    protected abstract Object transformResultToJsonFormat(@Nonnull T result);
 
     @Nonnull
     protected Set<String> convertToIds(@Nonnull Set<GraphNode> nodes) {

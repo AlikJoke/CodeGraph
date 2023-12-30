@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.CodeGraph;
 import ru.joke.cdgraph.core.GraphNode;
 import ru.joke.cdgraph.core.GraphNodeRelation;
+import ru.joke.cdgraph.core.impl.characteristics.SPIBasedCodeGraphCharacteristicFactoriesLoader;
+import ru.joke.cdgraph.core.impl.characteristics.SimpleCodeGraphCharacteristicFactoryRegistry;
 import ru.joke.cdgraph.core.impl.jms.JavaModuleCodeGraph;
 
 import javax.annotation.Nonnull;
@@ -21,7 +23,10 @@ public class DependencyBridgesCharacteristicTest {
         final var ds = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
         final var codeGraph = new JavaModuleCodeGraph(ds);
 
-        final var characteristic = new DependencyBridgesCharacteristic();
+        final var registry = new SimpleCodeGraphCharacteristicFactoryRegistry();
+        registry.register(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
+
+        final var characteristic = new DependencyBridgesCharacteristic("1", registry);
         final var result = characteristic.compute(codeGraph);
 
         final var bridges = result.get();
@@ -35,7 +40,10 @@ public class DependencyBridgesCharacteristicTest {
         final var sourceCodeGraph = new JavaModuleCodeGraph(ds);
         final var resultCodeGraph = createCodeGraphWithoutBaseModule(sourceCodeGraph);
 
-        final var characteristic = new DependencyBridgesCharacteristic();
+        final var registry = new SimpleCodeGraphCharacteristicFactoryRegistry();
+        registry.register(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
+
+        final var characteristic = new DependencyBridgesCharacteristic("1", registry);
         final var result = characteristic.compute(resultCodeGraph);
 
         final var bridges = result.get();

@@ -10,12 +10,12 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TransitiveChainsCharacteristic extends AbstractMultiplePathsBetweenModulesCharacteristic {
+final class TransitiveChainsCharacteristic extends AbstractMultiplePathsBetweenModulesCharacteristic<SingleModuleCharacteristicParameters> {
 
-    private final SingleModuleCharacteristicParameters parameters;
-
-    public TransitiveChainsCharacteristic(@Nonnull final SingleModuleCharacteristicParameters parameters) {
-        this.parameters = parameters;
+    TransitiveChainsCharacteristic(
+            @Nonnull final String id,
+            @Nonnull final SingleModuleCharacteristicParameters parameters) {
+        super(id, parameters);
     }
 
     @Nonnull

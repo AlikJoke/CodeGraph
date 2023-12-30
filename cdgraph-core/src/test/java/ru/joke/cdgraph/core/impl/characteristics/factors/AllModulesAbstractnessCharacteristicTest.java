@@ -1,6 +1,7 @@
 package ru.joke.cdgraph.core.impl.characteristics.factors;
 
 import org.junit.jupiter.api.Test;
+import ru.joke.cdgraph.core.impl.characteristics.SimpleCodeGraphCharacteristicFactoryRegistry;
 
 import java.net.URISyntaxException;
 
@@ -13,7 +14,11 @@ public class AllModulesAbstractnessCharacteristicTest {
     @Test
     public void test() throws URISyntaxException {
         final var codeGraph = createCodeGraphByJar(TEST_JAR_3_PATH, TEST_JAR_2_PATH);
-        final var characteristic = new AllModulesAbstractnessCharacteristic();
+
+        final var registry = new SimpleCodeGraphCharacteristicFactoryRegistry();
+        registry.register(new AbstractnessCharacteristicFactory());
+
+        final var characteristic = new AllModulesAbstractnessCharacteristic("1", registry);
         final var result = characteristic.compute(codeGraph);
 
         final var resultMap = result.get();

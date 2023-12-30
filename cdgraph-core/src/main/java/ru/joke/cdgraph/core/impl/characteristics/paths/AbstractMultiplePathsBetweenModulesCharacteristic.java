@@ -1,17 +1,24 @@
 package ru.joke.cdgraph.core.impl.characteristics.paths;
 
-import ru.joke.cdgraph.core.CodeGraphCharacteristic;
-import ru.joke.cdgraph.core.CodeGraphCharacteristicResult;
-import ru.joke.cdgraph.core.GraphNode;
-import ru.joke.cdgraph.core.GraphNodeRelation;
+import ru.joke.cdgraph.core.*;
 import ru.joke.cdgraph.core.impl.characteristics.SimpleCodeGraphCharacteristicResult;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-abstract class AbstractMultiplePathsBetweenModulesCharacteristic implements CodeGraphCharacteristic<List<PathBetweenModules>> {
+abstract class AbstractMultiplePathsBetweenModulesCharacteristic<T extends CodeGraphCharacteristicParameters> implements CodeGraphCharacteristic<List<PathBetweenModules>> {
+
+    protected final String id;
+    protected final T parameters;
+
+    AbstractMultiplePathsBetweenModulesCharacteristic(
+            @Nonnull final String id,
+            final T parameters) {
+        this.id = id;
+        this.parameters = parameters;
+    }
 
     protected CodeGraphCharacteristicResult<List<PathBetweenModules>> buildComputationResult(final List<List<GraphNodeRelation>> allPaths) {
 
@@ -21,7 +28,7 @@ abstract class AbstractMultiplePathsBetweenModulesCharacteristic implements Code
                                     .map(this::createOneResultPath)
                                     .toList();
 
-        return new SimpleCodeGraphCharacteristicResult<>(resultPaths) {
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, resultPaths) {
             @Override
             public String toJson() {
                 final var nodesIdsInPath =
@@ -31,8 +38,8 @@ abstract class AbstractMultiplePathsBetweenModulesCharacteristic implements Code
                                                     .map(GraphNode::id)
                                                     .toList()
                                 )
-                                .collect(Collectors.toList());
-                return gson.toJson(nodesIdsInPath);
+                                .toList();
+                return toJson(nodesIdsInPath);
             }
         };
     }

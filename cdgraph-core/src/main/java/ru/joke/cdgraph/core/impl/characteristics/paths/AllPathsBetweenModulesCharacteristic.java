@@ -9,12 +9,12 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class AllPathsBetweenModulesCharacteristic extends AbstractMultiplePathsBetweenModulesCharacteristic {
+final class AllPathsBetweenModulesCharacteristic extends AbstractMultiplePathsBetweenModulesCharacteristic<PathBetweenModulesCharacteristicParameters> {
 
-    private final PathBetweenModulesCharacteristicParameters parameters;
-
-    public AllPathsBetweenModulesCharacteristic(@Nonnull PathBetweenModulesCharacteristicParameters parameters) {
-        this.parameters = parameters;
+    AllPathsBetweenModulesCharacteristic(
+            @Nonnull String id,
+            @Nonnull PathBetweenModulesCharacteristicParameters parameters) {
+        super(id, parameters);
     }
 
     @Nonnull
