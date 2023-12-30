@@ -1,9 +1,6 @@
 package ru.joke.cdgraph.core.impl.characteristics.factors;
 
-import ru.joke.cdgraph.core.CodeGraph;
-import ru.joke.cdgraph.core.CodeGraphCharacteristic;
-import ru.joke.cdgraph.core.CodeGraphCharacteristicResult;
-import ru.joke.cdgraph.core.GraphNode;
+import ru.joke.cdgraph.core.*;
 import ru.joke.cdgraph.core.impl.characteristics.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParameters;
 
@@ -12,7 +9,17 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public final class AllModulesStabilityCharacteristic implements CodeGraphCharacteristic<Map<String, Factor>> {
+final class AllModulesStabilityCharacteristic implements CodeGraphCharacteristic<Map<String, Factor>> {
+
+    private final String id;
+    private final CodeGraphCharacteristicFactoryRegistry registry;
+
+    AllModulesStabilityCharacteristic(
+            @Nonnull String id,
+            @Nonnull CodeGraphCharacteristicFactoryRegistry registry) {
+        this.id = id;
+        this.registry = registry;
+    }
 
     @Nonnull
     @Override
@@ -22,12 +29,14 @@ public final class AllModulesStabilityCharacteristic implements CodeGraphCharact
                         .stream()
                         .map(GraphNode::id)
                         .collect(Collectors.toMap(Function.identity(), nodeId -> computeCharacteristic(nodeId, graph)));
-        return new SimpleCodeGraphCharacteristicResult<>(factors);
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, factors);
     }
 
     private Factor computeCharacteristic(final String nodeId, final CodeGraph graph) {
+        final CodeGraphCharacteristicFactory<CodeGraphCharacteristic<Factor>, Factor, SingleModuleCharacteristicParameters> factory =
+                this.registry.find(StabilityCharacteristicFactoryHandle.class);
         final var params = new SingleModuleCharacteristicParameters(nodeId);
-        final var characteristic = new StabilityCharacteristic(params);
+        final var characteristic = factory.createCharacteristic(params);
         return characteristic.compute(graph).get();
     }
 }

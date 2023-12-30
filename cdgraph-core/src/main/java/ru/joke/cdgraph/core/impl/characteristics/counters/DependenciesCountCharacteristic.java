@@ -9,12 +9,16 @@ import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParam
 
 import javax.annotation.Nonnull;
 
-public final class DependenciesCountCharacteristic implements CodeGraphCharacteristic<DependenciesCount> {
+final class DependenciesCountCharacteristic implements CodeGraphCharacteristic<DependenciesCount> {
 
+    private final String id;
     private final SingleModuleCharacteristicParameters parameters;
 
-    public DependenciesCountCharacteristic(@Nonnull SingleModuleCharacteristicParameters parameters) {
+    DependenciesCountCharacteristic(
+            @Nonnull String id,
+            @Nonnull SingleModuleCharacteristicParameters parameters) {
         this.parameters = parameters;
+        this.id = id;
     }
 
     @Nonnull
@@ -31,6 +35,6 @@ public final class DependenciesCountCharacteristic implements CodeGraphCharacter
                                             .stream()
                                             .anyMatch(relation -> targetNode.equals(relation.target())))
                             .count();
-       return new SimpleCodeGraphCharacteristicResult<>(new DependenciesCount(inputDependencies, outputDependencies));
+       return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, new DependenciesCount(inputDependencies, outputDependencies));
     }
 }

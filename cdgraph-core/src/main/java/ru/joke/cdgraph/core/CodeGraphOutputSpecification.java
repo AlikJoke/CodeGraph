@@ -12,8 +12,20 @@ public interface CodeGraphOutputSpecification {
 
     enum Format {
 
-        JSON,
+        JSON {
+            @Override
+            public String convert(@Nonnull CodeGraphCharacteristicResult<?> characteristicResult) {
+                return characteristicResult.toJson();
+            }
+        },
 
-        PLAIN_TEXT
+        PLAIN_TEXT {
+            @Override
+            public String convert(@Nonnull CodeGraphCharacteristicResult<?> characteristicResult) {
+                return characteristicResult.toPlainString();
+            }
+        };
+
+        public abstract String convert(@Nonnull CodeGraphCharacteristicResult<?> characteristicResult);
     }
 }

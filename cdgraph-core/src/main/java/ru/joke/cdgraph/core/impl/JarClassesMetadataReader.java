@@ -2,6 +2,7 @@ package ru.joke.cdgraph.core.impl;
 
 import ru.joke.cdgraph.core.ClassMetadata;
 import ru.joke.cdgraph.core.ClassesMetadataReader;
+import ru.joke.cdgraph.core.CodeGraphDataSourceException;
 
 import javax.annotation.Nonnull;
 import java.io.DataInputStream;
@@ -59,7 +60,7 @@ public final class JarClassesMetadataReader implements ClassesMetadataReader {
 
             return new ClassMetadata(className, detectClassType(accessFlags), packageName.isEmpty() ? DEFAULT_PACKAGE : packageName);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CodeGraphDataSourceException(e);
         }
     }
 

@@ -3,10 +3,10 @@ package ru.joke.cdgraph.core.impl.characteristics.bridges;
 import ru.joke.cdgraph.core.*;
 import ru.joke.cdgraph.core.impl.characteristics.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParameters;
-import ru.joke.cdgraph.core.impl.characteristics.paths.AllPathsBetweenModulesCharacteristic;
+import ru.joke.cdgraph.core.impl.characteristics.paths.AllPathsBetweenModulesCharacteristicFactoryHandle;
 import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenModules;
 import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenModulesCharacteristicParameters;
-import ru.joke.cdgraph.core.impl.characteristics.paths.TransitiveChainsCharacteristic;
+import ru.joke.cdgraph.core.impl.characteristics.paths.TransitiveChainsCharacteristicFactoryHandle;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -15,7 +15,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<Set<GraphNodeRelation>> {
+final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<Set<GraphNodeRelation>> {
+
+    private final String id;
+    private final CodeGraphCharacteristicFactoryRegistry registry;
+
+    DependencyBridgesCharacteristic(
+            @Nonnull String id,
+            @Nonnull CodeGraphCharacteristicFactoryRegistry registry) {
+        this.id = id;
+        this.registry = registry;
+    }
 
     @Nonnull
     @Override
@@ -45,11 +55,11 @@ public final class DependencyBridgesCharacteristic implements CodeGraphCharacter
             }
         });
 
-        return new SimpleCodeGraphCharacteristicResult<>(bridges) {
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, bridges) {
             @Override
             public String toJson() {
                 final var bridgesMaps = convertBridgesToMap(bridges);
-                return gson.toJson(bridgesMaps);
+                return toJson(bridgesMaps);
             }
         };
     }
@@ -65,7 +75,9 @@ public final class DependencyBridgesCharacteristic implements CodeGraphCharacter
 
         final String targetNodeId = bridgeCandidate.target().id();
         final var params = new SingleModuleCharacteristicParameters(targetNodeId);
-        final var transitiveChainsCharacteristic = new TransitiveChainsCharacteristic(params);
+        final CodeGraphCharacteristicFactory<CodeGraphCharacteristic<List<PathBetweenModules>>, List<PathBetweenModules>, SingleModuleCharacteristicParameters> transitiveChainsCharacteristicFactory =
+                this.registry.find(TransitiveChainsCharacteristicFactoryHandle.class);
+        final var transitiveChainsCharacteristic = transitiveChainsCharacteristicFactory.createCharacteristic(params);
 
         final var allPathsFromTargetResult = transitiveChainsCharacteristic.compute(graph);
         final var allPathsFromTarget = allPathsFromTargetResult.get();
@@ -79,10 +91,14 @@ public final class DependencyBridgesCharacteristic implements CodeGraphCharacter
 
     private boolean isNodeHasMultiplePathsFromRoot(final GraphNode targetNode, final GraphNode rootNode, final CodeGraph graph) {
         final var pathsBetweenCharacteristicParameters = new PathBetweenModulesCharacteristicParameters(rootNode.id(), targetNode.id());
-        final var allPathsBetweenNodesCharacteristic = new AllPathsBetweenModulesCharacteristic(pathsBetweenCharacteristicParameters);
+        final CodeGraphCharacteristicFactory<CodeGraphCharacteristic<List<PathBetweenModules>>, List<PathBetweenModules>, PathBetweenModulesCharacteristicParameters> allPathsBetweenNodesCharacteristicFactory =
+                this.registry.find(AllPathsBetweenModulesCharacteristicFactoryHandle.class);
+
+        final var allPathsBetweenNodesCharacteristic = allPathsBetweenNodesCharacteristicFactory.createCharacteristic(pathsBetweenCharacteristicParameters);
 
         final var allPathsBetweenNodesResult = allPathsBetweenNodesCharacteristic.compute(graph);
-        final var allPathsBetweenNodes = allPathsBetweenNodesResult.get();
+
+        final List<PathBetweenModules> allPathsBetweenNodes = allPathsBetweenNodesResult.get();
         return allPathsBetweenNodes.size() > 1;
     }
 }

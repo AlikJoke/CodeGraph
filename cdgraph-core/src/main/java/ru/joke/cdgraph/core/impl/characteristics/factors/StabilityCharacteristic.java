@@ -9,11 +9,15 @@ import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParam
 
 import javax.annotation.Nonnull;
 
-public final class StabilityCharacteristic implements CodeGraphCharacteristic<Factor> {
+final class StabilityCharacteristic implements CodeGraphCharacteristic<Factor> {
 
+    private final String id;
     private final SingleModuleCharacteristicParameters parameters;
 
-    public StabilityCharacteristic(@Nonnull SingleModuleCharacteristicParameters parameters) {
+    StabilityCharacteristic(
+            @Nonnull String id,
+            @Nonnull SingleModuleCharacteristicParameters parameters) {
+        this.id = id;
         this.parameters = parameters;
     }
 
@@ -32,6 +36,6 @@ public final class StabilityCharacteristic implements CodeGraphCharacteristic<Fa
                                     .anyMatch(relation -> targetNode.equals(relation.target())))
                             .count();
         final double stability = 1 - (double) outputDependencies / (inputDependencies + outputDependencies);
-        return new SimpleCodeGraphCharacteristicResult<>(new Factor(stability));
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, new Factor(stability));
     }
 }

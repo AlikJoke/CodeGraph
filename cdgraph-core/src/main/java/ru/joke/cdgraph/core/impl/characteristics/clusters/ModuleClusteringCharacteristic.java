@@ -7,12 +7,14 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class ModuleClusteringCharacteristic implements CodeGraphCharacteristic<Collection<Cluster>> {
+final class ModuleClusteringCharacteristic implements CodeGraphCharacteristic<Collection<Cluster>> {
 
+    private final String id;
     private final ModuleClusteringCharacteristicParameters parameters;
 
-    public ModuleClusteringCharacteristic(@Nonnull ModuleClusteringCharacteristicParameters parameters) {
+    ModuleClusteringCharacteristic(@Nonnull String id, @Nonnull ModuleClusteringCharacteristicParameters parameters) {
         this.parameters = parameters;
+        this.id = id;
     }
 
     @Nonnull
@@ -59,11 +61,11 @@ public final class ModuleClusteringCharacteristic implements CodeGraphCharacteri
         }
 
         final var resultClustersList = List.copyOf(clusters);
-        return new SimpleCodeGraphCharacteristicResult<>(resultClustersList) {
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, resultClustersList) {
             @Override
             public String toJson() {
                 final var clustersMaps = createClusterDataMaps(resultClustersList);
-                return gson.toJson(clustersMaps);
+                return toJson(clustersMaps);
             }
         };
     }

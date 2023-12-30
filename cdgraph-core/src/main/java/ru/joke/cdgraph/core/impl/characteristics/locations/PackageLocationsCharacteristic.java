@@ -1,17 +1,19 @@
 package ru.joke.cdgraph.core.impl.characteristics.locations;
 
-import com.google.gson.Gson;
 import ru.joke.cdgraph.core.ClassMetadata;
 import ru.joke.cdgraph.core.GraphNode;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
 
-public final class PackageLocationsCharacteristic extends AbstractResourceLocationsCharacteristic<Set<GraphNode>> {
+final class PackageLocationsCharacteristic extends AbstractResourceLocationsCharacteristic<Set<GraphNode>> {
 
     private final String[] packageParts;
 
-    public PackageLocationsCharacteristic(@Nonnull ResourceLocationsCharacteristicParameters parameters) {
+    PackageLocationsCharacteristic(
+            @Nonnull String id,
+            @Nonnull ResourceLocationsCharacteristicParameters parameters) {
+        super(id, parameters);
         this.packageParts = parameters.resourceName().split("\\.");
     }
 
@@ -34,8 +36,7 @@ public final class PackageLocationsCharacteristic extends AbstractResourceLocati
     }
 
     @Nonnull
-    protected String transformResultToJson(@Nonnull Gson gson, @Nonnull Set<GraphNode> result) {
-        final var modulesIds = convertToIds(result);
-        return gson.toJson(modulesIds);
+    protected Object transformResultToJsonFormat(@Nonnull Set<GraphNode> result) {
+        return convertToIds(result);
     }
 }

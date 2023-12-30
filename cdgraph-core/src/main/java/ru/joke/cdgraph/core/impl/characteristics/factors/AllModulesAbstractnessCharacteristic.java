@@ -11,7 +11,17 @@ import java.util.stream.Collectors;
 
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.SOURCE_MODULE_TAG;
 
-public final class AllModulesAbstractnessCharacteristic implements CodeGraphCharacteristic<Map<String, Factor>> {
+final class AllModulesAbstractnessCharacteristic implements CodeGraphCharacteristic<Map<String, Factor>> {
+
+    private final String id;
+    private final CodeGraphCharacteristicFactoryRegistry registry;
+
+    AllModulesAbstractnessCharacteristic(
+            @Nonnull String id,
+            @Nonnull CodeGraphCharacteristicFactoryRegistry registry) {
+        this.id = id;
+        this.registry = registry;
+    }
 
     @Nonnull
     @Override
@@ -22,7 +32,7 @@ public final class AllModulesAbstractnessCharacteristic implements CodeGraphChar
                         .filter(this::isSourceModule)
                         .map(GraphNode::id)
                         .collect(Collectors.toMap(Function.identity(), nodeId -> computeCharacteristic(nodeId, graph)));
-        return new SimpleCodeGraphCharacteristicResult<>(factors);
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, factors);
     }
 
     private boolean isSourceModule(final GraphNode node) {
@@ -33,7 +43,11 @@ public final class AllModulesAbstractnessCharacteristic implements CodeGraphChar
 
     private Factor computeCharacteristic(final String nodeId, final CodeGraph graph) {
         final var params = new SingleModuleCharacteristicParameters(nodeId);
-        final var characteristic = new AbstractnessCharacteristic(params);
-        return characteristic.compute(graph).get();
+        final CodeGraphCharacteristicFactory<CodeGraphCharacteristic<Factor>, Factor, SingleModuleCharacteristicParameters> abstractnessCharacteristicFactory =
+                this.registry.find(AbstractnessCharacteristicFactoryHandle.class);
+        final var characteristic = abstractnessCharacteristicFactory.createCharacteristic(params);
+        final var result = characteristic.compute(graph);
+
+        return result.get();
     }
 }

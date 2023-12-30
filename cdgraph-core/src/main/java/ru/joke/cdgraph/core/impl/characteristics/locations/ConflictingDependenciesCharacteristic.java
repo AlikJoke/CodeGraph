@@ -10,7 +10,13 @@ import java.util.stream.Collectors;
 
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.VERSION_TAG;
 
-public final class ConflictingDependenciesCharacteristic implements CodeGraphCharacteristic<Set<ConflictingDependencies>> {
+final class ConflictingDependenciesCharacteristic implements CodeGraphCharacteristic<Set<ConflictingDependencies>> {
+
+    private final String id;
+
+    ConflictingDependenciesCharacteristic(@Nonnull String id) {
+        this.id = id;
+    }
 
     @Nonnull
     @Override
@@ -25,14 +31,14 @@ public final class ConflictingDependenciesCharacteristic implements CodeGraphCha
                         .filter(nodes -> nodes.size() > 1)
                         .map(ConflictingDependencies::new)
                         .collect(Collectors.toSet());
-        return new SimpleCodeGraphCharacteristicResult<>(result) {
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, result) {
             @Override
             public String toJson() {
                 final Set<Set<String>> modulesIds = result
                                                         .stream()
                                                         .map(ConflictingDependenciesCharacteristic.this::convertNodesToIds)
                                                         .collect(Collectors.toSet());
-                return gson.toJson(modulesIds);
+                return toJson(modulesIds);
             }
         };
     }

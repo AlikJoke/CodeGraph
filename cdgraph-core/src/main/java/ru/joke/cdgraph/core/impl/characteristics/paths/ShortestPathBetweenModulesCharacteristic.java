@@ -12,12 +12,16 @@ import java.util.*;
  *
  * @author Alik
  */
-public final class ShortestPathBetweenModulesCharacteristic implements CodeGraphCharacteristic<PathBetweenModules> {
+final class ShortestPathBetweenModulesCharacteristic implements CodeGraphCharacteristic<PathBetweenModules> {
 
+    private final String id;
     private final PathBetweenModulesCharacteristicParameters parameters;
 
-    public ShortestPathBetweenModulesCharacteristic(@Nonnull PathBetweenModulesCharacteristicParameters parameters) {
+    public ShortestPathBetweenModulesCharacteristic(
+            @Nonnull String id,
+            @Nonnull PathBetweenModulesCharacteristicParameters parameters) {
         this.parameters = parameters;
+        this.id = id;
     }
 
     @Nonnull
@@ -49,7 +53,7 @@ public final class ShortestPathBetweenModulesCharacteristic implements CodeGraph
                 .forEach(nodesInPath::add);
 
         final var resultData = new PathBetweenModules(relationsInPath, nodesInPath);
-        return new SimpleCodeGraphCharacteristicResult<>(resultData) {
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, resultData) {
             @Override
             public String toJson() {
                 final var nodesIdsInPath =
@@ -57,7 +61,7 @@ public final class ShortestPathBetweenModulesCharacteristic implements CodeGraph
                                 .stream()
                                 .map(GraphNode::id)
                                 .toList();
-                return gson.toJson(nodesIdsInPath);
+                return toJson(nodesIdsInPath);
             }
         };
     }

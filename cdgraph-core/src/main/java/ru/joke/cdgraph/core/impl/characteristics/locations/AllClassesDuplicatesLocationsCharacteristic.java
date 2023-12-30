@@ -1,6 +1,5 @@
 package ru.joke.cdgraph.core.impl.characteristics.locations;
 
-import com.google.gson.Gson;
 import ru.joke.cdgraph.core.ClassMetadata;
 import ru.joke.cdgraph.core.GraphNode;
 
@@ -11,9 +10,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class AllClassesDuplicatesLocationsCharacteristic extends AbstractResourceLocationsCharacteristic<Set<ClassDuplicatesLocations>> {
+final class AllClassesDuplicatesLocationsCharacteristic extends AbstractResourceLocationsCharacteristic<Set<ClassDuplicatesLocations>> {
 
     private final Map<String, Set<GraphNode>> class2moduleMap = new HashMap<>();
+
+    AllClassesDuplicatesLocationsCharacteristic(@Nonnull String id) {
+        super(id, null);
+    }
 
     @Override
     protected boolean isResourceSatisfied(@Nonnull GraphNode module, @Nonnull ClassMetadata metadata) {
@@ -37,15 +40,13 @@ public final class AllClassesDuplicatesLocationsCharacteristic extends AbstractR
 
     @Override
     @Nonnull
-    protected String transformResultToJson(@Nonnull Gson gson, @Nonnull Set<ClassDuplicatesLocations> result) {
-        final var resultMaps =
-                result
-                    .stream()
-                    .map(location ->
-                            Map.of("className", location.classQualifiedName(), "modules", convertToIds(location.modules()))
-                    )
-                    .collect(Collectors.toSet());
-        return gson.toJson(resultMaps);
+    protected Object transformResultToJsonFormat(@Nonnull Set<ClassDuplicatesLocations> result) {
+        return result
+                .stream()
+                .map(location ->
+                        Map.of("className", location.classQualifiedName(), "modules", convertToIds(location.modules()))
+                )
+                .collect(Collectors.toSet());
     }
 
 }

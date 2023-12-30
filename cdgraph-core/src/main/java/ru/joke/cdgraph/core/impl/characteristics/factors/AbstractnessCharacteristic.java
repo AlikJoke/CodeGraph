@@ -12,12 +12,16 @@ import java.util.function.Predicate;
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.CLASSES_METADATA_TAG;
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.SOURCE_MODULE_TAG;
 
-public final class AbstractnessCharacteristic implements CodeGraphCharacteristic<Factor> {
+final class AbstractnessCharacteristic implements CodeGraphCharacteristic<Factor> {
 
+    private final String id;
     private final SingleModuleCharacteristicParameters parameters;
 
-    public AbstractnessCharacteristic(@Nonnull SingleModuleCharacteristicParameters parameters) {
+    AbstractnessCharacteristic(
+            @Nonnull String id,
+            @Nonnull SingleModuleCharacteristicParameters parameters) {
         this.parameters = parameters;
+        this.id = id;
     }
 
     @Nonnull
@@ -45,6 +49,6 @@ public final class AbstractnessCharacteristic implements CodeGraphCharacteristic
                                             .filter(Predicate.not(ClassMetadata.ClassType::isConcrete))
                                             .count();
         final double abstractness = classesMetadata.isEmpty() ? 1.0 : (double) abstractElements / classesMetadata.size();
-        return new SimpleCodeGraphCharacteristicResult<>(new Factor(abstractness));
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, new Factor(abstractness));
     }
 }

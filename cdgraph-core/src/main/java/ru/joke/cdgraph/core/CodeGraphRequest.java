@@ -6,7 +6,7 @@ import java.util.List;
 public interface CodeGraphRequest {
 
     @Nonnull
-    CodeGraphDataSource dataSource();
+    CodeGraph codeGraph();
 
     @Nonnull
     List<CodeGraphCharacteristic<?>> requiredCharacteristics();
