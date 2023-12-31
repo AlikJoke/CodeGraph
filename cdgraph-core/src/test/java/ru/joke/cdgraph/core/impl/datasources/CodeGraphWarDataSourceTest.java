@@ -10,9 +10,9 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_JAR_3_PATH;
+import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_WAR_PATH;
 
-public class CodeGraphJarDataSourceTest {
+public class CodeGraphWarDataSourceTest {
 
     private static final String MODULE_INFO_CLASS = "module-info.class";
     private static final String MAVEN_POM_FILE = "/pom.xml";
@@ -20,27 +20,34 @@ public class CodeGraphJarDataSourceTest {
 
     @Test
     public void testDirectCreation() throws URISyntaxException {
-        final URL testJarUrl = getClass().getResource(TEST_JAR_3_PATH);
-        final CodeGraphDataSource ds = new CodeGraphJarDataSource(Path.of(testJarUrl.toURI()), new JarClassesMetadataReader());
+        final URL testWarUrl = getClass().getResource(TEST_WAR_PATH);
+        final CodeGraphDataSource ds = new CodeGraphWarDataSource(
+                Path.of(testWarUrl.toURI()),
+                new JarClassesMetadataReader(),
+                new CodeGraphJarDataSourceFactory()
+        );
+
         makeChecks(ds);
     }
 
     @Test
     public void testCreationWithFactory() throws URISyntaxException {
-        final URL testJarUrl = getClass().getResource(TEST_JAR_3_PATH);
-        final var factory = new CodeGraphJarDataSourceFactory();
-        final var ds = factory.create(Path.of(testJarUrl.toURI()));
+        final URL testWarUrl = getClass().getResource(TEST_WAR_PATH);
+        final var factory = new CodeGraphWarDataSourceFactory(new CodeGraphJarDataSourceFactory());
+        final var ds = factory.create(Path.of(testWarUrl.toURI()), new JarClassesMetadataReader());
+
         makeChecks(ds);
     }
 
     private void makeChecks(final CodeGraphDataSource ds) {
         final var configs = ds.find(MODULE_INFO_CLASS::equals);
-        assertEquals(1, configs.size(), MODULE_INFO_CLASS + " should be found");
-        assertEquals(7, configs.get(0).classesMetadata().size(), "Classes metadata size must be equal");
+        final var warConfig = configs.get(0);
+        assertEquals(3, configs.size(), MODULE_INFO_CLASS + " should be found");
+        assertEquals(7, warConfig.classesMetadata().size(), "Classes metadata size must be equal");
 
         final var mavenConfigs = ds.find(entry -> entry.endsWith(MAVEN_POM_FILE));
-        assertEquals(1, mavenConfigs.size(), MAVEN_POM_FILE + " should be found");
-        assertEquals(7, mavenConfigs.get(0).classesMetadata().size(), "Classes metadata size must be equal");
+        assertEquals(3, mavenConfigs.size(), MAVEN_POM_FILE + " should be found");
+        assertEquals(7, warConfig.classesMetadata().size(), "Classes metadata size must be equal");
 
         final var gradleConfigs = ds.find(GRADLE_BUILD_FILE::equals);
         assertTrue(gradleConfigs.isEmpty(), GRADLE_BUILD_FILE + " should not be found");

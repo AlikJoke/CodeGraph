@@ -17,10 +17,10 @@ import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public final class CodeGraphJarDataSource implements CodeGraphDataSource {
+public class CodeGraphJarDataSource implements CodeGraphDataSource {
 
-    private final Path dataSourcePath;
-    private final ClassesMetadataReader metadataReader;
+    protected final Path dataSourcePath;
+    protected final ClassesMetadataReader metadataReader;
 
     public CodeGraphJarDataSource(
             @Nonnull Path dataSourcePath,
@@ -36,7 +36,7 @@ public final class CodeGraphJarDataSource implements CodeGraphDataSource {
         try (final JarFile jar = new JarFile(this.dataSourcePath.toFile())) {
             return jar
                     .stream()
-                    .filter(entry -> descriptorFileFilter.test(entry.getName()))
+                    .filter(entry -> descriptorFileFilter.test(getEntryName(entry)))
                     .map(entry -> convertEntryToFile(jar, entry))
                     .findAny()
                     .map(file -> new Configuration(file, metadataReader.read(jar)))
@@ -52,7 +52,12 @@ public final class CodeGraphJarDataSource implements CodeGraphDataSource {
         return "CodeGraphJarDataSource{" + "dataSourcePath=" + dataSourcePath + '}';
     }
 
-    private File convertEntryToFile(final JarFile jar, final JarEntry entry) {
+    @Nonnull
+    protected String getEntryName(@Nonnull JarEntry entry) {
+        return entry.getName();
+    }
+
+    protected File convertEntryToFile(final JarFile jar, final JarEntry entry) {
 
         try (final InputStream is = jar.getInputStream(entry)) {
             final File tempEntryFile = File.createTempFile(UUID.randomUUID().toString(), null);

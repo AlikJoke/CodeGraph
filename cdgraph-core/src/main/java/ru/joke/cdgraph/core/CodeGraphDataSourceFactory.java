@@ -7,4 +7,7 @@ public interface CodeGraphDataSourceFactory {
 
     @Nonnull
     CodeGraphDataSource create(@Nonnull Path dataPath);
+
+    @Nonnull
+    CodeGraphDataSource create(@Nonnull Path dataPath, @Nonnull ClassesMetadataReader metadataReader);
 }
