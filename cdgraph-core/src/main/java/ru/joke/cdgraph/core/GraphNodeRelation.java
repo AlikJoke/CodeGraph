@@ -27,6 +27,8 @@ public interface GraphNodeRelation {
 
         RUNTIME,
 
-        SYSTEM
+        SYSTEM,
+
+        SYNTHETIC
     }
 }

@@ -21,6 +21,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
 
     public static final String MAIN_CLASS_TAG = "main-class";
     public static final String MODULE_INFO_CLASS = "module-info.class";
+    public static final String IS_SYNTHETIC_TAG = "synthetic";
 
     public JavaModuleCodeGraph(@Nonnull CodeGraphDataSource dataSource) {
         super(dataSource);
@@ -56,6 +57,27 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph {
         });
 
         return nodes;
+    }
+
+    @Override
+    protected GraphNode findRootNode(
+            @Nonnull Map<String, GraphNode> nodesMap,
+            @Nonnull Set<String> rootNodesIds,
+            @Nonnull CodeGraphDataSource dataSource) {
+        if (rootNodesIds.size() <= 1) {
+            return super.findRootNode(nodesMap, rootNodesIds, dataSource);
+        }
+
+        final Map<String, GraphTag<?>> tags = Map.of(IS_SYNTHETIC_TAG, new SimpleGraphTag<>(IS_SYNTHETIC_TAG, true));
+        final GraphNode earNode = new SimpleGraphNode(dataSource.id(), new HashSet<>(), tags);
+
+        rootNodesIds
+                .stream()
+                .map(nodesMap::get)
+                .map(node -> new SimpleGraphNodeRelation(earNode, node, GraphNodeRelation.RelationType.SYNTHETIC, tags))
+                .forEach(earNode.relations()::add);
+
+        return earNode;
     }
 
     private GraphNodeRelation buildRelation(

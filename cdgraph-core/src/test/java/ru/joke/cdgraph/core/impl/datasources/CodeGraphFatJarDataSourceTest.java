@@ -10,13 +10,14 @@ import java.nio.file.Path;
 
 import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_WAR_PATH;
 
-public class CodeGraphWarDataSourceTest extends CodeGraphDataSourceTestBase {
+public class CodeGraphFatJarDataSourceTest extends CodeGraphDataSourceTestBase {
 
     @Test
     public void testDirectCreation() throws URISyntaxException {
-        final URL testWarUrl = getClass().getResource(TEST_WAR_PATH);
-        final CodeGraphDataSource ds = new CodeGraphWarDataSource(
-                Path.of(testWarUrl.toURI()),
+        // structure of war similar to fat/uber jar
+        final URL testFatJarUrl = getClass().getResource(TEST_WAR_PATH);
+        final CodeGraphDataSource ds = new CodeGraphFatJarDataSource(
+                Path.of(testFatJarUrl.toURI()),
                 new JarClassesMetadataReader(),
                 new CodeGraphJarDataSourceFactory()
         );
@@ -26,9 +27,10 @@ public class CodeGraphWarDataSourceTest extends CodeGraphDataSourceTestBase {
 
     @Test
     public void testCreationWithFactory() throws URISyntaxException {
-        final URL testWarUrl = getClass().getResource(TEST_WAR_PATH);
-        final var factory = new CodeGraphWarDataSourceFactory(new CodeGraphJarDataSourceFactory());
-        final var ds = factory.create(Path.of(testWarUrl.toURI()), new JarClassesMetadataReader());
+        // structure of war similar to fat/uber jar
+        final URL testFatJarUrl = getClass().getResource(TEST_WAR_PATH);
+        final var factory = new CodeGraphFatJarDataSourceFactory(new CodeGraphJarDataSourceFactory());
+        final var ds = factory.create(Path.of(testFatJarUrl.toURI()), new JarClassesMetadataReader());
 
         makeChecks(ds, 3, 7, 3, 7);
     }

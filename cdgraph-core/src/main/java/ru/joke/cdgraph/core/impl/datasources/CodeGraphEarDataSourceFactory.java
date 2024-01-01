@@ -8,16 +8,16 @@ import ru.joke.cdgraph.core.impl.JarClassesMetadataReader;
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
-public final class CodeGraphWarDataSourceFactory implements CodeGraphDataSourceFactory {
+public final class CodeGraphEarDataSourceFactory implements CodeGraphDataSourceFactory {
 
-    private final CodeGraphDataSourceFactory nestedJarDataSourceFactory;
+    private final CodeGraphDataSourceFactory nestedWarDataSourceFactory;
 
-    public CodeGraphWarDataSourceFactory() {
-        this(new CodeGraphJarDataSourceFactory());
+    public CodeGraphEarDataSourceFactory() {
+        this(new CodeGraphWarDataSourceFactory());
     }
 
-    public CodeGraphWarDataSourceFactory(@Nonnull CodeGraphDataSourceFactory nestedJarDataSourceFactory) {
-        this.nestedJarDataSourceFactory = nestedJarDataSourceFactory;
+    public CodeGraphEarDataSourceFactory(@Nonnull CodeGraphDataSourceFactory nestedWarDataSourceFactory) {
+        this.nestedWarDataSourceFactory = nestedWarDataSourceFactory;
     }
 
     @Nonnull
@@ -29,6 +29,6 @@ public final class CodeGraphWarDataSourceFactory implements CodeGraphDataSourceF
     @Nonnull
     @Override
     public CodeGraphDataSource create(@Nonnull Path dataPath, @Nonnull ClassesMetadataReader metadataReader) {
-        return new CodeGraphWarDataSource(dataPath, metadataReader, this.nestedJarDataSourceFactory);
+        return new CodeGraphEarDataSource(dataPath, metadataReader, this.nestedWarDataSourceFactory);
     }
 }

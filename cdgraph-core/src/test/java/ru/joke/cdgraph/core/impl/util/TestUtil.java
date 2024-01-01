@@ -26,6 +26,7 @@ public abstract class TestUtil {
     public static final String TEST_JAR_2_PATH = "/ds/test-modules2.jar";
     public static final String TEST_JAR_3_PATH = "/ds/test-modules3.jar";
     public static final String TEST_WAR_PATH = "/ds/test-modules.war";
+    public static final String TEST_EAR_PATH = "/ds/test-modules.ear";
 
     public static final String TEST_MODULE_1 = "ru.joke.cdgraph.test_modules1";
     public static final String TEST_MODULE_2 = "ru.joke.cdgraph.test_modules2";
@@ -40,6 +41,12 @@ public abstract class TestUtil {
 
     public static CodeGraphDataSource createCodeGraphDatasource(@Nonnull final String... modulePath) {
         return new CodeGraphDataSource() {
+            @Nonnull
+            @Override
+            public String id() {
+                return "test";
+            }
+
             @Override
             @Nonnull
             public List<Configuration> find(@Nonnull Predicate<String> filter) {

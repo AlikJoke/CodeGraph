@@ -22,11 +22,7 @@ public abstract class AbstractCodeGraph implements CodeGraph {
         nodesMap.values()
                     .forEach(node -> removeDependentNodesFromMap(node, allNodeIds));
 
-        if (allNodeIds.size() != 1) {
-            throw new CodeGraphConfigurationException("Found more than 1 root module: " + allNodeIds.size());
-        }
-
-        this.rootNode = nodesMap.get(allNodeIds.iterator().next());
+        this.rootNode = findRootNode(nodesMap, allNodeIds, dataSource);
     }
 
     @Nonnull
@@ -48,6 +44,17 @@ public abstract class AbstractCodeGraph implements CodeGraph {
     }
 
     protected abstract Map<String, GraphNode> buildNodesMap(@Nonnull CodeGraphDataSource dataSource);
+
+    protected GraphNode findRootNode(
+            @Nonnull Map<String, GraphNode> nodesMap,
+            @Nonnull Set<String> rootNodesIds,
+            @Nonnull CodeGraphDataSource dataSource) {
+        if (rootNodesIds.size() != 1) {
+            throw new CodeGraphConfigurationException("Found more than 1 root module: " + rootNodesIds.size());
+        }
+
+        return nodesMap.get(rootNodesIds.iterator().next());
+    }
 
     protected Map<String, GraphTag<?>> collectModuleClassesMetadataTags(@Nonnull Set<ClassMetadata> classesMetadata) {
         return classesMetadata.isEmpty()

@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.*;
+import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.SOURCE_MODULE_TAG;
+import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.VERSION_TAG;
 import static ru.joke.cdgraph.core.impl.util.TestUtil.*;
 
 public class JavaModuleCodeGraphTest {
@@ -33,6 +34,26 @@ public class JavaModuleCodeGraphTest {
 
         final CodeGraph graph = new JavaModuleCodeGraph(dataSource);
         makeTestModule2Checks(graph.findRootNode());
+    }
+
+    @Test
+    public void testTwoUnrelatedModules() {
+        final CodeGraphDataSource dataSource = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_3_PATH);
+
+        final CodeGraph graph = new JavaModuleCodeGraph(dataSource);
+
+        final var rootNode = graph.findRootNode();
+        assertNotNull(rootNode, "Root node must be not null");
+        // 7 real modules and 1 synthetic
+        assertEquals(7 + 1, graph.findAllNodes().size(), "Nodes count must be equal");
+        assertEquals(dataSource.id(), rootNode.id(), "Synthetic module id must be equal");
+
+        @SuppressWarnings("unchecked")
+        final GraphTag<Boolean> syntheticTag = (GraphTag<Boolean>) rootNode.tags().get(JavaModuleCodeGraph.IS_SYNTHETIC_TAG);
+        assertNotNull(syntheticTag, "Synthetic tag must be not null");
+        assertTrue(syntheticTag.value(), "Synthetic tag value must be equal");
+
+        assertEquals(2, rootNode.relations().size(), "Relations size from synthetic root node must be equal");
     }
 
     @Test

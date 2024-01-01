@@ -31,6 +31,12 @@ public class CodeGraphJarDataSource implements CodeGraphDataSource {
 
     @Nonnull
     @Override
+    public String id() {
+        return dataSourcePath.getFileName().toString();
+    }
+
+    @Nonnull
+    @Override
     public List<Configuration> find(@Nonnull Predicate<String> descriptorFileFilter) {
 
         try (final JarFile jar = new JarFile(this.dataSourcePath.toFile())) {

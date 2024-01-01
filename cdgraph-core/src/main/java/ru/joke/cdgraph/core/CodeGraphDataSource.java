@@ -9,6 +9,9 @@ import java.util.function.Predicate;
 public interface CodeGraphDataSource {
 
     @Nonnull
+    String id();
+
+    @Nonnull
     List<Configuration> find(@Nonnull Predicate<String> descriptorFileFilter);
 
     record Configuration(@Nonnull File descriptor, @Nonnull Set<ClassMetadata> classesMetadata) {

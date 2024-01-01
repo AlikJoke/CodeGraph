@@ -8,21 +8,15 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_JAR_3_PATH;
 
-public class CodeGraphJarDataSourceTest {
-
-    private static final String MODULE_INFO_CLASS = "module-info.class";
-    private static final String MAVEN_POM_FILE = "/pom.xml";
-    private static final String GRADLE_BUILD_FILE = "/build.gradle";
+public class CodeGraphJarDataSourceTest extends CodeGraphDataSourceTestBase {
 
     @Test
     public void testDirectCreation() throws URISyntaxException {
         final URL testJarUrl = getClass().getResource(TEST_JAR_3_PATH);
         final CodeGraphDataSource ds = new CodeGraphJarDataSource(Path.of(testJarUrl.toURI()), new JarClassesMetadataReader());
-        makeChecks(ds);
+        makeChecks(ds, 1, 7, 1, 7);
     }
 
     @Test
@@ -30,19 +24,6 @@ public class CodeGraphJarDataSourceTest {
         final URL testJarUrl = getClass().getResource(TEST_JAR_3_PATH);
         final var factory = new CodeGraphJarDataSourceFactory();
         final var ds = factory.create(Path.of(testJarUrl.toURI()));
-        makeChecks(ds);
-    }
-
-    private void makeChecks(final CodeGraphDataSource ds) {
-        final var configs = ds.find(MODULE_INFO_CLASS::equals);
-        assertEquals(1, configs.size(), MODULE_INFO_CLASS + " should be found");
-        assertEquals(7, configs.get(0).classesMetadata().size(), "Classes metadata size must be equal");
-
-        final var mavenConfigs = ds.find(entry -> entry.endsWith(MAVEN_POM_FILE));
-        assertEquals(1, mavenConfigs.size(), MAVEN_POM_FILE + " should be found");
-        assertEquals(7, mavenConfigs.get(0).classesMetadata().size(), "Classes metadata size must be equal");
-
-        final var gradleConfigs = ds.find(GRADLE_BUILD_FILE::equals);
-        assertTrue(gradleConfigs.isEmpty(), GRADLE_BUILD_FILE + " should not be found");
+        makeChecks(ds, 1, 7, 1, 7);
     }
 }
