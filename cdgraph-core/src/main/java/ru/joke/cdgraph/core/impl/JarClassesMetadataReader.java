@@ -43,7 +43,7 @@ public final class JarClassesMetadataReader implements ClassesMetadataReader {
         final String entryName = classEntry.getName();
         final int classNameIdx = entryName.lastIndexOf('/');
         final String className = entryName.substring(classNameIdx + 1).replace(CLASS_EXTENSION, "");
-        final String packageName = entryName.substring(0, classNameIdx).replace('/', '.');
+        final String packageName = entryName.substring(0, classNameIdx == -1 ? entryName.length() : classNameIdx).replace('/', '.');
 
         try (final InputStream is = jar.getInputStream(classEntry);
                 final DataInputStream dis = new DataInputStream(is)) {
