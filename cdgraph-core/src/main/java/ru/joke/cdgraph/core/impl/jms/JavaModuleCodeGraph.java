@@ -1,10 +1,7 @@
 package ru.joke.cdgraph.core.impl.jms;
 
 import ru.joke.cdgraph.core.*;
-import ru.joke.cdgraph.core.impl.AbstractCodeGraph;
-import ru.joke.cdgraph.core.impl.SimpleGraphNode;
-import ru.joke.cdgraph.core.impl.SimpleGraphNodeRelation;
-import ru.joke.cdgraph.core.impl.SimpleGraphTag;
+import ru.joke.cdgraph.core.impl.*;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -17,11 +14,21 @@ import java.lang.module.ModuleReference;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of a modules graph based on Java modules (the descriptor is 'module-info.class').
+ *
+ * @author Alik
+ * @see CodeGraph
+ * @see CodeGraphDataSource
+ */
 public final class JavaModuleCodeGraph extends AbstractCodeGraph<AbstractCodeGraph.Context> {
 
     public static final String MAIN_CLASS_TAG = "main-class";
     public static final String MODULE_INFO_CLASS = "module-info.class";
     public static final String IS_SYNTHETIC_TAG = "synthetic";
+
+    public static final String SYNTHETIC_RELATION_TYPE = "synthetic";
+    public static final String REQUIRES_RELATION_TYPE = "requires";
 
     public JavaModuleCodeGraph(@Nonnull CodeGraphDataSource dataSource) {
         super(dataSource, new AbstractCodeGraph.Context() {});
@@ -73,7 +80,7 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph<AbstractCodeGra
         rootNodesIds
                 .stream()
                 .map(nodesMap::get)
-                .map(node -> new SimpleGraphNodeRelation(earNode, node, GraphNodeRelation.RelationType.SYNTHETIC, tags))
+                .map(node -> new SimpleGraphNodeRelation(earNode, node, new SimpleRelationType(SYNTHETIC_RELATION_TYPE), tags))
                 .forEach(earNode.relations()::add);
 
         return earNode;
@@ -89,7 +96,12 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph<AbstractCodeGra
                 : nodesMap.get(dependency.name());
         nodesMap.putIfAbsent(targetNode.id(), targetNode);
 
-        return new SimpleGraphNodeRelation(sourceNode, targetNode, GraphNodeRelation.RelationType.REQUIRES, collectRelationTags(dependency));
+        return new SimpleGraphNodeRelation(
+                sourceNode,
+                targetNode,
+                new SimpleRelationType(REQUIRES_RELATION_TYPE),
+                collectRelationTags(dependency)
+        );
     }
 
     private GraphNode buildDependentNode(

@@ -9,6 +9,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.PasswordAuthentication;
 
+/**
+ * Implementation of a factory for creating a modules graph based on Maven modules.
+ *
+ * @author Alik
+ * @see CodeGraphFactory
+ * @see CodeGraph
+ */
 public final class MavenModuleCodeGraphFactory implements CodeGraphFactory {
 
     private static final String MAVEN_REPO_BASE_URL = "https://repo1.maven.org/maven2/";

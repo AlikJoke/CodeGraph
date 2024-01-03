@@ -6,6 +6,14 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+/**
+ * A factory of the characteristic that computes graph bridges.
+ *
+ * @author Alik
+ *
+ * @see DependencyBridgesCharacteristic
+ * @see DependencyBridgesCharacteristicFactoryHandle
+ */
 @DependencyBridgesCharacteristicFactoryHandle
 public final class DependencyBridgesCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

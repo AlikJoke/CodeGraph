@@ -2,15 +2,11 @@ package ru.joke.cdgraph.core.impl.maven;
 
 import org.apache.maven.api.model.Model;
 import org.apache.maven.model.v4.MavenStaxReader;
-import ru.joke.cdgraph.core.ClassesMetadataReader;
-import ru.joke.cdgraph.core.CodeGraphConfigurationException;
-import ru.joke.cdgraph.core.CodeGraphDataSource;
-import ru.joke.cdgraph.core.GraphNode;
+import ru.joke.cdgraph.core.*;
 import ru.joke.cdgraph.core.impl.AbstractCodeGraph;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,7 +18,13 @@ import java.util.*;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-@NotThreadSafe
+/**
+ * Implementation of a modules graph based on Maven modules (the descriptor is 'pom.xml').
+ *
+ * @author Alik
+ * @see CodeGraph
+ * @see CodeGraphDataSource
+ */
 public final class MavenModuleCodeGraph extends AbstractCodeGraph<MavenModuleCodeGraph.Context> {
 
     public static final String CLASSIFIER_TAG = "classifier";

@@ -9,6 +9,14 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 import javax.annotation.Nonnull;
 import java.util.Map;
 
+/**
+ * A factory of the characteristic that computes abstractness of all modules in the graph.
+ *
+ * @author Alik
+ *
+ * @see AllModulesAbstractnessCharacteristic
+ * @see AllModulesAbstractnessCharacteristicFactoryHandle
+ */
 @AllModulesAbstractnessCharacteristicFactoryHandle
 public final class AllModulesAbstractnessCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

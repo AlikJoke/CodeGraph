@@ -6,6 +6,16 @@ import ru.joke.cdgraph.core.GraphNode;
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+/**
+ * A characteristic that computes locations of the class (set of modules) with specified name.
+ * Allows to find duplicates of classes that have the same qualified class name.<br>
+ * Type of the characteristic parameters: {@link ResourceLocationsCharacteristicParameters}.
+ *
+ * @author Alik
+ *
+ * @see ClassLocationsCharacteristicFactory
+ * @see ClassLocationsCharacteristicFactoryHandle
+ */
 final class ClassLocationsCharacteristic extends AbstractResourceLocationsCharacteristic<Set<GraphNode>> {
 
     private final String[] classQualifiedNameParts;

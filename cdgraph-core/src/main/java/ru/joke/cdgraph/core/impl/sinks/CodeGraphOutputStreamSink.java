@@ -5,6 +5,13 @@ import ru.joke.cdgraph.core.CodeGraphOutputSink;
 import javax.annotation.Nonnull;
 import java.io.PrintStream;
 
+/**
+ * Output stream sink (console out, for example) for outputting the results
+ * of computing characteristics.
+ *
+ * @author Alik
+ * @see CodeGraphOutputSink
+ */
 public final class CodeGraphOutputStreamSink implements CodeGraphOutputSink {
 
     private final PrintStream outputStream;
@@ -24,6 +31,5 @@ public final class CodeGraphOutputStreamSink implements CodeGraphOutputSink {
 
     @Override
     public void close() {
-
     }
 }

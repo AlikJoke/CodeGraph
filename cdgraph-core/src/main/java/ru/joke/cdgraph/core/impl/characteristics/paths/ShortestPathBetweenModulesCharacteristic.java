@@ -7,10 +7,15 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
- * Implementation of the “shortest path between two modules” characteristic based on the wave algorithm
- * for finding the shortest path between two vertices of the graph.
+ * A characteristic that computes shortest path between two modules of the graph.<br>
+ * Implementation of the “shortest path between two modules” characteristic based on
+ * the wave algorithm for finding the shortest path between two vertices of the graph.<br>
+ * Type of the characteristic parameters: {@link PathBetweenModulesCharacteristicParameters}.
  *
  * @author Alik
+ *
+ * @see ShortestPathBetweenModulesCharacteristicFactory
+ * @see ShortestPathBetweenModulesCharacteristicFactoryHandle
  */
 final class ShortestPathBetweenModulesCharacteristic implements CodeGraphCharacteristic<PathBetweenModules> {
 
@@ -55,6 +60,7 @@ final class ShortestPathBetweenModulesCharacteristic implements CodeGraphCharact
         final var resultData = new PathBetweenModules(relationsInPath, nodesInPath);
         return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, resultData) {
             @Override
+            @Nonnull
             public String toJson() {
                 final var nodesIdsInPath =
                         get().modulesInPath()
@@ -87,7 +93,7 @@ final class ShortestPathBetweenModulesCharacteristic implements CodeGraphCharact
                     return createRelationsTraceFromSourceToTarget(relation.target(), relationsByTarget);
                 }
 
-                if (relation.type() != GraphNodeRelation.RelationType.PROVIDED) {
+                if (relation.type().isTransitive()) {
                     newFrontNodes.add(relation.target());
                 }
             }
@@ -104,7 +110,7 @@ final class ShortestPathBetweenModulesCharacteristic implements CodeGraphCharact
 
         final List<GraphNodeRelation> relationsInPath = new ArrayList<>();
         while (traceRelations != null && !traceRelations.isEmpty()) {
-            final GraphNodeRelation traceRelation = traceRelations.get(0);
+            final GraphNodeRelation traceRelation = traceRelations.getFirst();
             relationsInPath.add(traceRelation);
 
             traceNode = traceRelation.source();

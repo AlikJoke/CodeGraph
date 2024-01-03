@@ -2,7 +2,7 @@ package ru.joke.cdgraph.core.impl.characteristics;
 
 import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.CodeGraphCharacteristicFactory;
-import ru.joke.cdgraph.core.CodeGraphCharacteristicDefinitionNotFoundException;
+import ru.joke.cdgraph.core.CodeGraphCharacteristicFactoryNotFoundException;
 import ru.joke.cdgraph.core.impl.characteristics.factors.AbstractnessCharacteristicFactory;
 import ru.joke.cdgraph.core.impl.characteristics.factors.AbstractnessCharacteristicFactoryHandle;
 
@@ -14,7 +14,7 @@ public class SimpleCodeGraphCharacteristicFactoryRegistryTest {
     public void testWhenDefinitionNotFoundById() {
         final var registry = new SimpleCodeGraphCharacteristicFactoryRegistry();
 
-        assertThrows(CodeGraphCharacteristicDefinitionNotFoundException.class, () -> registry.find("test1"));
+        assertThrows(CodeGraphCharacteristicFactoryNotFoundException.class, () -> registry.find("test1"));
     }
 
     @Test

@@ -5,6 +5,14 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 
 import javax.annotation.Nonnull;
 
+/**
+ * A factory of the characteristic that computes shortest path between two modules of the graph.
+ *
+ * @author Alik
+ *
+ * @see ShortestPathBetweenModulesCharacteristic
+ * @see ShortestPathBetweenModulesCharacteristicFactoryHandle
+ */
 @ShortestPathBetweenModulesCharacteristicFactoryHandle
 public final class ShortestPathBetweenModulesCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

@@ -5,6 +5,12 @@ import ru.joke.cdgraph.core.CodeGraphOutputSink;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
+/**
+ * In memory sink for outputting the results of computing characteristics.
+ *
+ * @author Alik
+ * @see CodeGraphOutputSink
+ */
 public final class CodeGraphOutputInMemorySink implements CodeGraphOutputSink {
 
     private final Collection<String> data;

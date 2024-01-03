@@ -7,6 +7,15 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+/**
+ * A factory of the characteristic that computes duplicates of the package (set of modules)
+ * with specified name.
+ *
+ * @author Alik
+ *
+ * @see PackageLocationsCharacteristic
+ * @see PackageLocationsCharacteristicFactoryHandle
+ */
 @PackageLocationsCharacteristicFactoryHandle
 public final class PackageLocationsCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

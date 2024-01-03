@@ -6,6 +6,14 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
+/**
+ * A factory of the characteristic that computes graph clusters.
+ *
+ * @author Alik
+ *
+ * @see ModuleClusteringCharacteristic
+ * @see ModuleClusteringCharacteristicFactoryHandle
+ */
 @ModuleClusteringCharacteristicFactoryHandle
 public final class ModuleClusteringCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

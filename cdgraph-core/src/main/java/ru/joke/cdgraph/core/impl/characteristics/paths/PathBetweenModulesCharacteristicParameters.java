@@ -5,6 +5,12 @@ import ru.joke.cdgraph.core.CodeGraphCharacteristicParameters;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Parameters of the characteristics which computes the paths between two modules.
+ *
+ * @param sourceModuleId source module in the path, can not be {@code null}.
+ * @param targetModuleId target module in the path, can not be {@code null}.
+ */
 public record PathBetweenModulesCharacteristicParameters(
         @Nonnull String sourceModuleId,
         @Nonnull String targetModuleId) implements CodeGraphCharacteristicParameters {

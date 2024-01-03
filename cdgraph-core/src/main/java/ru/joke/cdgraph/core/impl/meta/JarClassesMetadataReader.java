@@ -13,6 +13,12 @@ import java.util.stream.Collectors;
 
 import static ru.joke.cdgraph.core.impl.jms.JavaModuleCodeGraph.MODULE_INFO_CLASS;
 
+/**
+ * Reader of the classes metadata from JAR.
+ *
+ * @author Alik
+ * @see ru.joke.cdgraph.core.ClassesMetadataReader
+ */
 public final class JarClassesMetadataReader extends AbstractClassesMetadataReader<JarFile> {
 
     @Nonnull

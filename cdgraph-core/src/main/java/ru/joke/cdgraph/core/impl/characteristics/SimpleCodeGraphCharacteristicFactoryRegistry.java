@@ -9,6 +9,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A simple (and default) implementation of a factory registry based
+ * on the {@link ConcurrentHashMap} in the memory.
+ *
+ * @author Alik
+ * @see CodeGraphCharacteristicFactoryRegistry
+ * @see CodeGraphCharacteristicFactoriesLoader
+ */
 public final class SimpleCodeGraphCharacteristicFactoryRegistry implements CodeGraphCharacteristicFactoryRegistry {
 
     private final Map<String, CodeGraphCharacteristicFactory<?, ?, ?>> factoriesMap = new ConcurrentHashMap<>();
@@ -22,6 +30,10 @@ public final class SimpleCodeGraphCharacteristicFactoryRegistry implements CodeG
                         .filter(Objects::nonNull)
                         .findAny()
                         .orElseThrow(() -> new CodeGraphConfigurationException("Required handle annotation not found"));
+
+        if (characteristicFactory instanceof CodeGraphCharacteristicFactoryRegistryAware registryAware) {
+            registryAware.setRegistry(this);
+        }
 
         this.factoriesMap.putIfAbsent(annotation.value(), characteristicFactory);
     }
@@ -37,7 +49,7 @@ public final class SimpleCodeGraphCharacteristicFactoryRegistry implements CodeG
         @SuppressWarnings("unchecked")
         final var definition = (CodeGraphCharacteristicFactory<T, V, K>) this.factoriesMap.get(id);
         if (definition == null) {
-            throw new CodeGraphCharacteristicDefinitionNotFoundException(id);
+            throw new CodeGraphCharacteristicFactoryNotFoundException(id);
         }
 
         return definition;

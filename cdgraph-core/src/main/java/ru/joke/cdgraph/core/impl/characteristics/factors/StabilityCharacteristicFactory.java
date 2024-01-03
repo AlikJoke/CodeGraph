@@ -6,6 +6,14 @@ import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParam
 
 import javax.annotation.Nonnull;
 
+/**
+ * A factory of the characteristic that computes module stability.
+ *
+ * @author Alik
+ *
+ * @see StabilityCharacteristic
+ * @see StabilityCharacteristicFactoryHandle
+ */
 @StabilityCharacteristicFactoryHandle
 public final class StabilityCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

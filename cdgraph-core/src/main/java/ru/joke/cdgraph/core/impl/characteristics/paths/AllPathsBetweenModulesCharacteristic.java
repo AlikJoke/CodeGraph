@@ -9,6 +9,17 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A characteristic that computes all paths between two modules of the graph.
+ * Allows to find all chains from which a dependency to the source module can be
+ * transitively extracted.<br>
+ * Type of the characteristic parameters: {@link PathBetweenModulesCharacteristicParameters}.
+ *
+ * @author Alik
+ *
+ * @see AllPathsBetweenModulesCharacteristicFactory
+ * @see AllPathsBetweenModulesCharacteristicFactoryHandle
+ */
 final class AllPathsBetweenModulesCharacteristic extends AbstractMultiplePathsBetweenModulesCharacteristic<PathBetweenModulesCharacteristicParameters> {
 
     AllPathsBetweenModulesCharacteristic(
@@ -51,9 +62,9 @@ final class AllPathsBetweenModulesCharacteristic extends AbstractMultiplePathsBe
             final List<GraphNodeRelation> relationsInPath,
             final List<List<GraphNodeRelation>> allPaths) {
 
-        if (relation.type() == GraphNodeRelation.RelationType.PROVIDED) {
+        if (!relation.type().isTransitive()) {
             relationsInPath.remove(relation);
-            return false;
+            return true;
         }
 
         for (final GraphNodeRelation nextRelation : relation.target().relations()) {

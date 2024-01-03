@@ -8,6 +8,12 @@ import ru.joke.cdgraph.core.impl.meta.FSDirectoryClassesMetadataReader;
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
+/**
+ * Factory of the {@link CodeGraphFileSystemDataSource}.
+ *
+ * @author Alik
+ * @see CodeGraphDataSourceFactory
+ */
 public final class CodeGraphFileSystemDataSourceFactory implements CodeGraphDataSourceFactory<Path> {
     @Nonnull
     @Override

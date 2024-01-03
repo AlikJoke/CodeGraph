@@ -9,6 +9,12 @@ import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.jar.JarFile;
 
+/**
+ * Factory of the WAR data source ({@link CodeGraphWarDataSource}).
+ *
+ * @author Alik
+ * @see CodeGraphDataSourceFactory
+ */
 public final class CodeGraphWarDataSourceFactory implements CodeGraphDataSourceFactory<JarFile> {
 
     private final CodeGraphDataSourceFactory<JarFile> nestedJarDataSourceFactory;

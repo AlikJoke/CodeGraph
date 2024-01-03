@@ -7,6 +7,18 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * A characteristic that computes graph clusters. A cluster is a group of nodes that make up
+ * a community based on a certain characteristic. This characteristic allows to define groups
+ * of closely related modules.<br>
+ * The implementation of this characteristic is based on the Louvain algorithm.<br>
+ * Type of the characteristic parameters: {@link ModuleClusteringCharacteristicParameters}.
+ *
+ * @author Alik
+ *
+ * @see ModuleClusteringCharacteristicFactory
+ * @see ModuleClusteringCharacteristicFactoryHandle
+ */
 final class ModuleClusteringCharacteristic implements CodeGraphCharacteristic<Collection<Cluster>> {
 
     private final String id;
@@ -63,6 +75,7 @@ final class ModuleClusteringCharacteristic implements CodeGraphCharacteristic<Co
         final var resultClustersList = List.copyOf(clusters);
         return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, resultClustersList) {
             @Override
+            @Nonnull
             public String toJson() {
                 final var clustersMaps = createClusterDataMaps(resultClustersList);
                 return toJson(clustersMaps);

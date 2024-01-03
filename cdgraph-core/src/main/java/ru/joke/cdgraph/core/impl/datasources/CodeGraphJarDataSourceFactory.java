@@ -9,6 +9,12 @@ import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.jar.JarFile;
 
+/**
+ * Factory of the {@link CodeGraphJarDataSource}.
+ *
+ * @author Alik
+ * @see CodeGraphDataSourceFactory
+ */
 public final class CodeGraphJarDataSourceFactory implements CodeGraphDataSourceFactory<JarFile> {
     @Nonnull
     @Override

@@ -30,6 +30,7 @@ abstract class AbstractMultiplePathsBetweenModulesCharacteristic<T extends CodeG
 
         return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, resultPaths) {
             @Override
+            @Nonnull
             public String toJson() {
                 final var nodesIdsInPath =
                         get().stream()
@@ -47,7 +48,7 @@ abstract class AbstractMultiplePathsBetweenModulesCharacteristic<T extends CodeG
     private PathBetweenModules createOneResultPath(final List<GraphNodeRelation> path) {
 
         final List<GraphNode> nodesInPath = new ArrayList<>(1 + path.size());
-        nodesInPath.add(path.get(0).source());
+        nodesInPath.add(path.getFirst().source());
 
         path.stream()
                 .map(GraphNodeRelation::target)

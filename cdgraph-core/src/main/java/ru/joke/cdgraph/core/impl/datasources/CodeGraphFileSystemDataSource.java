@@ -17,6 +17,13 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+/**
+ * Data source implementation for the compiled sources from the file system.<br>
+ * A factory can be used to create: {@link CodeGraphFileSystemDataSourceFactory}.
+ *
+ * @author Alik
+ * @see ru.joke.cdgraph.core.CodeGraphDataSource
+ */
 public final class CodeGraphFileSystemDataSource implements CodeGraphDataSource {
 
     private static final String CLASSES_DIR = "classes";

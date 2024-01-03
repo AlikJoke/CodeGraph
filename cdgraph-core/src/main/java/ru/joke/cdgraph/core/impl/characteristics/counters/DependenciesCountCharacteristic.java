@@ -9,6 +9,18 @@ import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParam
 
 import javax.annotation.Nonnull;
 
+/**
+ * A characteristic that computes module dependencies count. Dependencies count are the
+ * number of incoming dependencies (connections from other modules to the current one)
+ * and outgoing ones (from the current module to others). This characteristic allows to find
+ * modules that contain too many dependencies.<br>
+ * Type of the characteristic parameters: {@link SingleModuleCharacteristicParameters}.
+ *
+ * @author Alik
+ *
+ * @see DependenciesCountCharacteristicFactory
+ * @see DependenciesCountCharacteristicFactoryHandle
+ */
 final class DependenciesCountCharacteristic implements CodeGraphCharacteristic<DependenciesCount> {
 
     private final String id;

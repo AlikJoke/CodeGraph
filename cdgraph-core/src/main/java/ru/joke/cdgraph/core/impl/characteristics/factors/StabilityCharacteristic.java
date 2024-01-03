@@ -9,6 +9,17 @@ import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParam
 
 import javax.annotation.Nonnull;
 
+/**
+ * A characteristic that computes module stability (metric from the book 'Clean Architecture').
+ * The stability of the module is calculated as the ratio between the number of output dependencies
+ * and the total number of output and input dependencies of the module.<br>
+ * Type of the characteristic parameters: {@link SingleModuleCharacteristicParameters}.
+ *
+ * @author Alik
+ *
+ * @see StabilityCharacteristicFactory
+ * @see StabilityCharacteristicFactoryHandle
+ */
 final class StabilityCharacteristic implements CodeGraphCharacteristic<Factor> {
 
     private final String id;

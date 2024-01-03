@@ -9,6 +9,16 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * A characteristic that computes stability (metric from the book 'Clean Architecture')
+ * of all modules in the graph.<br>
+ * See information about the stability of one module in the Java-doc {@link StabilityCharacteristic}.
+ *
+ * @author Alik
+ *
+ * @see AllModulesStabilityCharacteristicFactory
+ * @see AllModulesStabilityCharacteristicFactoryHandle
+ */
 final class AllModulesStabilityCharacteristic implements CodeGraphCharacteristic<Map<String, Factor>> {
 
     private final String id;

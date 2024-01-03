@@ -7,6 +7,15 @@ import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParam
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/**
+ * A characteristic that computes graph description in the form of all transitive
+ * chains from the root node to all leaves.
+ *
+ * @author Alik
+ *
+ * @see CodeGraphDescriptionCharacteristicFactory
+ * @see CodeGraphDescriptionCharacteristicFactoryHandle
+ */
 final class CodeGraphDescriptionCharacteristic implements CodeGraphCharacteristic<List<PathBetweenModules>> {
 
     private final String id;
@@ -31,6 +40,7 @@ final class CodeGraphDescriptionCharacteristic implements CodeGraphCharacteristi
         final var result = transitiveChainsCharacteristic.compute(graph);
         return new SimpleCodeGraphCharacteristicResult<>(this.id, result.get()) {
             @Override
+            @Nonnull
             public String toJson() {
                 final var nodesIdsInPath =
                         get().stream()

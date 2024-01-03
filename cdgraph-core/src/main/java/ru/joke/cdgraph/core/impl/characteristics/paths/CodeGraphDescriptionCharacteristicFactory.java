@@ -9,6 +9,15 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/**
+ * A factory of the characteristic that computes graph description in the form of all transitive
+ * chains from the root node to all leaves.
+ *
+ * @author Alik
+ *
+ * @see CodeGraphDescriptionCharacteristic
+ * @see CodeGraphDescriptionCharacteristicFactoryHandle
+ */
 @CodeGraphDescriptionCharacteristicFactoryHandle
 public final class CodeGraphDescriptionCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

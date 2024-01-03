@@ -9,6 +9,12 @@ import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.jar.JarFile;
 
+/**
+ * Data source factory implementation for the EAR archives ({@link CodeGraphEarDataSource}).
+ *
+ * @author Alik
+ * @see ru.joke.cdgraph.core.CodeGraphDataSource
+ */
 public final class CodeGraphEarDataSourceFactory implements CodeGraphDataSourceFactory<JarFile> {
 
     private final CodeGraphDataSourceFactory<JarFile> nestedWarDataSourceFactory;

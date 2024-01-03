@@ -6,6 +6,14 @@ import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParam
 
 import javax.annotation.Nonnull;
 
+/**
+ * A factory of the characteristic that computes module dependencies count.
+ *
+ * @author Alik
+ *
+ * @see DependenciesCountCharacteristic
+ * @see DependenciesCountCharacteristicFactoryHandle
+ */
 @DependenciesCountCharacteristicFactoryHandle
 public final class DependenciesCountCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

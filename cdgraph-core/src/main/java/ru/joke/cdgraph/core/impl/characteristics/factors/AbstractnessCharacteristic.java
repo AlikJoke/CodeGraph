@@ -12,6 +12,17 @@ import java.util.function.Predicate;
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.CLASSES_METADATA_TAG;
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.SOURCE_MODULE_TAG;
 
+/**
+ * A characteristic that computes module abstractness (metric from the book 'Clean Architecture').
+ * The abstractness of the module is calculated as the ratio between the number of abstract elements
+ * (interfaces, annotations, and abstract classes) and the total number of elements in the module.<br>
+ * Type of the characteristic parameters: {@link SingleModuleCharacteristicParameters}.
+ *
+ * @author Alik
+ *
+ * @see AbstractnessCharacteristicFactory
+ * @see AbstractnessCharacteristicFactoryHandle
+ */
 final class AbstractnessCharacteristic implements CodeGraphCharacteristic<Factor> {
 
     private final String id;

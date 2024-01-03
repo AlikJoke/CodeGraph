@@ -7,6 +7,15 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+/**
+ * A factory of the characteristic that computes conflicting dependencies
+ * of the module in the code graph.
+ *
+ * @author Alik
+ *
+ * @see ConflictingDependenciesCharacteristic
+ * @see ConflictingDependenciesCharacteristicFactoryHandle
+ */
 @ConflictingDependenciesCharacteristicFactoryHandle
 public final class ConflictingDependenciesCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

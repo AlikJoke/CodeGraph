@@ -17,6 +17,13 @@ import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Data source implementation for the JAR archives.<br>
+ * A factory can be used to create: {@link CodeGraphJarDataSourceFactory}.
+ *
+ * @author Alik
+ * @see ru.joke.cdgraph.core.CodeGraphDataSource
+ */
 public class CodeGraphJarDataSource implements CodeGraphDataSource {
 
     protected final Path dataSourcePath;

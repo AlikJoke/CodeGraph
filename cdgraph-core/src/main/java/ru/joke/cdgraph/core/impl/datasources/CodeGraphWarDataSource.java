@@ -8,6 +8,13 @@ import java.nio.file.Path;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Data source implementation for the WAR archives.<br>
+ * A factory can be used to create: {@link CodeGraphWarDataSourceFactory}.
+ *
+ * @author Alik
+ * @see ru.joke.cdgraph.core.CodeGraphDataSource
+ */
 public class CodeGraphWarDataSource extends CodeGraphFatJarDataSource {
 
     private static final String WEB_INF_DIR = "WEB-INF/";

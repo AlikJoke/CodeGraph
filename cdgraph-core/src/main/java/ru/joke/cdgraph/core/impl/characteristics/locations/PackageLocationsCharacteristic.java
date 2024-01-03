@@ -6,6 +6,16 @@ import ru.joke.cdgraph.core.GraphNode;
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+/**
+ * A characteristic that computes locations of the package (set of modules) with specified name.
+ * Allows to find duplicates of packages that have the same name.<br>
+ * Type of the characteristic parameters: {@link ResourceLocationsCharacteristicParameters}.
+ *
+ * @author Alik
+ *
+ * @see PackageLocationsCharacteristicFactory
+ * @see PackageLocationsCharacteristicFactoryHandle
+ */
 final class PackageLocationsCharacteristic extends AbstractResourceLocationsCharacteristic<Set<GraphNode>> {
 
     private final String[] packageParts;

@@ -11,6 +11,16 @@ import java.util.stream.Collectors;
 
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.SOURCE_MODULE_TAG;
 
+/**
+ * A characteristic that computes abstractness (metric from the book 'Clean Architecture')
+ * of all modules in the graph.<br>
+ * See information about the abstractness of one module in the Java-doc {@link AbstractnessCharacteristic}.
+ *
+ * @author Alik
+ *
+ * @see AllModulesAbstractnessCharacteristicFactory
+ * @see AllModulesAbstractnessCharacteristicFactoryHandle
+ */
 final class AllModulesAbstractnessCharacteristic implements CodeGraphCharacteristic<Map<String, Factor>> {
 
     private final String id;

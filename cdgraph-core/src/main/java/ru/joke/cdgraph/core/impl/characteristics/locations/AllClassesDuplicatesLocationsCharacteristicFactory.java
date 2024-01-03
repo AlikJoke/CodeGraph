@@ -7,6 +7,15 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+/**
+ * A factory of the characteristic that computes duplicates of classes between
+ * different graph modules.
+ *
+ * @author Alik
+ *
+ * @see AllClassesDuplicatesLocationsCharacteristic
+ * @see AllClassesDuplicatesLocationsCharacteristicFactoryHandle
+ */
 @AllClassesDuplicatesLocationsCharacteristicFactoryHandle
 public final class AllClassesDuplicatesLocationsCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

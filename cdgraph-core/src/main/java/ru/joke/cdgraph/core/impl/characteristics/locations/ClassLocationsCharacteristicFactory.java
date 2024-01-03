@@ -7,6 +7,14 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+/**
+ * A factory of the characteristic that computes locations of the class with specified name.
+ *
+ * @author Alik
+ *
+ * @see ClassLocationsCharacteristic
+ * @see ClassLocationsCharacteristicFactoryHandle
+ */
 @ClassLocationsCharacteristicFactoryHandle
 public final class ClassLocationsCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

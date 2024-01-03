@@ -6,6 +6,14 @@ import ru.joke.cdgraph.core.impl.characteristics.AbstractCodeGraphCharacteristic
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/**
+ * A factory of the characteristic that computes all paths between two modules of the graph.
+ *
+ * @author Alik
+ *
+ * @see AllPathsBetweenModulesCharacteristic
+ * @see AllPathsBetweenModulesCharacteristicFactoryHandle
+ */
 @AllPathsBetweenModulesCharacteristicFactoryHandle
 public final class AllPathsBetweenModulesCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

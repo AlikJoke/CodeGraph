@@ -8,6 +8,13 @@ import java.nio.file.Path;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Data source implementation for the EAR archives.<br>
+ * A factory can be used to create: {@link CodeGraphEarDataSourceFactory}.
+ *
+ * @author Alik
+ * @see ru.joke.cdgraph.core.CodeGraphDataSource
+ */
 public final class CodeGraphEarDataSource extends CodeGraphWarDataSource {
 
     private static final String JAR_EXTENSION = ".jar";

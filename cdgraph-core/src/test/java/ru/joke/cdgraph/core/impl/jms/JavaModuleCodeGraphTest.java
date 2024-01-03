@@ -2,6 +2,7 @@ package ru.joke.cdgraph.core.impl.jms;
 
 import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.*;
+import ru.joke.cdgraph.core.impl.SimpleRelationType;
 
 import java.lang.module.ModuleDescriptor;
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.SOURCE_MODULE_TAG;
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.VERSION_TAG;
+import static ru.joke.cdgraph.core.impl.jms.JavaModuleCodeGraph.REQUIRES_RELATION_TYPE;
 import static ru.joke.cdgraph.core.impl.util.TestUtil.*;
 
 public class JavaModuleCodeGraphTest {
@@ -117,7 +119,7 @@ public class JavaModuleCodeGraphTest {
             final Set<ModuleDescriptor.Requires.Modifier> expectedDependencyModifiers) {
 
         assertEquals(expectedSourceModule, testModuleRelation.source().id(), "Source module must be equal");
-        assertEquals(GraphNodeRelation.RelationType.REQUIRES, testModuleRelation.type(), "Relation type must be equal");
+        assertEquals(new SimpleRelationType(REQUIRES_RELATION_TYPE), testModuleRelation.type(), "Relation type must be equal");
         final Map<String, Object> relationTags =
                 testModuleRelation.tags()
                                     .values()
@@ -147,7 +149,7 @@ public class JavaModuleCodeGraphTest {
         assertNotNull(sqlModuleRelation, "Sql relation must be not null");
         assertEquals(rootNode, sqlModuleRelation.source(), "Source node must be equal to root");
 
-        assertEquals(GraphNodeRelation.RelationType.REQUIRES, sqlModuleRelation.type(), "Relation type must be equal");
+        assertEquals(new SimpleRelationType(REQUIRES_RELATION_TYPE), sqlModuleRelation.type(), "Relation type must be equal");
         assertFalse(sqlModuleRelation.target().relations().isEmpty(), "Dependencies for system target module must be empty");
 
         final Map<String, GraphNodeRelation> dependenciesByTarget =
@@ -174,7 +176,7 @@ public class JavaModuleCodeGraphTest {
         assertNotNull(baseModuleRelation, "Target module must be base module");
         assertEquals(rootNode, baseModuleRelation.source(), "Source node must be equal to root");
 
-        assertEquals(GraphNodeRelation.RelationType.REQUIRES, baseModuleRelation.type(), "Relation type must be equal");
+        assertEquals(new SimpleRelationType(REQUIRES_RELATION_TYPE), baseModuleRelation.type(), "Relation type must be equal");
         assertTrue(baseModuleRelation.target().relations().isEmpty(), "Dependencies for target module must be empty");
 
         final Map<String, Object> relationTags =

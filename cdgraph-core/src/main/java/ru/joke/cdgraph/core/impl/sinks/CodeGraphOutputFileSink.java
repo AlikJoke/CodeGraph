@@ -1,12 +1,19 @@
 package ru.joke.cdgraph.core.impl.sinks;
 
 import ru.joke.cdgraph.core.CodeGraphOutputSink;
+import ru.joke.cdgraph.core.CodeGraphSinkException;
 
 import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+/**
+ * File sink for outputting the results of computing characteristics.
+ *
+ * @author Alik
+ * @see CodeGraphOutputSink
+ */
 public final class CodeGraphOutputFileSink implements CodeGraphOutputSink {
 
     private final OutputStream stream;
@@ -29,7 +36,7 @@ public final class CodeGraphOutputFileSink implements CodeGraphOutputSink {
             final String dataToWrite = data + System.lineSeparator();
             this.stream.write(dataToWrite.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CodeGraphSinkException(e);
         }
     }
 
@@ -39,7 +46,7 @@ public final class CodeGraphOutputFileSink implements CodeGraphOutputSink {
             this.stream.flush();
             this.stream.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CodeGraphSinkException(e);
         }
     }
 }

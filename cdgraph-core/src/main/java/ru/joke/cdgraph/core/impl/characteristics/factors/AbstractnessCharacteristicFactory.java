@@ -6,6 +6,14 @@ import ru.joke.cdgraph.core.impl.characteristics.SingleModuleCharacteristicParam
 
 import javax.annotation.Nonnull;
 
+/**
+ * A factory of the characteristic that computes module abstractness.
+ *
+ * @author Alik
+ *
+ * @see AbstractnessCharacteristic
+ * @see AbstractnessCharacteristicFactoryHandle
+ */
 @AbstractnessCharacteristicFactoryHandle
 public final class AbstractnessCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory

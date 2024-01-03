@@ -17,6 +17,12 @@ import java.util.Set;
 
 import static ru.joke.cdgraph.core.impl.jms.JavaModuleCodeGraph.MODULE_INFO_CLASS;
 
+/**
+ * Reader of the compiled classes metadata from the directory.
+ *
+ * @author Alik
+ * @see ru.joke.cdgraph.core.ClassesMetadataReader
+ */
 public final class FSDirectoryClassesMetadataReader extends AbstractClassesMetadataReader<Path> {
 
     @Nonnull

@@ -35,6 +35,7 @@ abstract class AbstractResourceLocationsCharacteristic<T> implements CodeGraphCh
                         .collect(Collectors.toSet());
         return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, transformResult(modulesWithResource)) {
             @Override
+            @Nonnull
             public String toJson() {
                 return toJson(transformResultToJsonFormat(get()));
             }

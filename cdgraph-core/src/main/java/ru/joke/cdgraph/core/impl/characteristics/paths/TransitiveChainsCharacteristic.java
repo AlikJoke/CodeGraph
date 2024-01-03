@@ -10,6 +10,16 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A characteristic that computes all transitive chains (paths) from the specified module node.<br>
+ * Allows to find all transitive dependencies on a given module for their further analysis.<br>
+ * Type of the characteristic parameters: {@link SingleModuleCharacteristicParameters}.
+ *
+ * @author Alik
+ *
+ * @see TransitiveChainsCharacteristicFactory
+ * @see TransitiveChainsCharacteristicFactoryHandle
+ */
 final class TransitiveChainsCharacteristic extends AbstractMultiplePathsBetweenModulesCharacteristic<SingleModuleCharacteristicParameters> {
 
     TransitiveChainsCharacteristic(
@@ -46,7 +56,7 @@ final class TransitiveChainsCharacteristic extends AbstractMultiplePathsBetweenM
             final List<List<GraphNodeRelation>> chains) {
 
         final var targetNodeRelations = relation.target().relations();
-        if (relation.type() == GraphNodeRelation.RelationType.PROVIDED || targetNodeRelations.isEmpty()) {
+        if (!relation.type().isTransitive() || targetNodeRelations.isEmpty()) {
             chains.add(new ArrayList<>(relationsInPath));
             relationsInPath.remove(relation);
 

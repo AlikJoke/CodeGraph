@@ -9,6 +9,12 @@ import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.jar.JarFile;
 
+/**
+ * Factory of the FatJar data source ({@link CodeGraphFatJarDataSource}).
+ *
+ * @author Alik
+ * @see CodeGraphDataSourceFactory
+ */
 public final class CodeGraphFatJarDataSourceFactory implements CodeGraphDataSourceFactory<JarFile> {
 
     private final CodeGraphDataSourceFactory<JarFile> nestedJarDataSourceFactory;

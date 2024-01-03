@@ -9,6 +9,7 @@ import ru.joke.cdgraph.core.GraphNodeRelation;
 import ru.joke.cdgraph.core.GraphTag;
 import ru.joke.cdgraph.core.impl.SimpleGraphNodeRelation;
 import ru.joke.cdgraph.core.impl.SimpleGraphTag;
+import ru.joke.cdgraph.core.impl.SimpleRelationType;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 import static ru.joke.cdgraph.core.impl.maven.MavenModuleCodeGraph.*;
 
 final class MavenModuleDependenciesReader {
+
+    public static final String COMPILE_RELATION_TYPE = "compile";
+    public static final String PROVIDED_RELATION_TYPE = "provided";
 
     private static final String PROJECT_VERSION_PROPERTY = "${project.version}";
 
@@ -74,7 +78,7 @@ final class MavenModuleDependenciesReader {
                     final Pair<GraphNode, Model> dependencyModule = modulesMap.computeIfAbsent(artifactFullId, id -> createModuleDataByDependency(id, dependency));
                     moduleNode.relations().add(new SimpleGraphNodeRelation(moduleNode, dependencyModule.first(), relationType, createDependencyTags(dependency)));
 
-                    if (relationType != GraphNodeRelation.RelationType.PROVIDED) {
+                    if (relationType.isTransitive()) {
                         read(dependencyModule, collectDependencyExclusions(exclusions, dependency));
                     }
                 });
@@ -90,9 +94,8 @@ final class MavenModuleDependenciesReader {
     }
 
     private GraphNodeRelation.RelationType getRelationType(final Dependency dependency) {
-        return dependency.getScope() == null
-                ? GraphNodeRelation.RelationType.COMPILE
-                : GraphNodeRelation.RelationType.valueOf(dependency.getScope().toUpperCase());
+        final var relationType = dependency.getScope() == null ? COMPILE_RELATION_TYPE : dependency.getScope();
+        return new SimpleRelationType(relationType, !PROVIDED_RELATION_TYPE.equalsIgnoreCase(dependency.getScope()));
     }
 
     private Set<String> collectDependencyExclusions(@Nonnull Set<String> exclusions, @Nonnull Dependency dependency) {

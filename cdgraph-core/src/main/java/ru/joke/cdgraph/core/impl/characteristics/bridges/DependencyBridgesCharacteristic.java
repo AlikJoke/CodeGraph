@@ -15,6 +15,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A characteristic that computes graph bridges. Graph bridges are edges that connect
+ * the blocks of the graph. Removing such an edge leads to loss of connectivity of the graph.<br>
+ * This characteristic makes it possible to determine dependencies, the presence of which
+ * leads to the appearance of a new block of the graph. Getting rid of such edges
+ * (if possible, if the dependency is obtained transitively and is not needed for the
+ * application functionality) will eliminate such blocks and reduce the size of the
+ * application distribution.
+ *
+ * @author Alik
+ *
+ * @see DependencyBridgesCharacteristicFactory
+ * @see DependencyBridgesCharacteristicFactoryHandle
+ */
 final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<Set<GraphNodeRelation>> {
 
     private final String id;
@@ -57,6 +71,7 @@ final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<S
 
         return new SimpleCodeGraphCharacteristicResult<>(this.id, bridges) {
             @Override
+            @Nonnull
             public String toJson() {
                 final var bridgesMaps = convertBridgesToMap(bridges);
                 return toJson(bridgesMaps);

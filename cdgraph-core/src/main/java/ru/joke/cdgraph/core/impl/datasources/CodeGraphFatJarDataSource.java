@@ -14,6 +14,13 @@ import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Data source implementation for the FatJar archives.<br>
+ * A factory can be used to create: {@link CodeGraphFatJarDataSourceFactory}.
+ *
+ * @author Alik
+ * @see ru.joke.cdgraph.core.CodeGraphDataSource
+ */
 public class CodeGraphFatJarDataSource extends CodeGraphJarDataSource {
 
     protected static final String JAR_EXTENSION = ".jar";

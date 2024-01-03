@@ -10,6 +10,17 @@ import java.util.stream.Collectors;
 
 import static ru.joke.cdgraph.core.impl.AbstractCodeGraph.VERSION_TAG;
 
+/**
+ * A characteristic that computes conflicting dependencies of the module in the code graph.
+ * Allows to find conflicting versions of the modules that have the same identifier but
+ * different versions.<br>
+ * This helps avoid situations where a class from a library of the wrong version is loaded.
+ *
+ * @author Alik
+ *
+ * @see ConflictingDependenciesCharacteristicFactory
+ * @see ConflictingDependenciesCharacteristicFactoryHandle
+ */
 final class ConflictingDependenciesCharacteristic implements CodeGraphCharacteristic<Set<ConflictingDependencies>> {
 
     private final String id;
@@ -33,6 +44,7 @@ final class ConflictingDependenciesCharacteristic implements CodeGraphCharacteri
                         .collect(Collectors.toSet());
         return new SimpleCodeGraphCharacteristicResult<>(this.id, result) {
             @Override
+            @Nonnull
             public String toJson() {
                 final Set<Set<String>> modulesIds = result
                                                         .stream()

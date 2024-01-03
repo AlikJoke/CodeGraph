@@ -4,8 +4,16 @@ import com.google.gson.Gson;
 import ru.joke.cdgraph.core.CodeGraphCharacteristicParameters;
 import ru.joke.cdgraph.core.CodeGraphCharacteristicResult;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
+/**
+ * A simple implementation of the characteristic result wrapper.
+ * @param <T> type of the result value
+ *
+ * @author Alik
+ * @see CodeGraphCharacteristicResult
+ */
 public class SimpleCodeGraphCharacteristicResult<T> implements CodeGraphCharacteristicResult<T> {
 
     protected static final Gson gson = new Gson();
@@ -30,11 +38,13 @@ public class SimpleCodeGraphCharacteristicResult<T> implements CodeGraphCharacte
     }
 
     @Override
+    @Nonnull
     public String toPlainString() {
         return characteristicId + ": { result: '" + result + "', parameters: '" + parameters + "'}";
     }
 
     @Override
+    @Nonnull
     public String toJson() {
         return toJson(result);
     }
