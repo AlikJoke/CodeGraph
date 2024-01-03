@@ -20,12 +20,12 @@ public class CodeGraphFatJarDataSource extends CodeGraphJarDataSource {
     private static final String JAR_DATA_DIR = "classes";
     private static final String JAR_DEPENDENCIES_DIR = "lib";
 
-    private final CodeGraphDataSourceFactory jarDataSourceFactory;
+    private final CodeGraphDataSourceFactory<JarFile> jarDataSourceFactory;
 
     public CodeGraphFatJarDataSource(
             @Nonnull Path dataSourcePath,
-            @Nonnull ClassesMetadataReader jarMetadataReader,
-            @Nonnull CodeGraphDataSourceFactory jarDataSourceFactory) {
+            @Nonnull ClassesMetadataReader<JarFile> jarMetadataReader,
+            @Nonnull CodeGraphDataSourceFactory<JarFile> jarDataSourceFactory) {
         super(dataSourcePath, jarMetadataReader);
         this.jarDataSourceFactory = jarDataSourceFactory;
     }

@@ -20,11 +20,11 @@ import java.util.jar.JarFile;
 public class CodeGraphJarDataSource implements CodeGraphDataSource {
 
     protected final Path dataSourcePath;
-    protected final ClassesMetadataReader metadataReader;
+    protected final ClassesMetadataReader<JarFile> metadataReader;
 
     public CodeGraphJarDataSource(
             @Nonnull Path dataSourcePath,
-            @Nonnull ClassesMetadataReader metadataReader) {
+            @Nonnull ClassesMetadataReader<JarFile> metadataReader) {
         this.dataSourcePath = dataSourcePath;
         this.metadataReader = metadataReader;
     }

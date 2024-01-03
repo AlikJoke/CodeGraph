@@ -12,10 +12,8 @@ import ru.joke.cdgraph.core.impl.characteristics.paths.PathBetweenModulesCharact
 import ru.joke.cdgraph.core.impl.datasources.CodeGraphJarDataSourceFactory;
 import ru.joke.cdgraph.core.impl.jms.JavaModuleCodeGraphFactory;
 import ru.joke.cdgraph.core.impl.sinks.CodeGraphOutputInMemorySink;
-import ru.joke.cdgraph.core.impl.util.TestUtil;
 
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,9 +51,7 @@ public class SimpleCodeGraphClientTest {
     private CodeGraphDataSource createDataSource() throws URISyntaxException {
         final var codeGraphDataSourceFactory = new CodeGraphJarDataSourceFactory();
 
-        final var jarUrl = TestUtil.class.getResource(TEST_JAR_3_PATH);
-        final var jarPath = Path.of(jarUrl.toURI());
-
+        final var jarPath = getJarFile(TEST_JAR_3_PATH).toPath();
         return codeGraphDataSourceFactory.create(jarPath);
     }
 

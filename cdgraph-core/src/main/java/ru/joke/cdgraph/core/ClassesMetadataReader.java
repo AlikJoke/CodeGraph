@@ -2,10 +2,9 @@ package ru.joke.cdgraph.core;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
-import java.util.jar.JarFile;
 
-public interface ClassesMetadataReader {
+public interface ClassesMetadataReader<T> {
 
     @Nonnull
-    Set<ClassMetadata> read(@Nonnull JarFile jar);
+    Set<ClassMetadata> read(@Nonnull T source);
 }

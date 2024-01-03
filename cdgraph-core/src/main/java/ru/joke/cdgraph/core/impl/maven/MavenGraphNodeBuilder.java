@@ -41,7 +41,8 @@ final class MavenGraphNodeBuilder {
             tags.add(new SimpleGraphTag<>(MODULE_DESCRIPTION_TAG, model.getDescription()));
         }
 
-        tags.add(new SimpleGraphTag<>(MODULE_GROUP_TAG, model.getGroupId()));
+        final String groupId = model.getGroupId() == null ? model.getParent().getGroupId() : model.getGroupId();
+        tags.add(new SimpleGraphTag<>(MODULE_GROUP_TAG, groupId));
 
         if (model.getPackaging() != null) {
             tags.add(new SimpleGraphTag<>(MODULE_PACKAGING_TAG, model.getPackaging()));

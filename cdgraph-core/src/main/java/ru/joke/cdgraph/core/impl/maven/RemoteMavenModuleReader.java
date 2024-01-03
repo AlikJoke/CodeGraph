@@ -32,13 +32,13 @@ final class RemoteMavenModuleReader {
 
     private final HttpClient httpClient;
     private final String mavenRepositoryBaseUrl;
-    private final ClassesMetadataReader classesMetadataReader;
+    private final ClassesMetadataReader<JarFile> classesMetadataReader;
     private final MavenStaxReader modelReader;
 
-    RemoteMavenModuleReader(
+    private RemoteMavenModuleReader(
             @Nonnull HttpClient httpClient,
             @Nonnull String mavenRepositoryBaseUrl,
-            @Nonnull ClassesMetadataReader classesMetadataReader,
+            @Nonnull ClassesMetadataReader<JarFile> classesMetadataReader,
             @Nonnull MavenStaxReader modelReader) {
         this.httpClient = httpClient;
         this.mavenRepositoryBaseUrl = mavenRepositoryBaseUrl;
@@ -139,5 +139,47 @@ final class RemoteMavenModuleReader {
                 + version
                 + "/"
                 + (artifactId + "-" + version + "." + dataType);
+    }
+
+    @Nonnull
+    static Builder builder() {
+        return new Builder();
+    }
+
+    static class Builder {
+
+        private HttpClient httpClient;
+        private String mavenRepositoryBaseUrl;
+        private ClassesMetadataReader<JarFile> classesMetadataReader;
+        private MavenStaxReader mavenModelReader;
+
+        @Nonnull
+        Builder withHttpClient(@Nonnull HttpClient httpClient) {
+            this.httpClient = httpClient;
+            return this;
+        }
+
+        @Nonnull
+        Builder withMavenRepositoryBaseUrl(@Nonnull String mavenRepositoryBaseUrl) {
+            this.mavenRepositoryBaseUrl = mavenRepositoryBaseUrl;
+            return this;
+        }
+
+        @Nonnull
+        Builder withClassesMetadataReader(@Nonnull ClassesMetadataReader<JarFile> classesMetadataReader) {
+            this.classesMetadataReader = classesMetadataReader;
+            return this;
+        }
+
+        @Nonnull
+        Builder withMavenModelReader(@Nonnull MavenStaxReader mavenModelReader) {
+            this.mavenModelReader = mavenModelReader;
+            return this;
+        }
+
+        @Nonnull
+        public RemoteMavenModuleReader build() {
+            return new RemoteMavenModuleReader(this.httpClient, this.mavenRepositoryBaseUrl, this.classesMetadataReader, this.mavenModelReader);
+        }
     }
 }

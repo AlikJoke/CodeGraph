@@ -22,22 +22,28 @@ final class MavenModuleDependenciesReader {
     private static final String PROJECT_VERSION_PROPERTY = "${project.version}";
 
     private static final String TEST_SCOPE = "test";
-    private static final String WAR_TYPE = "war";
 
     private final Map<String, Pair<GraphNode, Model>> modulesMap;
     private final Set<String> processedModules;
     private final RemoteMavenModuleReader remoteMavenModuleReader;
     private final MavenGraphNodeBuilder mavenGraphNodeBuilder;
+    private final Map<String, Model> parentModelsMap;
 
-    MavenModuleDependenciesReader(
+    private MavenModuleDependenciesReader(
             @Nonnull RemoteMavenModuleReader remoteMavenModuleReader,
             @Nonnull Map<String, Pair<GraphNode, Model>> modulesMap,
             @Nonnull Set<String> processedModules,
-            @Nonnull MavenGraphNodeBuilder mavenGraphNodeBuilder) {
+            @Nonnull MavenGraphNodeBuilder mavenGraphNodeBuilder,
+            @Nonnull Map<String, Model> parentModelsMap) {
         this.remoteMavenModuleReader = remoteMavenModuleReader;
         this.modulesMap = modulesMap;
         this.processedModules = processedModules;
         this.mavenGraphNodeBuilder = mavenGraphNodeBuilder;
+        this.parentModelsMap = parentModelsMap;
+    }
+
+    void read(@Nonnull Pair<GraphNode, Model> module) {
+        read(module, Collections.emptySet());
     }
 
     void read(@Nonnull Pair<GraphNode, Model> module, @Nonnull Set<String> exclusions) {
@@ -90,7 +96,7 @@ final class MavenModuleDependenciesReader {
     }
 
     private Set<String> collectDependencyExclusions(@Nonnull Set<String> exclusions, @Nonnull Dependency dependency) {
-        if (WAR_TYPE.equals(dependency.getType())) {
+        if (WAR_TYPE.equalsIgnoreCase(dependency.getType())) {
             return Collections.emptySet();
         }
 
@@ -166,7 +172,10 @@ final class MavenModuleDependenciesReader {
 
         var parent = model.getParent();
         while (parent != null) {
-            final var parentModel = this.remoteMavenModuleReader.readParentModuleModel(parent);
+            final String parentId = createModuleId(parent.getGroupId(), parent.getArtifactId(), parent.getVersion());
+            final var parentModel = this.parentModelsMap.containsKey(parentId)
+                    ? this.parentModelsMap.get(parentId)
+                    : this.remoteMavenModuleReader.readParentModuleModel(parent);
             if (parentModel == null) {
                 break;
             }
@@ -210,5 +219,60 @@ final class MavenModuleDependenciesReader {
 
     private String createModuleId(final String groupId, final String artifactId, final String version) {
         return groupId + ID_PART_DELIMITER + artifactId + ID_PART_DELIMITER + version;
+    }
+
+    @Nonnull
+    static MavenModuleDependenciesReader.Builder builder() {
+        return new MavenModuleDependenciesReader.Builder();
+    }
+
+    static class Builder {
+
+        private Map<String, Pair<GraphNode, Model>> modules;
+        private Set<String> processedModules;
+        private RemoteMavenModuleReader remoteMavenModuleReader;
+        private MavenGraphNodeBuilder graphNodeBuilder;
+        private Map<String, Model> parentModels;
+
+        @Nonnull
+        Builder withModules(@Nonnull Map<String, Pair<GraphNode, Model>> modules) {
+            this.modules = modules;
+            return this;
+        }
+
+        @Nonnull
+        Builder withAlreadyProcessedModules(@Nonnull Set<String> processedModules) {
+            this.processedModules = processedModules;
+            return this;
+        }
+
+        @Nonnull
+        Builder withRemoteMavenModuleReader(@Nonnull RemoteMavenModuleReader remoteMavenModuleReader) {
+            this.remoteMavenModuleReader = remoteMavenModuleReader;
+            return this;
+        }
+
+        @Nonnull
+        Builder withGraphNodeBuilder(@Nonnull MavenGraphNodeBuilder graphNodeBuilder) {
+            this.graphNodeBuilder = graphNodeBuilder;
+            return this;
+        }
+
+        @Nonnull
+        Builder withParentModels(@Nonnull Map<String, Model> parentModels) {
+            this.parentModels = parentModels;
+            return this;
+        }
+
+        @Nonnull
+        MavenModuleDependenciesReader build() {
+            return new MavenModuleDependenciesReader(
+                    this.remoteMavenModuleReader,
+                    this.modules,
+                    this.processedModules,
+                    this.graphNodeBuilder,
+                    this.parentModels
+            );
+        }
     }
 }

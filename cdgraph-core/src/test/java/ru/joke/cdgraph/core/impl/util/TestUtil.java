@@ -4,13 +4,17 @@ import ru.joke.cdgraph.core.CodeGraph;
 import ru.joke.cdgraph.core.CodeGraphDataSource;
 import ru.joke.cdgraph.core.CodeGraphDataSourceException;
 import ru.joke.cdgraph.core.GraphNode;
-import ru.joke.cdgraph.core.impl.JarClassesMetadataReader;
 import ru.joke.cdgraph.core.impl.datasources.CodeGraphJarDataSource;
 import ru.joke.cdgraph.core.impl.jms.JavaModuleCodeGraph;
+import ru.joke.cdgraph.core.impl.maven.MavenModuleCodeGraph;
+import ru.joke.cdgraph.core.impl.meta.JarClassesMetadataReader;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -19,6 +23,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 public abstract class TestUtil {
@@ -103,6 +109,45 @@ public abstract class TestUtil {
                 return allNodesMap.values();
             }
         };
+    }
+
+    public static File getJarFile(final String jarPath) throws URISyntaxException {
+        final URL testJarUrl = TestUtil.class.getResource(jarPath);
+        final URI testJarUri = Objects.requireNonNull(testJarUrl, "testJarUrl").toURI();
+
+        return new File(testJarUri);
+    }
+
+    public static Path unpackTestJarToDirectory(final String testJarPath) throws IOException, URISyntaxException {
+
+        try (final JarFile jarFile = new JarFile(getJarFile(testJarPath))) {
+            final Path moduleDirPath = Files.createTempDirectory(UUID.randomUUID().toString());
+            final File moduleDirFile = moduleDirPath.toFile();
+            final File classesDirFile = new File(moduleDirFile, "target/classes");
+            classesDirFile.mkdirs();
+
+            moduleDirFile.deleteOnExit();
+
+            final Enumeration<JarEntry> entries = jarFile.entries();
+
+            while (entries.hasMoreElements()) {
+                final JarEntry jarEntry = entries.nextElement();
+                final boolean isPomFile = jarEntry.getName().endsWith(MavenModuleCodeGraph.POM_XML);
+                final File file = isPomFile
+                        ? new File(moduleDirFile, MavenModuleCodeGraph.POM_XML)
+                        : new File(classesDirFile, jarEntry.getName());
+                if (jarEntry.isDirectory()) {
+                    file.mkdirs();
+                } else {
+                    try (final InputStream is = jarFile.getInputStream(jarEntry);
+                            final FileOutputStream fos = new FileOutputStream(file)) {
+                        fos.write(is.readAllBytes());
+                    }
+                }
+            }
+
+            return moduleDirPath;
+        }
     }
 
     private static CodeGraph createCodeGraphByJar(@Nonnull String jarResourcePath) throws URISyntaxException {

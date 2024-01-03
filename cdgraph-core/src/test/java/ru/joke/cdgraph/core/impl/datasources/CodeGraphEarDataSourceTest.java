@@ -2,21 +2,19 @@ package ru.joke.cdgraph.core.impl.datasources;
 
 import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.CodeGraphDataSource;
-import ru.joke.cdgraph.core.impl.JarClassesMetadataReader;
+import ru.joke.cdgraph.core.impl.meta.JarClassesMetadataReader;
 
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
 
 import static ru.joke.cdgraph.core.impl.util.TestUtil.TEST_EAR_PATH;
+import static ru.joke.cdgraph.core.impl.util.TestUtil.getJarFile;
 
 public class CodeGraphEarDataSourceTest extends CodeGraphDataSourceTestBase {
 
     @Test
     public void testDirectCreation() throws URISyntaxException {
-        final URL testEarUrl = getClass().getResource(TEST_EAR_PATH);
         final CodeGraphDataSource ds = new CodeGraphEarDataSource(
-                Path.of(testEarUrl.toURI()),
+                getJarFile(TEST_EAR_PATH).toPath(),
                 new JarClassesMetadataReader(),
                 new CodeGraphWarDataSourceFactory()
         );
@@ -26,9 +24,8 @@ public class CodeGraphEarDataSourceTest extends CodeGraphDataSourceTestBase {
 
     @Test
     public void testCreationWithFactory() throws URISyntaxException {
-        final URL testEarUrl = getClass().getResource(TEST_EAR_PATH);
         final var factory = new CodeGraphEarDataSourceFactory(new CodeGraphWarDataSourceFactory());
-        final var ds = factory.create(Path.of(testEarUrl.toURI()), new JarClassesMetadataReader());
+        final var ds = factory.create(getJarFile(TEST_EAR_PATH).toPath(), new JarClassesMetadataReader());
 
         makeChecks(ds, 3, 7, 4, 0);
     }

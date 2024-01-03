@@ -2,17 +2,24 @@ package ru.joke.cdgraph.core.impl.maven;
 
 import org.apache.maven.api.model.Model;
 import org.apache.maven.model.v4.MavenStaxReader;
-import ru.joke.cdgraph.core.*;
+import ru.joke.cdgraph.core.ClassesMetadataReader;
+import ru.joke.cdgraph.core.CodeGraphConfigurationException;
+import ru.joke.cdgraph.core.CodeGraphDataSource;
+import ru.joke.cdgraph.core.GraphNode;
 import ru.joke.cdgraph.core.impl.AbstractCodeGraph;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.*;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 @NotThreadSafe
@@ -29,14 +36,18 @@ public final class MavenModuleCodeGraph extends AbstractCodeGraph<MavenModuleCod
     public static final String MODULE_PACKAGING_TAG = "packaging";
 
     public static final String POM = "pom";
-    public static final String POM_XML = "/" + POM + ".xml";
+    public static final String POM_XML = POM + ".xml";
     public static final String ID_PART_DELIMITER = ":";
+
+    static final String WAR_TYPE = "war";
+    static final String EAR_TYPE = "ear";
 
     public MavenModuleCodeGraph(
             @Nonnull CodeGraphDataSource dataSource,
-            @Nonnull ClassesMetadataReader classesMetadataReader,
-            @Nonnull String mavenRepositoryBaseUrl) {
-        super(dataSource, new Context(classesMetadataReader, mavenRepositoryBaseUrl, new MavenStaxReader(), new MavenGraphNodeBuilder()));
+            @Nonnull ClassesMetadataReader<JarFile> classesMetadataReader,
+            @Nonnull String mavenRepositoryBaseUrl,
+            @Nullable PasswordAuthentication mavenRepositoryCredentials) {
+        super(dataSource, Context.create(classesMetadataReader, mavenRepositoryBaseUrl, mavenRepositoryCredentials));
     }
 
     @Override
@@ -48,23 +59,38 @@ public final class MavenModuleCodeGraph extends AbstractCodeGraph<MavenModuleCod
 
         final Set<Pair<GraphNode, Model>> configsPairs = new LinkedHashSet<>(configs.size(), 1);
         final Map<String, Pair<GraphNode, Model>> modulesMap = new HashMap<>();
+        final Map<String, Model> parentModels = new HashMap<>();
 
         configs.stream()
                 .map(config -> readOneConfig(config, context))
+                .sorted(createConfigComparator())
                 .forEach(configPair -> {
                     final GraphNode moduleNode = configPair.first();
+                    final Model moduleModel = configPair.second();
 
-                    configsPairs.add(configPair);
-                    modulesMap.put(moduleNode.id(), configPair);
+                    if (POM.equals(moduleModel.getPackaging())) {
+                        parentModels.put(moduleNode.id(), moduleModel);
+                    } else {
+                        configsPairs.add(configPair);
+                        modulesMap.put(moduleNode.id(), configPair);
+                    }
                 });
 
-        try (final HttpClient client = createHttpClient()) {
+        try (final HttpClient client = createHttpClient(context)) {
             final Set<String> processedModules = new HashSet<>();
-            final var remoteMavenModuleReader = new RemoteMavenModuleReader(client, context.mavenRepositoryBaseUrl, context.classesMetadataReader, context.modelReader);
+            final var remoteMavenModuleReader = createRemoteMavenModuleReader(client, context);
 
             configsPairs.forEach(moduleData -> {
-                final var dependenciesReader = new MavenModuleDependenciesReader(remoteMavenModuleReader, modulesMap, processedModules, context.graphNodeBuilder);
-                dependenciesReader.read(moduleData, Collections.emptySet());
+                final var dependenciesReader =
+                        MavenModuleDependenciesReader
+                                .builder()
+                                        .withGraphNodeBuilder(context.graphNodeBuilder())
+                                        .withModules(modulesMap)
+                                        .withAlreadyProcessedModules(processedModules)
+                                        .withParentModels(parentModels)
+                                        .withRemoteMavenModuleReader(remoteMavenModuleReader)
+                                .build();
+                dependenciesReader.read(moduleData);
             });
 
             return modulesMap.entrySet()
@@ -73,11 +99,33 @@ public final class MavenModuleCodeGraph extends AbstractCodeGraph<MavenModuleCod
         }
     }
 
-    private HttpClient createHttpClient() {
+    private RemoteMavenModuleReader createRemoteMavenModuleReader(@Nonnull HttpClient client, @Nonnull Context context) {
+        return RemoteMavenModuleReader.builder()
+                                        .withHttpClient(client)
+                                        .withMavenModelReader(context.modelReader())
+                                        .withMavenRepositoryBaseUrl(context.mavenRepositoryBaseUrl)
+                                        .withClassesMetadataReader(context.classesMetadataReader)
+                                      .build();
+    }
+
+    private Comparator<Pair<GraphNode, Model>> createConfigComparator() {
+        return Comparator.comparingInt(
+                pair -> WAR_TYPE.equalsIgnoreCase(pair.second().getPackaging())
+                        || EAR_TYPE.equalsIgnoreCase(pair.second().getPackaging()) ? 0 : 1
+        );
+    }
+
+    private HttpClient createHttpClient(@Nonnull Context context) {
         return HttpClient
                 .newBuilder()
                     .connectTimeout(Duration.ofSeconds(5))
                     .followRedirects(HttpClient.Redirect.NORMAL)
+                    .authenticator(new Authenticator() {
+                        @Override
+                        public PasswordAuthentication getPasswordAuthentication() {
+                            return context.mavenRepositoryCredentials();
+                        }
+                    })
                 .build();
     }
 
@@ -104,9 +152,18 @@ public final class MavenModuleCodeGraph extends AbstractCodeGraph<MavenModuleCod
     }
 
     public record Context(
-            @Nonnull ClassesMetadataReader classesMetadataReader,
+            @Nonnull ClassesMetadataReader<JarFile> classesMetadataReader,
             @Nonnull String mavenRepositoryBaseUrl,
             @Nonnull MavenStaxReader modelReader,
-            @Nonnull MavenGraphNodeBuilder graphNodeBuilder) implements AbstractCodeGraph.Context {
+            @Nonnull MavenGraphNodeBuilder graphNodeBuilder,
+            @Nullable PasswordAuthentication mavenRepositoryCredentials) implements AbstractCodeGraph.Context {
+
+        @Nonnull
+        static Context create(
+                @Nonnull ClassesMetadataReader<JarFile> classesMetadataReader,
+                @Nonnull String mavenRepositoryBaseUrl,
+                @Nullable PasswordAuthentication mavenRepositoryCredentials) {
+            return new Context(classesMetadataReader, mavenRepositoryBaseUrl, new MavenStaxReader(), new MavenGraphNodeBuilder(), mavenRepositoryCredentials);
+        }
     }
 }

@@ -6,6 +6,7 @@ import ru.joke.cdgraph.core.CodeGraphDataSourceFactory;
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class CodeGraphWarDataSource extends CodeGraphFatJarDataSource {
 
@@ -16,8 +17,8 @@ public class CodeGraphWarDataSource extends CodeGraphFatJarDataSource {
 
     public CodeGraphWarDataSource(
             @Nonnull Path dataSourcePath,
-            @Nonnull ClassesMetadataReader warMetadataReader,
-            @Nonnull CodeGraphDataSourceFactory jarDataSourceFactory) {
+            @Nonnull ClassesMetadataReader<JarFile> warMetadataReader,
+            @Nonnull CodeGraphDataSourceFactory<JarFile> jarDataSourceFactory) {
         super(dataSourcePath, warMetadataReader, jarDataSourceFactory);
     }
 
