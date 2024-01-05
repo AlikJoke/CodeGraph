@@ -1,0 +1,15 @@
+ru.joke.cdgraph.core.characteristics.impl.bridges.DependencyBridgesCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.clusters.ModuleClusteringCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.counters.DependenciesCountCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.factors.AbstractnessCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.factors.AllModulesAbstractnessCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.factors.StabilityCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.factors.AllModulesStabilityCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.locations.AllClassesDuplicatesLocationsCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.locations.ClassLocationsCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.locations.ConflictingDependenciesCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.locations.PackageLocationsCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.paths.AllPathsBetweenModulesCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.paths.ShortestPathBetweenModulesCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.paths.TransitiveChainsCharacteristicFactory
+ru.joke.cdgraph.core.characteristics.impl.paths.CodeGraphDescriptionCharacteristicFactory

@@ -11,6 +11,8 @@
     <description>Parent module for CodeGraph application</description>
     <modules>
         <module>cdgraph-core</module>
+        <module>cdgraph-console-starter</module>
+        <module>cdgraph-starter-shared</module>
     </modules>
 
     <properties>
@@ -20,7 +22,7 @@
 
         <junit.version>5.9.3</junit.version>
         <mockito.version>5.8.0</mockito.version>
-        <slf4j.version>2.0.9</slf4j.version>
+        <maven.model.version>4.0.0-alpha-10</maven.model.version>
     </properties>
 
     <scm>
@@ -35,13 +37,6 @@
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <version>3.0.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
