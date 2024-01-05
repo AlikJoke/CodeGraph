@@ -51,7 +51,14 @@ import static ru.joke.cdgraph.core.graph.impl.maven.MavenModuleCodeGraph.POM;
  *     characteristic's computed values out of bounds of the configured min/max characteristic
  *     value; default value is {@code true}</li>
  *     <li>{@literal mavenRepository}: Custom maven repository information; when the parameter is not
- *     specified, central maven repository is used</li>
+ *     specified, central maven repository is used. Nested parameters:
+ *     <ul>
+ *         <li>{@literal url}: Url of the maven repository; required parameter</li>
+ *         <li>{@literal login}: User to access to the maven repository; optional parameter</li>
+ *         <li>{@literal password}: Password to access to the maven repository; optional parameter;
+ *         in the configuration, the password can be set via the property (${...})</li>
+ *     </ul>
+ *     </li>
  * </ul>
  *
  * @author Alik
