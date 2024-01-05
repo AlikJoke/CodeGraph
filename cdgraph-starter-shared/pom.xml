@@ -25,5 +25,4 @@
             <version>${maven.model.version}</version>
         </dependency>
     </dependencies>
-
 </project>

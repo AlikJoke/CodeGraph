@@ -1,12 +1,12 @@
 package ru.joke.cdgraph.core.graph.impl.maven;
 
-import org.apache.maven.api.model.Model;
+import org.apache.maven.model.Model;
+import ru.joke.cdgraph.core.graph.GraphNode;
+import ru.joke.cdgraph.core.graph.GraphTag;
 import ru.joke.cdgraph.core.graph.impl.AbstractCodeGraph;
 import ru.joke.cdgraph.core.graph.impl.SimpleGraphNode;
 import ru.joke.cdgraph.core.graph.impl.SimpleGraphTag;
 import ru.joke.cdgraph.core.meta.ClassMetadata;
-import ru.joke.cdgraph.core.graph.GraphNode;
-import ru.joke.cdgraph.core.graph.GraphTag;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;

@@ -67,7 +67,6 @@ module ru.joke.cdgraph.core {
     requires jsr305;
 
     requires maven.model;
-    requires maven.api.model;
 
     requires java.xml;
     requires java.net.http;

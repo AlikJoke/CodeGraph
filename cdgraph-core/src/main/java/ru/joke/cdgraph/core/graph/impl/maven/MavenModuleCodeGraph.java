@@ -1,7 +1,7 @@
 package ru.joke.cdgraph.core.graph.impl.maven;
 
-import org.apache.maven.api.model.Model;
-import org.apache.maven.model.v4.MavenStaxReader;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import ru.joke.cdgraph.core.datasources.CodeGraphDataSource;
 import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.CodeGraphConfigurationException;
@@ -11,9 +11,7 @@ import ru.joke.cdgraph.core.meta.ClassesMetadataReader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.http.HttpClient;
@@ -142,7 +140,7 @@ public final class MavenModuleCodeGraph extends AbstractCodeGraph<MavenModuleCod
 
             final var node = context.graphNodeBuilder.build(moduleId, model, configuration.classesMetadata());
             return new Pair<>(node, model);
-        } catch (IOException | XMLStreamException e) {
+        } catch (Exception e) {
             throw new CodeGraphConfigurationException(e);
         }
     }
@@ -160,7 +158,7 @@ public final class MavenModuleCodeGraph extends AbstractCodeGraph<MavenModuleCod
     public record Context(
             @Nonnull ClassesMetadataReader<JarFile> classesMetadataReader,
             @Nonnull String mavenRepositoryBaseUrl,
-            @Nonnull MavenStaxReader modelReader,
+            @Nonnull MavenXpp3Reader modelReader,
             @Nonnull MavenGraphNodeBuilder graphNodeBuilder,
             @Nullable PasswordAuthentication mavenRepositoryCredentials) implements AbstractCodeGraph.Context {
 
@@ -169,7 +167,7 @@ public final class MavenModuleCodeGraph extends AbstractCodeGraph<MavenModuleCod
                 @Nonnull ClassesMetadataReader<JarFile> classesMetadataReader,
                 @Nonnull String mavenRepositoryBaseUrl,
                 @Nullable PasswordAuthentication mavenRepositoryCredentials) {
-            return new Context(classesMetadataReader, mavenRepositoryBaseUrl, new MavenStaxReader(), new MavenGraphNodeBuilder(), mavenRepositoryCredentials);
+            return new Context(classesMetadataReader, mavenRepositoryBaseUrl, new MavenXpp3Reader(), new MavenGraphNodeBuilder(), mavenRepositoryCredentials);
         }
     }
 }

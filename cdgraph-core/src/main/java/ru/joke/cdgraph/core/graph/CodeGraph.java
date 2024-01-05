@@ -10,9 +10,9 @@ import java.util.Optional;
  *
  * The following applies to the CodeGraph:
  * <ul>
- * <li>The code modules graph is always an acyclic directed graph (DAG), since cyclic dependencies in the code are not allowed;</li>
- * <li>The graph always contains only one root module (without incoming edges);</li>
- * <li>The graph can contain only one node, but cannot be empty.</li>
+ *     <li>The code modules graph is always an acyclic directed graph (DAG), since cyclic dependencies in the code are not allowed;</li>
+ *     <li>The graph always contains only one root module (without incoming edges);</li>
+ *     <li>The graph can contain only one node, but cannot be empty.</li>
  * </ul>
  *
  * The graph is the context for calculating various characteristics of the application being analyzed.

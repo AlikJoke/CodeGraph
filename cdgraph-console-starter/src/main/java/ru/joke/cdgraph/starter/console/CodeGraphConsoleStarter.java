@@ -10,11 +10,11 @@ import java.util.Scanner;
  * using command line arguments.<br>
  * Format description:
  * <ul>
- * <li>Separator between different command line arguments: space</li>
- * <li>Separator between value and parameter identifier: {@literal =}</li>
- * <li>Separator between different characteristics: {@literal ;}</li>
- * <li>Separator between the characteristic identifier and its parameters: {@literal :}</li>
- * <li>Separator between different parameters of one characteristic: {@literal =}</li>
+ *     <li>Separator between different command line arguments: space</li>
+ *     <li>Separator between value and parameter identifier: {@literal =}</li>
+ *     <li>Separator between different characteristics: {@literal ;}</li>
+ *     <li>Separator between the characteristic identifier and its parameters: {@literal :}</li>
+ *     <li>Separator between different parameters of one characteristic: {@literal =}</li>
  * </ul>
  * Example: {@code ds-type=war graph-type=maven-modules characteristics=c1:prm11=val11,prm12=val12;c2:prm21=val21;c3;}
  *

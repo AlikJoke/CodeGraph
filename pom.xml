@@ -13,6 +13,7 @@
         <module>cdgraph-core</module>
         <module>cdgraph-console-starter</module>
         <module>cdgraph-starter-shared</module>
+        <module>cdgraph-maven-plugin</module>
     </modules>
 
     <properties>
@@ -22,7 +23,7 @@
 
         <junit.version>5.9.3</junit.version>
         <mockito.version>5.8.0</mockito.version>
-        <maven.model.version>4.0.0-alpha-10</maven.model.version>
+        <maven.model.version>3.9.6</maven.model.version>
     </properties>
 
     <scm>

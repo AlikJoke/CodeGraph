@@ -1,20 +1,20 @@
 package ru.joke.cdgraph.core.graph.impl;
 
 import org.junit.jupiter.api.Test;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.impl.SPIBasedCodeGraphCharacteristicFactoriesLoader;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicFactoryRegistry;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
 import ru.joke.cdgraph.core.characteristics.impl.paths.PathBetweenModulesCharacteristicParameters;
-import ru.joke.cdgraph.core.client.impl.SimpleCodeGraphClient;
-import ru.joke.cdgraph.core.client.impl.SimpleCodeGraphRequest;
-import ru.joke.cdgraph.core.graph.CodeGraph;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
-import ru.joke.cdgraph.core.datasources.CodeGraphDataSource;
 import ru.joke.cdgraph.core.client.CodeGraphOutputSpecification;
-import ru.joke.cdgraph.core.datasources.impl.CodeGraphJarDataSourceFactory;
-import ru.joke.cdgraph.core.graph.impl.jpms.JavaModuleCodeGraphFactory;
 import ru.joke.cdgraph.core.client.impl.CodeGraphOutputInMemorySink;
+import ru.joke.cdgraph.core.client.impl.SimpleCodeGraphClient;
 import ru.joke.cdgraph.core.client.impl.SimpleCodeGraphOutputSpecification;
+import ru.joke.cdgraph.core.client.impl.SimpleCodeGraphRequest;
+import ru.joke.cdgraph.core.datasources.CodeGraphDataSource;
+import ru.joke.cdgraph.core.datasources.impl.CodeGraphJarDataSourceFactory;
+import ru.joke.cdgraph.core.graph.CodeGraph;
+import ru.joke.cdgraph.core.graph.impl.jpms.JavaModuleCodeGraphFactory;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;

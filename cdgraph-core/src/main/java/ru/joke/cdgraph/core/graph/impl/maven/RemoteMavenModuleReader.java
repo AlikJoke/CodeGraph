@@ -1,15 +1,14 @@
 package ru.joke.cdgraph.core.graph.impl.maven;
 
-import org.apache.maven.api.model.Dependency;
-import org.apache.maven.api.model.Model;
-import org.apache.maven.api.model.Parent;
-import org.apache.maven.model.v4.MavenStaxReader;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import ru.joke.cdgraph.core.graph.CodeGraphConfigurationException;
 import ru.joke.cdgraph.core.meta.ClassMetadata;
 import ru.joke.cdgraph.core.meta.ClassesMetadataReader;
-import ru.joke.cdgraph.core.graph.CodeGraphConfigurationException;
 
 import javax.annotation.Nonnull;
-import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,13 +32,13 @@ final class RemoteMavenModuleReader {
     private final HttpClient httpClient;
     private final String mavenRepositoryBaseUrl;
     private final ClassesMetadataReader<JarFile> classesMetadataReader;
-    private final MavenStaxReader modelReader;
+    private final MavenXpp3Reader modelReader;
 
     private RemoteMavenModuleReader(
             @Nonnull HttpClient httpClient,
             @Nonnull String mavenRepositoryBaseUrl,
             @Nonnull ClassesMetadataReader<JarFile> classesMetadataReader,
-            @Nonnull MavenStaxReader modelReader) {
+            @Nonnull MavenXpp3Reader modelReader) {
         this.httpClient = httpClient;
         this.mavenRepositoryBaseUrl = mavenRepositoryBaseUrl;
         this.classesMetadataReader = classesMetadataReader;
@@ -78,7 +77,7 @@ final class RemoteMavenModuleReader {
     private Model readModuleModel(@Nonnull String uri, boolean skipErrors) {
         try (final var modelStream = executeRequest(uri, skipErrors)) {
             return modelStream == null ? null : modelReader.read(modelStream);
-        } catch (XMLStreamException | IOException | InterruptedException e) {
+        } catch (Exception e) {
             throw new CodeGraphConfigurationException(e);
         }
     }
@@ -151,7 +150,7 @@ final class RemoteMavenModuleReader {
         private HttpClient httpClient;
         private String mavenRepositoryBaseUrl;
         private ClassesMetadataReader<JarFile> classesMetadataReader;
-        private MavenStaxReader mavenModelReader;
+        private MavenXpp3Reader mavenModelReader;
 
         @Nonnull
         Builder withHttpClient(@Nonnull HttpClient httpClient) {
@@ -172,7 +171,7 @@ final class RemoteMavenModuleReader {
         }
 
         @Nonnull
-        Builder withMavenModelReader(@Nonnull MavenStaxReader mavenModelReader) {
+        Builder withMavenModelReader(@Nonnull MavenXpp3Reader mavenModelReader) {
             this.mavenModelReader = mavenModelReader;
             return this;
         }

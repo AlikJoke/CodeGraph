@@ -1,8 +1,8 @@
 package ru.joke.cdgraph.core.graph.impl.maven;
 
-import org.apache.maven.api.model.Dependency;
-import org.apache.maven.api.model.DependencyManagement;
-import org.apache.maven.api.model.Model;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Model;
 import ru.joke.cdgraph.core.graph.CodeGraphConfigurationException;
 import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.graph.GraphNodeRelation;
@@ -85,7 +85,9 @@ final class MavenModuleDependenciesReader {
     }
 
     private Map<String, String> collectProperties(final Model moduleModel) {
-        final Map<String, String> properties = new HashMap<>(moduleModel.getProperties());
+        final Map<String, String> properties = new HashMap<>();
+        moduleModel.getProperties()
+                    .forEach((key, value) -> properties.put(key.toString(), value.toString()));
         if (moduleModel.getParent() != null) {
             properties.put(PROJECT_VERSION_PROPERTY, moduleModel.getParent().getVersion());
         }
@@ -153,7 +155,9 @@ final class MavenModuleDependenciesReader {
         if (dependency.getVersion() != null && !properties.containsKey(dependency.getVersion())) {
             return dependency;
         } else if (dependency.getVersion() != null) {
-            return dependency.withVersion(properties.get(dependency.getVersion()));
+            final var result = dependency.clone();
+            result.setVersion(properties.get(dependency.getVersion()));
+            return result;
         }
 
         final var unversionedArtifactId = composeUnversionedDependencyId(dependency);
@@ -161,7 +165,10 @@ final class MavenModuleDependenciesReader {
 
         if (artifactVersionFromDependenciesManagement != null) {
             final var version = properties.getOrDefault(artifactVersionFromDependenciesManagement.getVersion(), artifactVersionFromDependenciesManagement.getVersion());
-            return dependency.withVersion(version);
+            final var result = dependency.clone();
+            result.setVersion(version);
+
+            return result;
         }
 
         throw new CodeGraphConfigurationException("Unable to find dependency version for " + dependency);
@@ -189,7 +196,8 @@ final class MavenModuleDependenciesReader {
             final var parentDependencies = parentModel.getDependencies();
             dependencies.addAll(parentDependencies);
 
-            parentModel.getProperties().forEach(properties::putIfAbsent);
+            parentModel.getProperties()
+                        .forEach((key, value) -> properties.put(key.toString(), value.toString()));
 
             parent = parentModel.getParent();
         }
