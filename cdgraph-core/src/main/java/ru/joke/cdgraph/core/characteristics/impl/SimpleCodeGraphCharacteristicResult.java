@@ -60,6 +60,12 @@ public class SimpleCodeGraphCharacteristicResult<T> implements CodeGraphCharacte
         return result;
     }
 
+    @Override
+    @Nonnull
+    public String characteristicId() {
+        return characteristicId;
+    }
+
     protected String toJson(final Object result) {
         final Map<String, Object> data = Map.of(
                 "characteristicId", this.characteristicId,

@@ -29,4 +29,11 @@ public interface CodeGraphCharacteristicResult<T> {
      * @return result value, can be {@code null}.
      */
     T get();
+
+    /**
+     * Returns the identifier of the characteristic.
+     * @return the identifier of the characteristic, can not be {@code null}.
+     */
+    @Nonnull
+    String characteristicId();
 }

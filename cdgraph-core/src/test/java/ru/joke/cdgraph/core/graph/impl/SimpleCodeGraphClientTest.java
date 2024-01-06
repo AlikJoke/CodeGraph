@@ -2,6 +2,7 @@ package ru.joke.cdgraph.core.graph.impl;
 
 import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SPIBasedCodeGraphCharacteristicFactoriesLoader;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicFactoryRegistry;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
@@ -32,16 +33,18 @@ public class SimpleCodeGraphClientTest {
         final var requiredCharacteristics = getRequiredCharacteristics();
 
         final List<String> characteristicsResultList = new ArrayList<>();
+        final List<CodeGraphCharacteristicResult<?>> characteristicsResults = new ArrayList<>();
         try (final var sink = new CodeGraphOutputInMemorySink(characteristicsResultList)) {
             final var outputSpecification = new SimpleCodeGraphOutputSpecification(CodeGraphOutputSpecification.Format.JSON, sink);
 
             final var graphRequest = new SimpleCodeGraphRequest(graph, requiredCharacteristics);
 
             final var client = new SimpleCodeGraphClient();
-            client.execute(graphRequest, outputSpecification);
+            characteristicsResults.addAll(client.execute(graphRequest, outputSpecification));
         }
 
         assertEquals(2, characteristicsResultList.size(), "Characteristics results count must be equal");
+        assertEquals(2, characteristicsResults.size(), "Characteristics results count must be equal");
     }
 
     private CodeGraph createGraph() throws URISyntaxException {

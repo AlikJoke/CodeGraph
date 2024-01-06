@@ -1,6 +1,9 @@
 package ru.joke.cdgraph.core.client;
 
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
+
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * A client for executing queries against a code modules graph. Contains a query object
@@ -19,6 +22,9 @@ public interface CodeGraphClient {
      *
      * @param request request query to the graph, can not be {@code null}.
      * @param outputSpecification specification of data output of characteristics calculation results, can not be {@code null}.
+     * @return results of the characteristic's computing, can not be {@code null}.
+     * @see CodeGraphCharacteristicResult
      */
-    void execute(@Nonnull CodeGraphRequest request, @Nonnull CodeGraphOutputSpecification outputSpecification);
+    @Nonnull
+    List<CodeGraphCharacteristicResult<?>> execute(@Nonnull CodeGraphRequest request, @Nonnull CodeGraphOutputSpecification outputSpecification);
 }

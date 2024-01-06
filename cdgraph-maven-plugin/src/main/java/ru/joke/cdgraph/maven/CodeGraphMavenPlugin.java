@@ -9,6 +9,7 @@ import org.apache.maven.project.MavenProject;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicParametersFactory;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SPIBasedCodeGraphCharacteristicFactoriesLoader;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicFactoryRegistry;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicParametersFactory;
@@ -26,6 +27,7 @@ import ru.joke.cdgraph.core.graph.impl.jpms.JavaModuleCodeGraphFactory;
 import ru.joke.cdgraph.core.graph.impl.maven.MavenModuleCodeGraphFactory;
 import ru.joke.cdgraph.maven.params.MavenCodeGraphCharacteristicParameters;
 import ru.joke.cdgraph.maven.params.MavenRepository;
+import ru.joke.cdgraph.maven.params.eval.CharacteristicResultSnippetBasedBoundChecker;
 
 import java.io.*;
 import java.net.PasswordAuthentication;
@@ -45,7 +47,21 @@ import static ru.joke.cdgraph.core.graph.impl.maven.MavenModuleCodeGraph.POM;
  *     <li>{@literal outputFormat}: Type of the output format; required parameter</li>
  *     <li>{@literal outputFile}: Type of the output format; when the parameter is not specified,
  *     console output is used</li>
- *     <li>{@literal characteristics}: List of the required characteristics; required parameter</li>
+ *     <li>{@literal characteristics}: List of the required characteristics; required parameter.
+ *     Nested parameters:
+ *     <ul>
+ *         <li>{@literal boundExpression}: Snippet of the Java code calculating whether the
+ *         calculated value of the characteristic within the permissible boundaries. If snippet
+ *         returns {@code false} and parameter {@code failOnOutOfBounds} is configured to {@code true},
+ *         then the build will be completed with an error. The code as a context receives the value
+ *         of the corresponding characteristic, which corresponds to the variable {@code result}.
+ *         For example, for the abstractness or stability characteristic, which returns an object
+ *         containing the {@code factor()}, the snippet will be like this:
+ *         {@code result.factor() < 0.45}; optional parameter</li>
+ *         <li>{@literal parameters}: Parameters of the characteristic; parameter is optional
+ *         if the characteristic does not require parameters to run</li>
+ *     </ul>
+ *     </li>
  *     <li>{@literal failOnErrors}: Whether the plugin should abort the build on errors; default value is {@code true}</li>
  *     <li>{@literal failOnOutOfBounds}: Whether the plugin should abort the build when the
  *     characteristic's computed values out of bounds of the configured min/max characteristic
@@ -108,7 +124,7 @@ public final class CodeGraphMavenPlugin extends AbstractMojo {
 
     private void checkModuleType() throws MojoFailureException {
         if (POM.equalsIgnoreCase(this.project.getModel().getPackaging())) {
-            throw new MojoFailureException("Plugin must be applied to the project with packaging types: war, ear, jar");
+            throw new MojoFailureException("Plugin must be applied to the project with packaging types: war, ear, jar (only for fat/uber jars)");
         }
     }
 
@@ -118,10 +134,41 @@ public final class CodeGraphMavenPlugin extends AbstractMojo {
         final var request = createGraphRequest();
 
         final var client = new SimpleCodeGraphClient();
-        client.execute(request, outputSpecification);
+        final var results = client.execute(request, outputSpecification);
+
+        checkCharacteristicsBounds(results);
+    }
+
+    private void checkCharacteristicsBounds(final List<CodeGraphCharacteristicResult<?>> results) {
+        final var boundChecker = new CharacteristicResultSnippetBasedBoundChecker(getLog());
+        results.forEach(result -> checkCharacteristicBound(result, boundChecker));
+    }
+
+    private void checkCharacteristicBound(
+            final CodeGraphCharacteristicResult<?> result,
+            final CharacteristicResultSnippetBasedBoundChecker boundChecker) {
+
+        final var params = this.characteristics.get(result.characteristicId());
+        final String boundExpression;
+        if (params == null || (boundExpression = params.getBoundExpression()) == null || boundExpression.isBlank()) {
+            return;
+        }
+
+        if (!boundChecker.check(result, boundExpression)) {
+            final var outOfBoundsException = new CodeGraphCharacteristicOutOfBoundsException(result.characteristicId(), result.toJson());
+            if (this.failOnOutOfBounds) {
+                throw outOfBoundsException;
+            }
+
+            getLog().warn(outOfBoundsException.getMessage());
+        }
     }
 
     private void handleException(final RuntimeException ex) throws MojoFailureException {
+        if (ex instanceof CodeGraphCharacteristicOutOfBoundsException) {
+            throw new MojoFailureException(ex);
+        }
+
         final var sink = createSink();
         try (sink) {
             sink.write(convertExceptionToString(ex));
@@ -133,12 +180,14 @@ public final class CodeGraphMavenPlugin extends AbstractMojo {
     }
 
     private String convertExceptionToString(final RuntimeException exception) {
-        try (final var writer = new StringWriter(); final var pw = new PrintWriter(writer)) {
+        try (final var writer = new StringWriter();
+                final var pw = new PrintWriter(writer)) {
             exception.printStackTrace(pw);
 
             return writer.toString();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            getLog().error(exception);
+            throw new CodeGraphSinkException(e);
         }
     }
 
@@ -158,7 +207,9 @@ public final class CodeGraphMavenPlugin extends AbstractMojo {
 
     private CodeGraphOutputSink createSink() {
         try {
-            return this.outputFile == null ? new CodeGraphOutputStreamSink() : new CodeGraphOutputFileSink(this.outputFile);
+            return this.outputFile == null
+                    ? new CodeGraphOutputStreamSink()
+                    : new CodeGraphOutputFileSink(this.outputFile);
         } catch (FileNotFoundException ex) {
             throw new CodeGraphSinkException(ex);
         }
@@ -208,12 +259,12 @@ public final class CodeGraphMavenPlugin extends AbstractMojo {
         final var factoryRegistry = new SimpleCodeGraphCharacteristicFactoryRegistry();
         factoryRegistry.register(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
 
-        // TODO out of configured bounds checks
         final var parametersFactory = new SimpleCodeGraphCharacteristicParametersFactory();
-        return this.characteristics.entrySet()
-                .stream()
-                .map(e -> createCharacteristic(e.getKey(), e.getValue(), factoryRegistry, parametersFactory))
-                .collect(Collectors.toList());
+        final var characteristicsEntries = this.characteristics.entrySet();
+        return characteristicsEntries
+                    .stream()
+                    .map(e -> createCharacteristic(e.getKey(), e.getValue(), factoryRegistry, parametersFactory))
+                    .collect(Collectors.toList());
     }
 
     private CodeGraphCharacteristic<?> createCharacteristic(

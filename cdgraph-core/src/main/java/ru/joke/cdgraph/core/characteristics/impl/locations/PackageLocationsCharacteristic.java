@@ -8,7 +8,8 @@ import java.util.Set;
 
 /**
  * A characteristic that computes locations of the package (set of modules) with specified name.
- * Allows to find duplicates of packages that have the same name.<br>
+ * Allows to find duplicates of packages that have the same name in different modules
+ * (split packages in JPMS).<br>
  * Type of the characteristic parameters: {@link ResourceLocationsCharacteristicParameters}.
  *
  * @author Alik
