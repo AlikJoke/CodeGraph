@@ -10,13 +10,13 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- * A simple implementation of the characteristic result wrapper.
+ * A simple abstract implementation of the characteristic result wrapper.
  * @param <T> type of the result value
  *
  * @author Alik
  * @see CodeGraphCharacteristicResult
  */
-public class SimpleCodeGraphCharacteristicResult<T> implements CodeGraphCharacteristicResult<T> {
+public abstract class SimpleCodeGraphCharacteristicResult<T> implements CodeGraphCharacteristicResult<T> {
 
     protected static final Gson gson =
             new GsonBuilder()

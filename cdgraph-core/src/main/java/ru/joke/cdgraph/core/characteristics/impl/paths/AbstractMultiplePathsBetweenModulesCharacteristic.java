@@ -1,9 +1,9 @@
 package ru.joke.cdgraph.core.characteristics.impl.paths;
 
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicParameters;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.graph.GraphNodeRelation;
 
@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-abstract class AbstractMultiplePathsBetweenModulesCharacteristic<T extends CodeGraphCharacteristicParameters> implements CodeGraphCharacteristic<List<PathBetweenModules>> {
+abstract class AbstractMultiplePathsBetweenModulesCharacteristic<T extends CodeGraphCharacteristicParameters> extends
+        VisualizedPathBetweenModulesCharacteristicBase<List<PathBetweenModules>> {
 
     protected final String id;
     protected final T parameters;
@@ -24,7 +25,9 @@ abstract class AbstractMultiplePathsBetweenModulesCharacteristic<T extends CodeG
         this.parameters = parameters;
     }
 
-    protected CodeGraphCharacteristicResult<List<PathBetweenModules>> buildComputationResult(final List<List<GraphNodeRelation>> allPaths) {
+    protected CodeGraphCharacteristicResult<List<PathBetweenModules>> buildComputationResult(
+            final CodeGraph graph,
+            final List<List<GraphNodeRelation>> allPaths) {
 
         final var resultPaths = allPaths
                                     .stream()
@@ -45,6 +48,17 @@ abstract class AbstractMultiplePathsBetweenModulesCharacteristic<T extends CodeG
                                 )
                                 .toList();
                 return toJson(nodesIdsInPath);
+            }
+
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                final var graphCopy = graph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+                for (int i = 0; i < resultPaths.size(); i++) {
+                    addTagsToPathComponentsInGraphCopy(graphCopy, resultPaths.get(i), i + 1);
+                }
+
+                return graphCopy;
             }
         };
     }

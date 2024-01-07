@@ -1,13 +1,13 @@
 package ru.joke.cdgraph.core.characteristics.impl.locations;
 
-import ru.joke.cdgraph.core.meta.ClassMetadata;
+import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.GraphNode;
+import ru.joke.cdgraph.core.graph.GraphTag;
+import ru.joke.cdgraph.core.graph.impl.SimpleGraphTag;
+import ru.joke.cdgraph.core.meta.ClassMetadata;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
  * @see AllClassesDuplicatesLocationsCharacteristicFactoryDescriptor
  */
 final class AllClassesDuplicatesLocationsCharacteristic extends AbstractResourceLocationsCharacteristic<Set<ClassDuplicatesLocations>> {
+
+    private static final String CLASS_NAME_TAG = "class";
 
     private final Map<String, Set<GraphNode>> class2moduleMap = new HashMap<>();
 
@@ -61,4 +63,36 @@ final class AllClassesDuplicatesLocationsCharacteristic extends AbstractResource
                 .collect(Collectors.toSet());
     }
 
+    @Nonnull
+    @Override
+    protected CodeGraph transformResultToVisualizedGraph(
+            @Nonnull CodeGraph codeGraph,
+            @Nonnull Set<ClassDuplicatesLocations> result) {
+
+        final var graphCopy = codeGraph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+        result.forEach(location -> addClassTagToModules(graphCopy, location));
+
+        return graphCopy;
+    }
+
+    private void addClassTagToModules(
+            final CodeGraph graphCopy,
+            final ClassDuplicatesLocations locations) {
+        locations.modules()
+                    .stream()
+                    .map(GraphNode::id)
+                    .map(graphCopy::findNodeById)
+                    .flatMap(Optional::stream)
+                    .forEach(node -> addClassTag(node, locations.classQualifiedName()));
+    }
+
+    private void addClassTag(final GraphNode node, final String className) {
+        @SuppressWarnings("unchecked")
+        final GraphTag<List<String>> tag =
+                (GraphTag<List<String>>) node.tags().computeIfAbsent(
+                        CLASS_NAME_TAG,
+                        tagId -> new SimpleGraphTag<>(tagId, new ArrayList<>())
+                );
+        tag.value().add(className);
+    }
 }

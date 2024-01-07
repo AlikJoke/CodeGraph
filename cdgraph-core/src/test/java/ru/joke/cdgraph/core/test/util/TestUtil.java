@@ -108,6 +108,12 @@ public abstract class TestUtil {
             public Collection<GraphNode> findAllNodes() {
                 return allNodesMap.values();
             }
+
+            @Override
+            @Nonnull
+            public CodeGraph clone(@Nonnull CloneOptions... options) {
+                throw new UnsupportedOperationException();
+            }
         };
     }
 

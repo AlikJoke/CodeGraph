@@ -4,10 +4,11 @@ import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
-import ru.joke.cdgraph.core.graph.CodeGraph;
-import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
+import ru.joke.cdgraph.core.graph.CodeGraph;
+import ru.joke.cdgraph.core.graph.GraphNode;
+import ru.joke.cdgraph.core.graph.impl.SimpleGraphTag;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
  * @see AllModulesStabilityCharacteristicFactoryDescriptor
  */
 final class AllModulesStabilityCharacteristic implements CodeGraphCharacteristic<Map<String, Factor>> {
+
+    private static final String STABILITY_TAG = "stability";
 
     private final String id;
     private final CodeGraphCharacteristicFactoryRegistry registry;
@@ -44,7 +47,23 @@ final class AllModulesStabilityCharacteristic implements CodeGraphCharacteristic
                         .stream()
                         .map(GraphNode::id)
                         .collect(Collectors.toMap(Function.identity(), nodeId -> computeCharacteristic(nodeId, graph)));
-        return new SimpleCodeGraphCharacteristicResult<>(this.id, factors);
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, factors) {
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                final var graphCopy = graph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+                graphCopy.findAllNodes()
+                            .forEach(this::addStabilityTag);
+
+                return graphCopy;
+            }
+
+            private void addStabilityTag(final GraphNode node) {
+                final var stabilityFactor = factors.get(node.id());
+                final var tag = new SimpleGraphTag<>(STABILITY_TAG, stabilityFactor.factor());
+                node.tags().put(tag.name(), tag);
+            }
+        };
     }
 
     private Factor computeCharacteristic(final String nodeId, final CodeGraph graph) {

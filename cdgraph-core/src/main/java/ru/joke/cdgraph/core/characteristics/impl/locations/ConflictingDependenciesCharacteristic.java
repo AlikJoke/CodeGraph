@@ -6,6 +6,7 @@ import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.graph.GraphTag;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.graph.impl.SimpleGraphTag;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -26,6 +27,8 @@ import static ru.joke.cdgraph.core.graph.impl.AbstractCodeGraph.VERSION_TAG;
  * @see ConflictingDependenciesCharacteristicFactoryDescriptor
  */
 final class ConflictingDependenciesCharacteristic implements CodeGraphCharacteristic<Set<ConflictingDependencies>> {
+
+    private static final String CONFLICTING_DEPENDENCIES_TAG = "conflicting-group";
 
     private final String id;
 
@@ -50,11 +53,34 @@ final class ConflictingDependenciesCharacteristic implements CodeGraphCharacteri
             @Override
             @Nonnull
             public String toJson() {
-                final Set<Set<String>> modulesIds = result
-                                                        .stream()
-                                                        .map(ConflictingDependenciesCharacteristic.this::convertNodesToIds)
-                                                        .collect(Collectors.toSet());
+                final var modulesIds = result
+                                        .stream()
+                                        .map(ConflictingDependenciesCharacteristic.this::convertNodesToIds)
+                                        .collect(Collectors.toSet());
                 return toJson(modulesIds);
+            }
+
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                final var graphCopy = graph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+
+                int groupIndex = 0;
+                for (final var conflictingGroup : result) {
+                    addConflictingGroupIndexTagsToGroupOfModules(conflictingGroup, groupIndex++);
+                }
+
+                return graphCopy;
+            }
+
+            private void addConflictingGroupIndexTagsToGroupOfModules(final ConflictingDependencies group, final int groupIndex) {
+                group.conflictingDependencies()
+                        .forEach(module -> addConflictingGroupIndexTagToNode(module, groupIndex));
+            }
+
+            private void addConflictingGroupIndexTagToNode(final GraphNode node, final int groupIndex) {
+                final var tag = new SimpleGraphTag<>(CONFLICTING_DEPENDENCIES_TAG, groupIndex);
+                node.tags().put(tag.name(), tag);
             }
         };
     }

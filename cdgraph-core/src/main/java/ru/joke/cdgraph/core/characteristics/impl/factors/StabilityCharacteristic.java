@@ -6,6 +6,8 @@ import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicComputationException;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
+import ru.joke.cdgraph.core.graph.GraphNode;
+import ru.joke.cdgraph.core.graph.impl.SimpleGraphTag;
 
 import javax.annotation.Nonnull;
 
@@ -21,6 +23,8 @@ import javax.annotation.Nonnull;
  * @see StabilityCharacteristicFactoryDescriptor
  */
 final class StabilityCharacteristic implements CodeGraphCharacteristic<Factor> {
+
+    private static final String STABILITY_TAG = "stability";
 
     private final String id;
     private final SingleModuleCharacteristicParameters parameters;
@@ -47,6 +51,21 @@ final class StabilityCharacteristic implements CodeGraphCharacteristic<Factor> {
                                     .anyMatch(relation -> targetNode.equals(relation.target())))
                             .count();
         final double stability = 1 - (double) outputDependencies / (inputDependencies + outputDependencies);
-        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, new Factor(stability));
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, new Factor(stability)) {
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                final var graphCopy = graph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+                graphCopy.findNodeById(targetNode.id())
+                            .ifPresent(this::addStabilityTag);
+
+                return graphCopy;
+            }
+
+            private void addStabilityTag(final GraphNode node) {
+                final var tag = new SimpleGraphTag<>(STABILITY_TAG, stability);
+                node.tags().put(tag.name(), tag);
+            }
+        };
     }
 }

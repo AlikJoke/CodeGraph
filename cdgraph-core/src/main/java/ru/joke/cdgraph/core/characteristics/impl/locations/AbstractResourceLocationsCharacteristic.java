@@ -3,10 +3,10 @@ package ru.joke.cdgraph.core.characteristics.impl.locations;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicParameters;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.graph.GraphTag;
-import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.meta.ClassMetadata;
 
 import javax.annotation.Nonnull;
@@ -45,6 +45,12 @@ abstract class AbstractResourceLocationsCharacteristic<T> implements CodeGraphCh
             public String toJson() {
                 return toJson(transformResultToJsonFormat(get()));
             }
+
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                return transformResultToVisualizedGraph(graph, get());
+            }
         };
     }
 
@@ -55,6 +61,9 @@ abstract class AbstractResourceLocationsCharacteristic<T> implements CodeGraphCh
 
     @Nonnull
     protected abstract Object transformResultToJsonFormat(@Nonnull T result);
+
+    @Nonnull
+    protected abstract CodeGraph transformResultToVisualizedGraph(@Nonnull CodeGraph codeGraph, @Nonnull T result);
 
     @Nonnull
     protected Set<String> convertToIds(@Nonnull Set<GraphNode> nodes) {

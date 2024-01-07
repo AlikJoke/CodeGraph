@@ -1,9 +1,6 @@
 package ru.joke.cdgraph.core.characteristics.impl.paths;
 
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.characteristics.*;
 import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
@@ -56,6 +53,12 @@ final class CodeGraphDescriptionCharacteristic implements CodeGraphCharacteristi
                                 )
                                 .toList();
                 return toJson(nodesIdsInPath);
+            }
+
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                return graph.clone(CodeGraph.CloneOptions.CLEAR_CLASSES_METADATA);
             }
         };
     }

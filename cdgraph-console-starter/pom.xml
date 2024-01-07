@@ -11,7 +11,11 @@
 
     <artifactId>cdgraph-console-starter</artifactId>
     <description>CodeGraph Console Starter</description>
-    <name>CodeGraph Console Starter</name>
+    <name>CodeGraph Console Starter Module</name>
+
+    <properties>
+        <gs.version>2.0</gs.version>
+    </properties>
 
    <dependencies>
        <dependency>
@@ -25,6 +29,17 @@
            <version>${project.version}</version>
            <type>test-jar</type>
            <scope>test</scope>
+       </dependency>
+
+       <dependency>
+           <groupId>org.graphstream</groupId>
+           <artifactId>gs-core</artifactId>
+           <version>${gs.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.graphstream</groupId>
+           <artifactId>gs-ui-swing</artifactId>
+           <version>${gs.version}</version>
        </dependency>
    </dependencies>
 

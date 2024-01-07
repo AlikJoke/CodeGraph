@@ -1,5 +1,7 @@
 package ru.joke.cdgraph.core.characteristics;
 
+import ru.joke.cdgraph.core.graph.CodeGraph;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -36,4 +38,14 @@ public interface CodeGraphCharacteristicResult<T> {
      */
     @Nonnull
     String characteristicId();
+
+    /**
+     * Returns the graph to visualize.
+     * @return graph to visualize, can not be {@code null}.
+     * @implSpec Implementations should returns source graph or copy of the source graph
+     * without modifications of the source graph.
+     * @see CodeGraph
+     */
+    @Nonnull
+    CodeGraph visualizedGraph();
 }

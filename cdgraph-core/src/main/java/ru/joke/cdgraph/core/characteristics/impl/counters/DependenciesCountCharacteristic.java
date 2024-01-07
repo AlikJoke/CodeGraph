@@ -1,11 +1,13 @@
 package ru.joke.cdgraph.core.characteristics.impl.counters;
 
-import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicComputationException;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
+import ru.joke.cdgraph.core.graph.CodeGraph;
+import ru.joke.cdgraph.core.graph.GraphNode;
+import ru.joke.cdgraph.core.graph.impl.SimpleGraphTag;
 
 import javax.annotation.Nonnull;
 
@@ -22,6 +24,9 @@ import javax.annotation.Nonnull;
  * @see DependenciesCountCharacteristicFactoryDescriptor
  */
 final class DependenciesCountCharacteristic implements CodeGraphCharacteristic<DependenciesCount> {
+
+    private static final String INPUT_DEPENDENCIES_COUNT_TAG = "input";
+    private static final String OUTPUT_DEPENDENCIES_COUNT_TAG = "output";
 
     private final String id;
     private final SingleModuleCharacteristicParameters parameters;
@@ -47,6 +52,25 @@ final class DependenciesCountCharacteristic implements CodeGraphCharacteristic<D
                                             .stream()
                                             .anyMatch(relation -> targetNode.equals(relation.target())))
                             .count();
-       return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, new DependenciesCount(inputDependencies, outputDependencies));
+       final var dependenciesCount = new DependenciesCount(inputDependencies, outputDependencies);
+       return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, dependenciesCount) {
+           @Nonnull
+           @Override
+           public CodeGraph visualizedGraph() {
+               final CodeGraph graphCopy = graph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+               graphCopy.findNodeById(targetNode.id())
+                        .ifPresent(this::addDependenciesCountTags);
+
+               return graphCopy;
+           }
+
+           private void addDependenciesCountTags(final GraphNode node) {
+               final var inputCountTag = new SimpleGraphTag<>(INPUT_DEPENDENCIES_COUNT_TAG, inputDependencies);
+               final var outputCountTag = new SimpleGraphTag<>(OUTPUT_DEPENDENCIES_COUNT_TAG, outputDependencies);
+
+               node.tags().put(inputCountTag.name(), inputCountTag);
+               node.tags().put(outputCountTag.name(), outputCountTag);
+           }
+       };
     }
 }

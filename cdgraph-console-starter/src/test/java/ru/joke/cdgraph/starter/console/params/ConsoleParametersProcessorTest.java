@@ -54,12 +54,7 @@ public class ConsoleParametersProcessorTest {
     }
 
     private String arrayToString(final String[] args) {
-        var sb = new StringBuilder();
-        for (var arg : args) {
-            sb.append(arg).append(" ");
-        }
-
-        return sb.deleteCharAt(sb.length() - 1).toString();
+        return String.join(" ", args);
     }
 
     private void checkParameterExistence(final Object valueFromParams, final Object expectedParams) {

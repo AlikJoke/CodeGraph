@@ -54,6 +54,19 @@ public final class MavenModuleCodeGraph extends AbstractCodeGraph<MavenModuleCod
         super(dataSource, Context.create(classesMetadataReader, mavenRepositoryBaseUrl, mavenRepositoryCredentials));
     }
 
+    private MavenModuleCodeGraph(@Nonnull GraphNode rootNode, @Nonnull Map<String, GraphNode> nodes) {
+        super(rootNode, nodes);
+    }
+
+    @Override
+    @Nonnull
+    public CodeGraph clone(@Nonnull CloneOptions... options) {
+        final var nodesCopies = cloneGraphNodes(options);
+        final var rootNodeCopy = nodesCopies.get(findRootNode().id());
+
+        return new MavenModuleCodeGraph(rootNodeCopy, nodesCopies);
+    }
+
     @Override
     protected Map<String, GraphNode> buildNodesMap(
             @Nonnull CodeGraphDataSource dataSource,

@@ -4,11 +4,12 @@ import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
 import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.graph.GraphTag;
-import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
-import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
+import ru.joke.cdgraph.core.graph.impl.SimpleGraphTag;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -29,6 +30,8 @@ import static ru.joke.cdgraph.core.graph.impl.AbstractCodeGraph.SOURCE_MODULE_TA
  */
 final class AllModulesAbstractnessCharacteristic implements CodeGraphCharacteristic<Map<String, Factor>> {
 
+    private static final String ABSTRACTNESS_TAG = "abstractness";
+
     private final String id;
     private final CodeGraphCharacteristicFactoryRegistry registry;
 
@@ -48,7 +51,23 @@ final class AllModulesAbstractnessCharacteristic implements CodeGraphCharacteris
                         .filter(this::isSourceModule)
                         .map(GraphNode::id)
                         .collect(Collectors.toMap(Function.identity(), nodeId -> computeCharacteristic(nodeId, graph)));
-        return new SimpleCodeGraphCharacteristicResult<>(this.id, factors);
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, factors) {
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                final var graphCopy = graph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+                graphCopy.findAllNodes()
+                            .forEach(this::addAbstractnessTag);
+
+                return graphCopy;
+            }
+
+            private void addAbstractnessTag(final GraphNode node) {
+                final var abstractnessFactor = factors.get(node.id());
+                final var tag = new SimpleGraphTag<>(ABSTRACTNESS_TAG, abstractnessFactor.factor());
+                node.tags().put(tag.name(), tag);
+            }
+        };
     }
 
     private boolean isSourceModule(final GraphNode node) {

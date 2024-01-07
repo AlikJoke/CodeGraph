@@ -38,7 +38,7 @@ final class TransitiveChainsCharacteristic extends AbstractMultiplePathsBetweenM
         sourceNode.relations()
                     .forEach(relation -> scanSourceRelation(relation, chains));
 
-        return buildComputationResult(chains);
+        return buildComputationResult(graph, chains);
     }
 
     private void scanSourceRelation(

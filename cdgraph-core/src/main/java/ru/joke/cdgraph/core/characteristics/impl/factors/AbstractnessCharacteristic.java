@@ -4,9 +4,11 @@ import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicComputationException;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.graph.CodeGraph;
+import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.graph.GraphTag;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
+import ru.joke.cdgraph.core.graph.impl.SimpleGraphTag;
 import ru.joke.cdgraph.core.meta.ClassMetadata;
 
 import javax.annotation.Nonnull;
@@ -29,6 +31,8 @@ import static ru.joke.cdgraph.core.graph.impl.AbstractCodeGraph.SOURCE_MODULE_TA
  * @see AbstractnessCharacteristicFactoryDescriptor
  */
 final class AbstractnessCharacteristic implements CodeGraphCharacteristic<Factor> {
+
+    private static final String ABSTRACTNESS_TAG = "abstractness";
 
     private final String id;
     private final SingleModuleCharacteristicParameters parameters;
@@ -65,6 +69,21 @@ final class AbstractnessCharacteristic implements CodeGraphCharacteristic<Factor
                                             .filter(Predicate.not(ClassMetadata.ClassType::isConcrete))
                                             .count();
         final double abstractness = classesMetadata.isEmpty() ? 1.0 : (double) abstractElements / classesMetadata.size();
-        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, new Factor(abstractness));
+        return new SimpleCodeGraphCharacteristicResult<>(this.id, this.parameters, new Factor(abstractness)) {
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                final var graphCopy = graph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+                graphCopy.findNodeById(targetNode.id())
+                            .ifPresent(this::addAbstractnessTag);
+
+                return graphCopy;
+            }
+
+            private void addAbstractnessTag(final GraphNode node) {
+                final var tag = new SimpleGraphTag<>(ABSTRACTNESS_TAG, abstractness);
+                node.tags().put(tag.name(), tag);
+            }
+        };
     }
 }

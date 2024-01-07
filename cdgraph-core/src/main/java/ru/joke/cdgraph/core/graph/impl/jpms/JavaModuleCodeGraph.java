@@ -39,6 +39,19 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph<AbstractCodeGra
         super(dataSource, new AbstractCodeGraph.Context() {});
     }
 
+    private JavaModuleCodeGraph(@Nonnull GraphNode rootNode, @Nonnull Map<String, GraphNode> nodes) {
+        super(rootNode, nodes);
+    }
+
+    @Override
+    @Nonnull
+    public CodeGraph clone(@Nonnull CloneOptions... options) {
+        final var nodesCopies = cloneGraphNodes(options);
+        final var rootNodeCopy = nodesCopies.get(findRootNode().id());
+
+        return new JavaModuleCodeGraph(rootNodeCopy, nodesCopies);
+    }
+
     @Override
     protected Map<String, GraphNode> buildNodesMap(
             @Nonnull CodeGraphDataSource dataSource,
@@ -71,12 +84,12 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph<AbstractCodeGra
     }
 
     @Override
-    protected GraphNode findRootNode(
+    protected GraphNode findSingleRootNode(
             @Nonnull Map<String, GraphNode> nodesMap,
             @Nonnull Set<String> rootNodesIds,
             @Nonnull CodeGraphDataSource dataSource) {
         if (rootNodesIds.size() <= 1) {
-            return super.findRootNode(nodesMap, rootNodesIds, dataSource);
+            return super.findSingleRootNode(nodesMap, rootNodesIds, dataSource);
         }
 
         final Map<String, GraphTag<?>> tags = Map.of(IS_SYNTHETIC_TAG, new SimpleGraphTag<>(IS_SYNTHETIC_TAG, true));

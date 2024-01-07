@@ -84,6 +84,12 @@ public class ConflictingDependenciesCharacteristicTest {
             public Collection<GraphNode> findAllNodes() {
                 return nodesMap.values();
             }
+
+            @Override
+            @Nonnull
+            public CodeGraph clone(@Nonnull CloneOptions... options) {
+                throw new UnsupportedOperationException();
+            }
         };
     }
 

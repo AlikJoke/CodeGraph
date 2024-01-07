@@ -4,15 +4,16 @@ import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
-import ru.joke.cdgraph.core.graph.CodeGraph;
-import ru.joke.cdgraph.core.graph.GraphNode;
-import ru.joke.cdgraph.core.graph.GraphNodeRelation;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
 import ru.joke.cdgraph.core.characteristics.impl.paths.AllPathsBetweenModulesCharacteristicFactoryDescriptor;
 import ru.joke.cdgraph.core.characteristics.impl.paths.PathBetweenModules;
 import ru.joke.cdgraph.core.characteristics.impl.paths.PathBetweenModulesCharacteristicParameters;
 import ru.joke.cdgraph.core.characteristics.impl.paths.TransitiveChainsCharacteristicFactoryDescriptor;
+import ru.joke.cdgraph.core.graph.CodeGraph;
+import ru.joke.cdgraph.core.graph.GraphNode;
+import ru.joke.cdgraph.core.graph.GraphNodeRelation;
+import ru.joke.cdgraph.core.graph.impl.SimpleGraphTag;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -36,6 +37,8 @@ import java.util.stream.Collectors;
  * @see DependencyBridgesCharacteristicFactoryDescriptor
  */
 final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<Set<GraphNodeRelation>> {
+
+    private static final String BRIDGE_TAG = "bridge";
 
     private final String id;
     private final CodeGraphCharacteristicFactoryRegistry registry;
@@ -82,6 +85,30 @@ final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<S
                 final var bridgesMaps = convertBridgesToMap(bridges);
                 return toJson(bridgesMaps);
             }
+
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                final var graphCopy = graph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+                bridges.forEach(bridge -> addBridgeTagInGraphCopy(bridge, graphCopy));
+
+                return graphCopy;
+            }
+
+            private void addBridgeTagInGraphCopy(final GraphNodeRelation bridge, final CodeGraph graphCopy) {
+                graphCopy.findNodeById(bridge.source().id())
+                            .stream()
+                            .map(GraphNode::relations)
+                            .flatMap(Set::stream)
+                            .filter(relation -> relation.target().equals(bridge.target()))
+                            .findAny()
+                            .ifPresent(this::addBridgeTag);
+            }
+
+            private void addBridgeTag(final GraphNodeRelation relation) {
+                final var bridgeTag = new SimpleGraphTag<>(BRIDGE_TAG, true);
+                relation.tags().put(bridgeTag.name(), bridgeTag);
+            }
         };
     }
 
@@ -120,6 +147,17 @@ final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<S
         final var allPathsBetweenNodesResult = allPathsBetweenNodesCharacteristic.compute(graph);
 
         final List<PathBetweenModules> allPathsBetweenNodes = allPathsBetweenNodesResult.get();
-        return allPathsBetweenNodes.size() > 1;
+        return allPathsBetweenNodes.size() > 1 && isLastPathPartDiffers(allPathsBetweenNodes);
+    }
+
+    private boolean isLastPathPartDiffers(final List<PathBetweenModules> paths) {
+        final Set<GraphNodeRelation> lastPathParts = new HashSet<>();
+        for (final var path : paths) {
+            if (lastPathParts.add(path.relationsInPath().getLast()) && lastPathParts.size() > 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

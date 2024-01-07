@@ -51,4 +51,31 @@ public interface CodeGraph {
      */
     @Nonnull
     Collection<GraphNode> findAllNodes();
+
+    /**
+     * Performs graph cloning (with deep copies of the nodes and edges) taking
+     * into account cloning options.
+     * @param options cloning options, can not be {@code null}.
+     * @return cloned graph, can not be {@code null}.
+     * @see CloneOptions
+     */
+    @Nonnull
+    CodeGraph clone(@Nonnull CloneOptions... options);
+
+    /**
+     * CodeGraph cloning options.
+     * @author Alik
+     */
+    enum CloneOptions {
+
+        /**
+         * Creation of the copy with cleared nodes and edges tags.
+         */
+        CLEAR_TAGS,
+
+        /**
+         * Creation of the copy with cleared classes metadata tags in nodes.
+         */
+        CLEAR_CLASSES_METADATA
+    }
 }

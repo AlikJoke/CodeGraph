@@ -87,6 +87,12 @@ public class DependencyBridgesCharacteristicTest {
             public Collection<GraphNode> findAllNodes() {
                 return nodes;
             }
+
+            @Override
+            @Nonnull
+            public CodeGraph clone(@Nonnull CloneOptions... options) {
+                throw new UnsupportedOperationException();
+            }
         };
     }
 

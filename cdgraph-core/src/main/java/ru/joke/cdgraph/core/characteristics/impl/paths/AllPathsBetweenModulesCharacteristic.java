@@ -41,7 +41,7 @@ final class AllPathsBetweenModulesCharacteristic extends AbstractMultiplePathsBe
         sourceNode.relations()
                     .forEach(relation -> scanSourceRelation(relation, allPaths));
 
-        return buildComputationResult(allPaths);
+        return buildComputationResult(graph, allPaths);
     }
 
     private void scanSourceRelation(

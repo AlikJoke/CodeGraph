@@ -1,12 +1,11 @@
 package ru.joke.cdgraph.core.characteristics.impl.paths;
 
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicComputationException;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.graph.GraphNodeRelation;
-import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -22,7 +21,7 @@ import java.util.*;
  * @see ShortestPathBetweenModulesCharacteristicFactory
  * @see ShortestPathBetweenModulesCharacteristicFactoryDescriptor
  */
-final class ShortestPathBetweenModulesCharacteristic implements CodeGraphCharacteristic<PathBetweenModules> {
+final class ShortestPathBetweenModulesCharacteristic extends VisualizedPathBetweenModulesCharacteristicBase<PathBetweenModules> {
 
     private final String id;
     private final PathBetweenModulesCharacteristicParameters parameters;
@@ -46,10 +45,11 @@ final class ShortestPathBetweenModulesCharacteristic implements CodeGraphCharact
         final Map<GraphNode, List<GraphNodeRelation>> relationsByTarget = new HashMap<>();
         final List<GraphNodeRelation> relationsInPath = scanFrontRelations(List.of(sourceNode), relationsByTarget);
 
-        return buildComputationResult(sourceNode, relationsInPath);
+        return buildComputationResult(graph, sourceNode, relationsInPath);
     }
 
     private CodeGraphCharacteristicResult<PathBetweenModules> buildComputationResult(
+            final CodeGraph graph,
             final GraphNode sourceNode,
             final List<GraphNodeRelation> relationsInPath) {
 
@@ -73,6 +73,15 @@ final class ShortestPathBetweenModulesCharacteristic implements CodeGraphCharact
                                 .map(GraphNode::id)
                                 .toList();
                 return toJson(nodesIdsInPath);
+            }
+
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                final var graphCopy = graph.clone(CodeGraph.CloneOptions.CLEAR_TAGS);
+                addTagsToPathComponentsInGraphCopy(graphCopy, resultData, 1);
+
+                return graphCopy;
             }
         };
     }

@@ -1,8 +1,11 @@
 package ru.joke.cdgraph.starter.console;
 
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.client.impl.SimpleCodeGraphClient;
 import ru.joke.cdgraph.starter.console.params.ConsoleParametersProcessor;
+import ru.joke.cdgraph.starter.console.visualizer.CodeGraphCharacteristicResultsVisualizer;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -16,7 +19,8 @@ import java.util.Scanner;
  *     <li>Separator between the characteristic identifier and its parameters: {@literal :}</li>
  *     <li>Separator between different parameters of one characteristic: {@literal =}</li>
  * </ul>
- * Example: {@code ds-type=war graph-type=maven-modules characteristics=c1:prm11=val11,prm12=val12;c2:prm21=val21;c3;}
+ * Example: {@code ds-type=war graph-type=maven-modules characteristics=c1:prm11=val11,prm12=val12;c2:prm21=val21;c3;}<br>
+ * To visualize results of the characteristics provide argument {@code visualize=true}.
  *
  * @author Alik
  */
@@ -31,6 +35,7 @@ public final class CodeGraphConsoleStarter {
     public static final String OUTPUT_FILE_PATH = "output-file";
     public static final String CHARACTERISTICS = "characteristics";
     public static final String CACHE_GRAPH = "enable-graph-caching";
+    public static final String VISUALIZE = "visualize";
 
     public static final String MAVEN_REPO_BASE_URL = "maven-repository-url";
     public static final String MAVEN_REPO_USER = "maven-repository-user";
@@ -87,6 +92,16 @@ public final class CodeGraphConsoleStarter {
         final var outputSpecification = new ConsoleCodeGraphOutputSpecification(parametersMap);
 
         final var client = new SimpleCodeGraphClient();
-        client.execute(codeGraphRequest, outputSpecification);
+        final var results = client.execute(codeGraphRequest, outputSpecification);
+
+        final boolean visualizeResults = Boolean.parseBoolean(parametersMap.get(VISUALIZE));
+        if (visualizeResults) {
+            visualizeResults(results);
+        }
+    }
+
+    private static void visualizeResults(final List<CodeGraphCharacteristicResult<?>> results) {
+        final var visualizer = new CodeGraphCharacteristicResultsVisualizer(results);
+        visualizer.visualize();
     }
 }

@@ -2,10 +2,12 @@ package ru.joke.cdgraph.core.characteristics.impl.clusters;
 
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.datasources.CodeGraphDataSource;
 import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.graph.GraphNodeRelation;
-import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
+import ru.joke.cdgraph.core.graph.impl.*;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -83,6 +85,69 @@ final class ModuleClusteringCharacteristic implements CodeGraphCharacteristic<Co
             public String toJson() {
                 final var clustersMaps = createClusterDataMaps(resultClustersList);
                 return toJson(clustersMaps);
+            }
+
+            @Nonnull
+            @Override
+            public CodeGraph visualizedGraph() {
+                final Map<String, GraphNode> nodes = buildNodesMap();
+                return new AbstractCodeGraph<>(nodes) {
+                    @Override
+                    protected Map<String, GraphNode> buildNodesMap(@Nonnull CodeGraphDataSource dataSource, @Nonnull Context context) {
+                        return nodes;
+                    }
+
+                    @Override
+                    @Nonnull
+                    public CodeGraph clone(@Nonnull CloneOptions... options) {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+
+            private Map<String, GraphNode> buildNodesMap() {
+
+                final Map<String, GraphNode> nodes = new HashMap<>();
+
+                int id = 0;
+                for (final Cluster cluster : clusters) {
+                    final var graphClusterNode = nodes.computeIfAbsent(
+                            String.valueOf(++id),
+                            clusterId -> createClusterNode(clusterId, cluster)
+                    );
+
+                    for (final ClusterRelation relation : cluster.relations()) {
+                        final var targetGraphClusterNode = nodes.computeIfAbsent(
+                                String.valueOf(++id),
+                                clusterId -> createClusterNode(clusterId, relation.target())
+                        );
+
+                        final var graphRelation = new SimpleGraphNodeRelation(
+                                graphClusterNode,
+                                targetGraphClusterNode,
+                                new SimpleRelationType("depends"),
+                                Collections.emptyMap()
+                        );
+                        graphClusterNode.relations().add(graphRelation);
+                    }
+                }
+
+                return nodes;
+            }
+
+            private GraphNode createClusterNode(final String clusterId, final Cluster cluster) {
+                final var includedNodesIds =
+                        cluster.includedNodes()
+                                .stream()
+                                .map(GraphNode::id)
+                                .collect(Collectors.toSet());
+
+                final var includedNodesTag = new SimpleGraphTag<>("included-source-nodes", includedNodesIds);
+                return new SimpleGraphNode(
+                        clusterId,
+                        new HashSet<>(cluster.relations().size(), 1),
+                        Map.of(includedNodesTag.name(), includedNodesTag)
+                );
             }
         };
     }
