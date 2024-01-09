@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
  */
 final class StabilityCharacteristic implements CodeGraphCharacteristic<Factor> {
 
-    private static final String STABILITY_TAG = "stability";
+    static final String STABILITY_TAG = "stability";
 
     private final String id;
     private final SingleModuleCharacteristicParameters parameters;

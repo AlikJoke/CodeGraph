@@ -17,8 +17,8 @@ public abstract class AbstractCodeGraph<T extends AbstractCodeGraph.Context> imp
     protected final GraphNode rootNode;
 
     public AbstractCodeGraph(@Nonnull Map<String, GraphNode> nodes) {
+        this.rootNode = findOrCreateSingleRootNode(nodes, findRootNodesIds(nodes));
         this.nodes = Map.copyOf(nodes);
-        this.rootNode = findSingleRootNode(nodes, findRootNodesIds(nodes));
     }
 
     protected AbstractCodeGraph(@Nonnull GraphNode rootNode, @Nonnull Map<String, GraphNode> nodes) {
@@ -28,8 +28,8 @@ public abstract class AbstractCodeGraph<T extends AbstractCodeGraph.Context> imp
 
     protected AbstractCodeGraph(@Nonnull CodeGraphDataSource dataSource, @Nonnull T context) {
         final Map<String, GraphNode> nodesMap = buildNodesMap(dataSource, context);
+        this.rootNode = findOrCreateSingleRootNode(nodesMap, findRootNodesIds(nodesMap), dataSource);
         this.nodes = Map.copyOf(nodesMap);
-        this.rootNode = findSingleRootNode(nodesMap, findRootNodesIds(nodes), dataSource);
     }
 
     @Nonnull
@@ -52,11 +52,11 @@ public abstract class AbstractCodeGraph<T extends AbstractCodeGraph.Context> imp
 
     protected abstract Map<String, GraphNode> buildNodesMap(@Nonnull CodeGraphDataSource dataSource, @Nonnull T context);
 
-    protected GraphNode findSingleRootNode(
+    protected GraphNode findOrCreateSingleRootNode(
             @Nonnull Map<String, GraphNode> nodesMap,
             @Nonnull Set<String> rootNodesIds,
             @Nonnull CodeGraphDataSource dataSource) {
-        return findSingleRootNode(nodesMap, rootNodesIds);
+        return findOrCreateSingleRootNode(nodesMap, rootNodesIds);
     }
 
     @Nonnull
@@ -107,7 +107,7 @@ public abstract class AbstractCodeGraph<T extends AbstractCodeGraph.Context> imp
         return allNodeIds;
     }
 
-    private GraphNode findSingleRootNode(
+    private GraphNode findOrCreateSingleRootNode(
             @Nonnull Map<String, GraphNode> nodesMap,
             @Nonnull Set<String> rootNodesIds) {
         if (rootNodesIds.size() != 1) {

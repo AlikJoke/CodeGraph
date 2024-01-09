@@ -5,7 +5,7 @@ import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.GraphNode;
 import ru.joke.cdgraph.core.graph.GraphNodeRelation;
 import ru.joke.cdgraph.core.characteristics.impl.SPIBasedCodeGraphCharacteristicFactoriesLoader;
-import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.graph.impl.jpms.JavaModuleCodeGraph;
 
 import javax.annotation.Nonnull;
@@ -23,10 +23,10 @@ public class DependencyBridgesCharacteristicTest {
         final var ds = createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH);
         final var codeGraph = new JavaModuleCodeGraph(ds);
 
-        final var registry = new SimpleCodeGraphCharacteristicFactoryRegistry();
-        registry.register(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
+        final var service = new SimpleCodeGraphCharacteristicService();
+        service.registerFactories(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
 
-        final var characteristic = new DependencyBridgesCharacteristic("1", registry);
+        final var characteristic = new DependencyBridgesCharacteristic("1", service);
         final var result = characteristic.compute(codeGraph);
 
         final var bridges = result.get();
@@ -40,10 +40,10 @@ public class DependencyBridgesCharacteristicTest {
         final var sourceCodeGraph = new JavaModuleCodeGraph(ds);
         final var resultCodeGraph = createCodeGraphWithoutBaseModule(sourceCodeGraph);
 
-        final var registry = new SimpleCodeGraphCharacteristicFactoryRegistry();
-        registry.register(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
+        final var service = new SimpleCodeGraphCharacteristicService();
+        service.registerFactories(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
 
-        final var characteristic = new DependencyBridgesCharacteristic("1", registry);
+        final var characteristic = new DependencyBridgesCharacteristic("1", service);
         final var result = characteristic.compute(resultCodeGraph);
 
         final var bridges = result.get();

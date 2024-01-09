@@ -13,7 +13,11 @@ import javax.annotation.Nonnull;
  * @param moduleId module identifier, can not be {@code null}.
  */
 public record SingleModuleCharacteristicParameters(
-        @CodeGraphCharacteristicParameter(id = "module-id", required = true) @Nonnull String moduleId
+        @CodeGraphCharacteristicParameter(
+                id = "module-id",
+                description = "Identifier of the module for which the characteristic is computed",
+                required = true
+        ) @Nonnull String moduleId
 ) implements CodeGraphCharacteristicParameters {
 
     @CodeGraphCharacteristicParametersCreator

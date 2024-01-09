@@ -42,6 +42,8 @@ public final class CodeGraphConsoleStarter {
     public static final String MAVEN_REPO_PWD = "maven-repository-password";
 
     private static final String STOP_COMMAND = "stop";
+    private static final String CHARACTERISTIC_DESCRIPTION_COMMAND = "description";
+    private static final String CHARACTERISTICS_DESCRIPTIONS_COMMAND = "descriptions";
 
     private static final String AWAIT_NEXT_COMMAND_INFO = "Ready to next request...";
     private static final String STARTED_INFO = "Started, ready to requests";
@@ -63,16 +65,16 @@ public final class CodeGraphConsoleStarter {
             }
 
             if (command != null) {
-                executeRequestNoEx(command);
+                executeCommandNoEx(command);
             }
         }
 
         println(STOPPED_INFO);
     }
 
-    private static void executeRequestNoEx(final String parameters) {
+    private static void executeCommandNoEx(final String parameters) {
         try {
-            executeRequest(parameters);
+            executeCommand(parameters);
         } catch (RuntimeException ex) {
             ex.printStackTrace(System.err);
         }
@@ -84,7 +86,33 @@ public final class CodeGraphConsoleStarter {
         System.out.println(line);
     }
 
-    private static void executeRequest(final String parameters) {
+    private static void executeCommand(final String command) {
+
+        if (command.equalsIgnoreCase(CHARACTERISTICS_DESCRIPTIONS_COMMAND)) {
+            printDescriptionsInfo(null);
+        } else if (command.startsWith(CHARACTERISTIC_DESCRIPTION_COMMAND)) {
+            final var commandParts = command.split(" ");
+            if (commandParts.length != 2) {
+                throw new IllegalArgumentException("Format of the command must be 'description characteristicId'");
+            }
+
+            printDescriptionsInfo(commandParts[1]);
+        } else {
+            executeGraphRequest(command);
+        }
+    }
+
+    private static void printDescriptionsInfo(final String characteristicId) {
+        final var descriptionsWriter = new ConsoleCodeGraphCharacteristicDescriptionWriter();
+        if (characteristicId == null) {
+            descriptionsWriter.writeAll();
+        } else {
+            descriptionsWriter.write(characteristicId);
+        }
+    }
+
+    private static void executeGraphRequest(final String parameters) {
+
         final var parametersProcessor = new ConsoleParametersProcessor();
         final var parametersMap = parametersProcessor.process(parameters);
 

@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
  *
  * @author Alik
  *
- * @see CodeGraphCharacteristicFactoryRegistry
+ * @see CodeGraphCharacteristicService
  */
 public interface CodeGraphCharacteristicFactoryRegistryAware {
 
@@ -16,5 +16,5 @@ public interface CodeGraphCharacteristicFactoryRegistryAware {
      * Sets the characteristic's factories registry for a given characteristic factory.
      * @param registry registry of the characteristic's factories, can not be {@code null}.
      */
-    void setRegistry(@Nonnull CodeGraphCharacteristicFactoryRegistry registry);
+    void setRegistry(@Nonnull CodeGraphCharacteristicService registry);
 }

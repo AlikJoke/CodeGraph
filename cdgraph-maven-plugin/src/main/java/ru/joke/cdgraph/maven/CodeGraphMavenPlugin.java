@@ -7,11 +7,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicParametersFactory;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SPIBasedCodeGraphCharacteristicFactoriesLoader;
-import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicParametersFactory;
 import ru.joke.cdgraph.core.client.CodeGraphOutputSink;
 import ru.joke.cdgraph.core.client.CodeGraphOutputSpecification;
@@ -256,24 +256,24 @@ public final class CodeGraphMavenPlugin extends AbstractMojo {
     }
 
     private List<CodeGraphCharacteristic<?>> createCharacteristics() {
-        final var factoryRegistry = new SimpleCodeGraphCharacteristicFactoryRegistry();
-        factoryRegistry.register(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
+        final var characteristicsService = new SimpleCodeGraphCharacteristicService();
+        characteristicsService.registerFactories(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
 
         final var parametersFactory = new SimpleCodeGraphCharacteristicParametersFactory();
         final var characteristicsEntries = this.characteristics.entrySet();
         return characteristicsEntries
                     .stream()
-                    .map(e -> createCharacteristic(e.getKey(), e.getValue(), factoryRegistry, parametersFactory))
+                    .map(e -> createCharacteristic(e.getKey(), e.getValue(), characteristicsService, parametersFactory))
                     .collect(Collectors.toList());
     }
 
     private CodeGraphCharacteristic<?> createCharacteristic(
             final String characteristicId,
             final MavenCodeGraphCharacteristicParameters pluginParameters,
-            final CodeGraphCharacteristicFactoryRegistry factoryRegistry,
+            final CodeGraphCharacteristicService characteristicsService,
             final CodeGraphCharacteristicParametersFactory parametersFactory) {
 
-        final var factory = factoryRegistry.find(characteristicId);
+        final var factory = characteristicsService.findFactory(characteristicId);
         final var parameters = parametersFactory.createFor(factory, pluginParameters.getParameters());
 
         return factory.createCharacteristic(parameters);

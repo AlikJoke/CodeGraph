@@ -2,7 +2,7 @@ package ru.joke.cdgraph.core.characteristics.impl.factors;
 
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
@@ -30,11 +30,11 @@ final class AllModulesStabilityCharacteristic implements CodeGraphCharacteristic
     private static final String STABILITY_TAG = "stability";
 
     private final String id;
-    private final CodeGraphCharacteristicFactoryRegistry registry;
+    private final CodeGraphCharacteristicService registry;
 
     AllModulesStabilityCharacteristic(
             @Nonnull String id,
-            @Nonnull CodeGraphCharacteristicFactoryRegistry registry) {
+            @Nonnull CodeGraphCharacteristicService registry) {
         this.id = id;
         this.registry = registry;
     }
@@ -68,7 +68,7 @@ final class AllModulesStabilityCharacteristic implements CodeGraphCharacteristic
 
     private Factor computeCharacteristic(final String nodeId, final CodeGraph graph) {
         final CodeGraphCharacteristicFactory<CodeGraphCharacteristic<Factor>, Factor, SingleModuleCharacteristicParameters> factory =
-                this.registry.find(StabilityCharacteristicFactoryDescriptor.class);
+                this.registry.findFactory(StabilityCharacteristicFactoryDescriptor.class);
         final var params = new SingleModuleCharacteristicParameters(nodeId);
         final var characteristic = factory.createCharacteristic(params);
         return characteristic.compute(graph).get();

@@ -1,16 +1,18 @@
 package ru.joke.cdgraph.core.characteristics.impl.factors;
 
 import org.junit.jupiter.api.Test;
-import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
 import ru.joke.cdgraph.core.characteristics.impl.SingleNodeCharacteristicTestBase;
+import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.impl.jpms.JavaModuleCodeGraph;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static ru.joke.cdgraph.core.characteristics.impl.factors.StabilityCharacteristic.STABILITY_TAG;
 import static ru.joke.cdgraph.core.test.util.TestUtil.*;
 
 public class StabilityCharacteristicTest extends SingleNodeCharacteristicTestBase<Factor> {
@@ -45,5 +47,14 @@ public class StabilityCharacteristicTest extends SingleNodeCharacteristicTestBas
 
         assertNotNull(result.get(), "Stability factor object must be not null");
         assertEquals(expectedStability, result.get().factor(), "Stability factor must be equal");
+
+        makeSingleModuleTagChecks(
+                codeGraph,
+                result.visualizedGraph(),
+                Set.of(TEST_MODULE_2, TEST_MODULE_3, TEST_MODULE_1, SQL_MODULE, BASE_MODULE),
+                moduleId,
+                STABILITY_TAG,
+                result.get().factor()
+        );
     }
 }

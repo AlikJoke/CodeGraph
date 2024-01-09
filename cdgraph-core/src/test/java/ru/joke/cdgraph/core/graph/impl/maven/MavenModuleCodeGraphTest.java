@@ -7,6 +7,7 @@ import ru.joke.cdgraph.core.graph.GraphNodeRelation;
 import ru.joke.cdgraph.core.datasources.impl.CodeGraphEarDataSourceFactory;
 import ru.joke.cdgraph.core.datasources.impl.CodeGraphFileSystemDataSourceFactory;
 import ru.joke.cdgraph.core.datasources.impl.CodeGraphJarDataSourceFactory;
+import ru.joke.cdgraph.core.graph.impl.AbstractCodeGraphTestBase;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -19,7 +20,7 @@ import static ru.joke.cdgraph.core.graph.impl.maven.MavenModuleCodeGraph.*;
 import static ru.joke.cdgraph.core.test.util.TestUtil.getJarFile;
 import static ru.joke.cdgraph.core.test.util.TestUtil.unpackTestJarToDirectory;
 
-public class MavenModuleCodeGraphTest {
+public class MavenModuleCodeGraphTest extends AbstractCodeGraphTestBase {
 
     private static final String TEST_EAR_EXT_PATH = "/ds/test-modules-ext.ear";
     private static final String TEST_SKINNY_JAR_PATH = "/ds/test-skinny-jar.jar";
@@ -45,6 +46,7 @@ public class MavenModuleCodeGraphTest {
         assertNotNull(rootNode, "CodeGraph root node must be not null");
 
         makeEarModuleChecks(codeGraph, rootNode);
+        makeCloningChecks(codeGraph);
     }
 
     @Test
@@ -57,6 +59,7 @@ public class MavenModuleCodeGraphTest {
 
         assertNotNull(codeGraph, "CodeGraph must be not null");
         makeTest1ModuleChecks(codeGraph, codeGraph.findRootNode());
+        makeCloningChecks(codeGraph);
     }
 
     @Test
@@ -69,6 +72,7 @@ public class MavenModuleCodeGraphTest {
 
         assertNotNull(codeGraph, "CodeGraph must be not null");
         makeTest1ModuleChecks(codeGraph, codeGraph.findRootNode());
+        makeCloningChecks(codeGraph);
     }
 
     private Path createPath(final String path) throws URISyntaxException {

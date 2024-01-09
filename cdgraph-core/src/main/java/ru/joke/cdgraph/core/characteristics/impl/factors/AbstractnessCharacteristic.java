@@ -32,7 +32,7 @@ import static ru.joke.cdgraph.core.graph.impl.AbstractCodeGraph.SOURCE_MODULE_TA
  */
 final class AbstractnessCharacteristic implements CodeGraphCharacteristic<Factor> {
 
-    private static final String ABSTRACTNESS_TAG = "abstractness";
+    static final String ABSTRACTNESS_TAG = "abstractness";
 
     private final String id;
     private final SingleModuleCharacteristicParameters parameters;

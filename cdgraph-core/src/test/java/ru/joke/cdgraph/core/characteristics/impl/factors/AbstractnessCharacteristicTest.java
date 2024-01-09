@@ -1,16 +1,18 @@
 package ru.joke.cdgraph.core.characteristics.impl.factors;
 
 import org.junit.jupiter.api.Test;
-import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
 import ru.joke.cdgraph.core.characteristics.impl.SingleNodeCharacteristicTestBase;
+import ru.joke.cdgraph.core.graph.CodeGraph;
 
 import javax.annotation.Nonnull;
 import java.net.URISyntaxException;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static ru.joke.cdgraph.core.characteristics.impl.factors.AbstractnessCharacteristic.ABSTRACTNESS_TAG;
 import static ru.joke.cdgraph.core.test.util.TestUtil.*;
 
 public class AbstractnessCharacteristicTest extends SingleNodeCharacteristicTestBase<Factor> {
@@ -25,6 +27,15 @@ public class AbstractnessCharacteristicTest extends SingleNodeCharacteristicTest
 
         assertNotNull(result.get(), "Abstractness factor object must be not null");
         assertEquals(3.0 / 7, result.get().factor(), "Abstractness factor must be equal");
+
+        makeSingleModuleTagChecks(
+                codeGraph,
+                result.visualizedGraph(),
+                Set.of(TEST_MODULE_3),
+                TEST_MODULE_3,
+                ABSTRACTNESS_TAG,
+                result.get().factor()
+        );
     }
 
     @Nonnull

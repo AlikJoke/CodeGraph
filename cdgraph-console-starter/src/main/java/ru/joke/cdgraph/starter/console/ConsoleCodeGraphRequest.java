@@ -1,14 +1,14 @@
 package ru.joke.cdgraph.starter.console;
 
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicParametersFactory;
 import ru.joke.cdgraph.core.datasources.CodeGraphDataSourceFactory;
 import ru.joke.cdgraph.core.graph.CodeGraph;
 import ru.joke.cdgraph.core.graph.CodeGraphFactory;
 import ru.joke.cdgraph.core.client.CodeGraphRequest;
 import ru.joke.cdgraph.core.characteristics.impl.SPIBasedCodeGraphCharacteristicFactoriesLoader;
-import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicParametersFactory;
 import ru.joke.cdgraph.core.graph.impl.jpms.JavaModuleCodeGraphFactory;
 import ru.joke.cdgraph.core.graph.impl.maven.MavenModuleCodeGraphFactory;
@@ -33,15 +33,15 @@ import static ru.joke.cdgraph.starter.console.CodeGraphConsoleStarter.*;
 final class ConsoleCodeGraphRequest implements CodeGraphRequest {
 
     private final Map<String, String> parameters;
-    private final CodeGraphCharacteristicFactoryRegistry factoryRegistry;
+    private final CodeGraphCharacteristicService characteristicsService;
     private final CodeGraphCharacteristicParametersFactory parametersFactory;
     private final CodeGraphCache codeGraphCache;
 
     ConsoleCodeGraphRequest(@Nonnull Map<String, String> parameters) {
         this.parameters = parameters;
 
-        this.factoryRegistry = new SimpleCodeGraphCharacteristicFactoryRegistry();
-        this.factoryRegistry.register(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
+        this.characteristicsService = new SimpleCodeGraphCharacteristicService();
+        this.characteristicsService.registerFactories(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
 
         this.parametersFactory = new SimpleCodeGraphCharacteristicParametersFactory();
         this.codeGraphCache = CodeGraphCache.SINGLETON;
@@ -85,7 +85,7 @@ final class ConsoleCodeGraphRequest implements CodeGraphRequest {
 
         final Map<String, String> params = convertToParametersMap(characteristicRequest, characteristicParts, characteristicId);
 
-        final var factory = this.factoryRegistry.find(characteristicId);
+        final var factory = this.characteristicsService.findFactory(characteristicId);
         final var characteristicParameters = this.parametersFactory.createFor(factory, params);
 
         return factory.createCharacteristic(characteristicParameters);

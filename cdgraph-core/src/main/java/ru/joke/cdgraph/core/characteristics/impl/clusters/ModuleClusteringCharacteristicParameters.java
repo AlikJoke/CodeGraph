@@ -18,12 +18,14 @@ import javax.annotation.Nonnegative;
 public record ModuleClusteringCharacteristicParameters(
         @CodeGraphCharacteristicParameter(
                 id = "optimizing-factor",
+                description = "Optimization coefficient, below which the number of clusters in the graph should not decrease, can not be negative",
                 required = true,
                 valueTransformer = ToIntCharacteristicParameterValueTransformer.class
         )
         @Nonnegative int optimizingFactor,
         @CodeGraphCharacteristicParameter(
                 id = "max-rounds",
+                description = "Number of rounds of cluster selection using the Louvain algorithm, can not be negative",
                 required = true,
                 valueTransformer = ToIntCharacteristicParameterValueTransformer.class
         )

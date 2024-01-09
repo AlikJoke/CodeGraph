@@ -25,8 +25,8 @@ import javax.annotation.Nonnull;
  */
 final class DependenciesCountCharacteristic implements CodeGraphCharacteristic<DependenciesCount> {
 
-    private static final String INPUT_DEPENDENCIES_COUNT_TAG = "input";
-    private static final String OUTPUT_DEPENDENCIES_COUNT_TAG = "output";
+    static final String INPUT_DEPENDENCIES_COUNT_TAG = "input";
+    static final String OUTPUT_DEPENDENCIES_COUNT_TAG = "output";
 
     private final String id;
     private final SingleModuleCharacteristicParameters parameters;

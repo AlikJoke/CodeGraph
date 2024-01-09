@@ -13,7 +13,11 @@ import javax.annotation.Nonnull;
  * @param resourceName name of the resource, can not be {@code null}.
  */
 public record ResourceLocationsCharacteristicParameters(
-        @CodeGraphCharacteristicParameter(id = "resource-name", required = true) @Nonnull String resourceName
+        @CodeGraphCharacteristicParameter(
+                id = "resource-name",
+                description = "Name of the resource whose location is determined by the characteristic",
+                required = true
+        ) @Nonnull String resourceName
 ) implements CodeGraphCharacteristicParameters {
 
     @CodeGraphCharacteristicParametersCreator

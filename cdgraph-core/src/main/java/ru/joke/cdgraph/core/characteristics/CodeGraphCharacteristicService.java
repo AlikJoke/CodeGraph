@@ -2,19 +2,20 @@ package ru.joke.cdgraph.core.characteristics;
 
 import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
- * Registry of module graph characteristics factories.
- * Allows to access the factory of the characteristic by a unique identifier,
- * as well as register the factory of the characteristic.
+ * CodeGraph characteristic's service. Allows to access the factory and the description
+ * of the characteristic by a unique identifier, as well as register the factory of the characteristic.
  *
  * @author Alik
  *
  * @see CodeGraphCharacteristic
+ * @see CodeGraphCharacteristicDescription
  * @see CodeGraphCharacteristicParameters
  * @see CodeGraphCharacteristicFactoriesLoader
  */
-public interface CodeGraphCharacteristicFactoryRegistry {
+public interface CodeGraphCharacteristicService {
 
     /**
      * Registers the factory of the characteristic in the registry.
@@ -24,9 +25,9 @@ public interface CodeGraphCharacteristicFactoryRegistry {
      * @param <V> type of the result value of the characteristic, can not be {@code null}.
      * @param <K> type of the characteristic parameters, can not be {@code null}.
      *
-     * @see CodeGraphCharacteristicFactoryRegistry#register(CodeGraphCharacteristicFactoriesLoader)
+     * @see CodeGraphCharacteristicService#registerFactories(CodeGraphCharacteristicFactoriesLoader)
      */
-    <T extends CodeGraphCharacteristic<V>, V, K extends CodeGraphCharacteristicParameters> void register(@Nonnull CodeGraphCharacteristicFactory<T, V, K> characteristicFactory);
+    <T extends CodeGraphCharacteristic<V>, V, K extends CodeGraphCharacteristicParameters> void registerFactory(@Nonnull CodeGraphCharacteristicFactory<T, V, K> characteristicFactory);
 
     /**
      * Registers the factories returned by the specified loader in the registry.
@@ -34,7 +35,7 @@ public interface CodeGraphCharacteristicFactoryRegistry {
      * @param loader the loader of the factories, can not be {@code null}.
      * @see CodeGraphCharacteristicFactoriesLoader
      */
-    void register(@Nonnull CodeGraphCharacteristicFactoriesLoader loader);
+    void registerFactories(@Nonnull CodeGraphCharacteristicFactoriesLoader loader);
 
     /**
      * Returns a characteristic factory by identifier.
@@ -47,10 +48,10 @@ public interface CodeGraphCharacteristicFactoryRegistry {
      * @throws CodeGraphCharacteristicFactoryNotFoundException if the factory of the characteristic not found
      */
     @Nonnull
-    <T extends CodeGraphCharacteristic<V>, V, K extends CodeGraphCharacteristicParameters> CodeGraphCharacteristicFactory<T, V, K> find(@Nonnull String id);
+    <T extends CodeGraphCharacteristic<V>, V, K extends CodeGraphCharacteristicParameters> CodeGraphCharacteristicFactory<T, V, K> findFactory(@Nonnull String id);
 
     /**
-     * Returns a characteristic factory by factory descriptor class.
+     * Returns a characteristic's factory by factory descriptor class.
      *
      * @param characteristicFactoryDescriptor type descriptor of factory, can not be {@code null}.
      * @return a factory of the characteristic, can not be {@code null}.
@@ -61,5 +62,22 @@ public interface CodeGraphCharacteristicFactoryRegistry {
      * @throws CodeGraphCharacteristicFactoryNotFoundException if the factory of the characteristic not found
      */
     @Nonnull
-    <A extends Annotation, T extends CodeGraphCharacteristic<V>, V, K extends CodeGraphCharacteristicParameters> CodeGraphCharacteristicFactory<T, V, K> find(@Nonnull Class<A> characteristicFactoryDescriptor);
+    <A extends Annotation, T extends CodeGraphCharacteristic<V>, V, K extends CodeGraphCharacteristicParameters> CodeGraphCharacteristicFactory<T, V, K> findFactory(@Nonnull Class<A> characteristicFactoryDescriptor);
+
+    /**
+     * Returns the description of the characteristic by id.
+     * @param characteristicId id of the characteristic, can not be {@code null}.
+     * @return description of the characteristic, can not be {@code null}.
+     * @throws CodeGraphCharacteristicDescriptionNotFoundException if the description of the characteristic not found
+     * @see CodeGraphCharacteristicDescription
+     */
+    @Nonnull
+    CodeGraphCharacteristicDescription findDescription(@Nonnull String characteristicId);
+
+    /**
+     * Returns the characteristic's descriptions.
+     * @return the characteristic's descriptions, can not be {@code null}.
+     */
+    @Nonnull
+    Set<CodeGraphCharacteristicDescription> findDescriptions();
 }

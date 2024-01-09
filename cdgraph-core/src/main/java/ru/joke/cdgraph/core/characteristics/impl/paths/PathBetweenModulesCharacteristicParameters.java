@@ -14,8 +14,16 @@ import javax.annotation.Nonnull;
  * @param targetModuleId target module in the path, can not be {@code null}.
  */
 public record PathBetweenModulesCharacteristicParameters(
-        @CodeGraphCharacteristicParameter(id = "source-module-id", required = true) @Nonnull String sourceModuleId,
-        @CodeGraphCharacteristicParameter(id = "target-module-id", required = true) @Nonnull String targetModuleId
+        @CodeGraphCharacteristicParameter(
+                id = "source-module-id",
+                description = "Identifier of the source module from the path",
+                required = true
+        ) @Nonnull String sourceModuleId,
+        @CodeGraphCharacteristicParameter(
+                id = "target-module-id",
+                description = "Identifier of the target module from the path",
+                required = true
+        ) @Nonnull String targetModuleId
 ) implements CodeGraphCharacteristicParameters {
 
     @CodeGraphCharacteristicParametersCreator

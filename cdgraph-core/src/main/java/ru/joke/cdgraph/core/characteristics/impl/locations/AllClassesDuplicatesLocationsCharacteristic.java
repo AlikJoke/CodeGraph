@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 final class AllClassesDuplicatesLocationsCharacteristic extends AbstractResourceLocationsCharacteristic<Set<ClassDuplicatesLocations>> {
 
-    private static final String CLASS_NAME_TAG = "class";
+    static final String CLASS_NAME_TAG = "class";
 
     private final Map<String, Set<GraphNode>> class2moduleMap = new HashMap<>();
 

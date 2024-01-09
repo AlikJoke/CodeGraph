@@ -2,7 +2,7 @@ package ru.joke.cdgraph.core.characteristics.impl.bridges;
 
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
@@ -41,11 +41,11 @@ final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<S
     private static final String BRIDGE_TAG = "bridge";
 
     private final String id;
-    private final CodeGraphCharacteristicFactoryRegistry registry;
+    private final CodeGraphCharacteristicService registry;
 
     DependencyBridgesCharacteristic(
             @Nonnull String id,
-            @Nonnull CodeGraphCharacteristicFactoryRegistry registry) {
+            @Nonnull CodeGraphCharacteristicService registry) {
         this.id = id;
         this.registry = registry;
     }
@@ -124,7 +124,7 @@ final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<S
         final String targetNodeId = bridgeCandidate.target().id();
         final var params = new SingleModuleCharacteristicParameters(targetNodeId);
         final CodeGraphCharacteristicFactory<CodeGraphCharacteristic<List<PathBetweenModules>>, List<PathBetweenModules>, SingleModuleCharacteristicParameters> transitiveChainsCharacteristicFactory =
-                this.registry.find(TransitiveChainsCharacteristicFactoryDescriptor.class);
+                this.registry.findFactory(TransitiveChainsCharacteristicFactoryDescriptor.class);
         final var transitiveChainsCharacteristic = transitiveChainsCharacteristicFactory.createCharacteristic(params);
 
         final var allPathsFromTargetResult = transitiveChainsCharacteristic.compute(graph);
@@ -140,7 +140,7 @@ final class DependencyBridgesCharacteristic implements CodeGraphCharacteristic<S
     private boolean isNodeHasMultiplePathsFromRoot(final GraphNode targetNode, final GraphNode rootNode, final CodeGraph graph) {
         final var pathsBetweenCharacteristicParameters = new PathBetweenModulesCharacteristicParameters(rootNode.id(), targetNode.id());
         final CodeGraphCharacteristicFactory<CodeGraphCharacteristic<List<PathBetweenModules>>, List<PathBetweenModules>, PathBetweenModulesCharacteristicParameters> allPathsBetweenNodesCharacteristicFactory =
-                this.registry.find(AllPathsBetweenModulesCharacteristicFactoryDescriptor.class);
+                this.registry.findFactory(AllPathsBetweenModulesCharacteristicFactoryDescriptor.class);
 
         final var allPathsBetweenNodesCharacteristic = allPathsBetweenNodesCharacteristicFactory.createCharacteristic(pathsBetweenCharacteristicParameters);
 

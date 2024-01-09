@@ -8,7 +8,7 @@ import java.util.Set;
  *
  * @author Alik
  * @see CodeGraphCharacteristicFactory
- * @see CodeGraphCharacteristicFactoryRegistry
+ * @see CodeGraphCharacteristicService
  */
 public interface CodeGraphCharacteristicFactoriesLoader {
 

@@ -10,8 +10,8 @@ import java.util.Set;
 
 abstract class AbstractSingleResourceLocationsCharacteristic extends AbstractResourceLocationsCharacteristic<Set<GraphNode>> {
 
-    private static final String RESOURCE_NAME_TAG = "resource-name";
-    private static final String RESOURCE_EXIST_TAG = "contains-resource";
+    static final String RESOURCE_NAME_TAG = "resource-name";
+    static final String RESOURCE_EXIST_TAG = "contains-resource";
 
     protected final String[] resourceNameParts;
 

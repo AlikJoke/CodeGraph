@@ -1,7 +1,7 @@
 package ru.joke.cdgraph.core.characteristics.impl.bridges;
 
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistryAware;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicParameters;
 import ru.joke.cdgraph.core.graph.GraphNodeRelation;
@@ -25,7 +25,7 @@ public final class DependencyBridgesCharacteristicFactory
         CodeGraphCharacteristicFactory<DependencyBridgesCharacteristic, Set<GraphNodeRelation>, CodeGraphCharacteristicParameters>,
         CodeGraphCharacteristicFactoryRegistryAware {
 
-    private CodeGraphCharacteristicFactoryRegistry registry;
+    private CodeGraphCharacteristicService registry;
 
     @Nonnull
     @Override
@@ -34,7 +34,7 @@ public final class DependencyBridgesCharacteristicFactory
     }
 
     @Override
-    public void setRegistry(@Nonnull CodeGraphCharacteristicFactoryRegistry registry) {
+    public void setRegistry(@Nonnull CodeGraphCharacteristicService registry) {
         this.registry = registry;
     }
 }

@@ -2,7 +2,7 @@ package ru.joke.cdgraph.core.characteristics.impl.factors;
 
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
@@ -30,14 +30,14 @@ import static ru.joke.cdgraph.core.graph.impl.AbstractCodeGraph.SOURCE_MODULE_TA
  */
 final class AllModulesAbstractnessCharacteristic implements CodeGraphCharacteristic<Map<String, Factor>> {
 
-    private static final String ABSTRACTNESS_TAG = "abstractness";
+    static final String ABSTRACTNESS_TAG = "abstractness";
 
     private final String id;
-    private final CodeGraphCharacteristicFactoryRegistry registry;
+    private final CodeGraphCharacteristicService registry;
 
     AllModulesAbstractnessCharacteristic(
             @Nonnull String id,
-            @Nonnull CodeGraphCharacteristicFactoryRegistry registry) {
+            @Nonnull CodeGraphCharacteristicService registry) {
         this.id = id;
         this.registry = registry;
     }
@@ -79,7 +79,7 @@ final class AllModulesAbstractnessCharacteristic implements CodeGraphCharacteris
     private Factor computeCharacteristic(final String nodeId, final CodeGraph graph) {
         final var params = new SingleModuleCharacteristicParameters(nodeId);
         final CodeGraphCharacteristicFactory<CodeGraphCharacteristic<Factor>, Factor, SingleModuleCharacteristicParameters> abstractnessCharacteristicFactory =
-                this.registry.find(AbstractnessCharacteristicFactoryDescriptor.class);
+                this.registry.findFactory(AbstractnessCharacteristicFactoryDescriptor.class);
         final var characteristic = abstractnessCharacteristicFactory.createCharacteristic(params);
         final var result = characteristic.compute(graph);
 

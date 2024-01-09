@@ -1,7 +1,7 @@
 package ru.joke.cdgraph.core.characteristics.impl.factors;
 
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistryAware;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicParameters;
 import ru.joke.cdgraph.core.characteristics.impl.AbstractCodeGraphCharacteristicFactory;
@@ -22,7 +22,7 @@ public final class AllModulesAbstractnessCharacteristicFactory
         extends AbstractCodeGraphCharacteristicFactory
         implements CodeGraphCharacteristicFactory<AllModulesAbstractnessCharacteristic, Map<String, Factor>, CodeGraphCharacteristicParameters>, CodeGraphCharacteristicFactoryRegistryAware {
 
-    private CodeGraphCharacteristicFactoryRegistry registry;
+    private CodeGraphCharacteristicService registry;
 
     @Nonnull
     @Override
@@ -31,7 +31,7 @@ public final class AllModulesAbstractnessCharacteristicFactory
     }
 
     @Override
-    public void setRegistry(@Nonnull CodeGraphCharacteristicFactoryRegistry registry) {
+    public void setRegistry(@Nonnull CodeGraphCharacteristicService registry) {
         this.registry = registry;
     }
 }

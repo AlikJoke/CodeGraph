@@ -21,11 +21,11 @@ import java.util.List;
 final class CodeGraphDescriptionCharacteristic implements CodeGraphCharacteristic<List<PathBetweenModules>> {
 
     private final String id;
-    private final CodeGraphCharacteristicFactoryRegistry registry;
+    private final CodeGraphCharacteristicService registry;
 
     CodeGraphDescriptionCharacteristic(
             @Nonnull String id,
-            @Nonnull CodeGraphCharacteristicFactoryRegistry registry) {
+            @Nonnull CodeGraphCharacteristicService registry) {
         this.id = id;
         this.registry = registry;
     }
@@ -35,7 +35,7 @@ final class CodeGraphDescriptionCharacteristic implements CodeGraphCharacteristi
     public CodeGraphCharacteristicResult<List<PathBetweenModules>> compute(@Nonnull CodeGraph graph) {
         final var rootNodeId = graph.findRootNode().id();
         final CodeGraphCharacteristicFactory<CodeGraphCharacteristic<List<PathBetweenModules>>, List<PathBetweenModules>, SingleModuleCharacteristicParameters> characteristicFactory =
-                this.registry.find(TransitiveChainsCharacteristicFactoryDescriptor.class);
+                this.registry.findFactory(TransitiveChainsCharacteristicFactoryDescriptor.class);
         final var params = new SingleModuleCharacteristicParameters(rootNodeId);
         final var transitiveChainsCharacteristic = characteristicFactory.createCharacteristic(params);
 

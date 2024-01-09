@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristic;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicResult;
 import ru.joke.cdgraph.core.characteristics.impl.SPIBasedCodeGraphCharacteristicFactoriesLoader;
-import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.characteristics.impl.SingleModuleCharacteristicParameters;
 import ru.joke.cdgraph.core.characteristics.impl.paths.PathBetweenModulesCharacteristicParameters;
 import ru.joke.cdgraph.core.client.CodeGraphOutputSpecification;
@@ -62,13 +62,13 @@ public class SimpleCodeGraphClientTest {
     }
 
     private List<CodeGraphCharacteristic<?>> getRequiredCharacteristics() {
-        final var registry = new SimpleCodeGraphCharacteristicFactoryRegistry();
-        registry.register(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
+        final var service = new SimpleCodeGraphCharacteristicService();
+        service.registerFactories(new SPIBasedCodeGraphCharacteristicFactoriesLoader());
 
-        final var abstractnessDef = registry.find("module.abstractness");
+        final var abstractnessDef = service.findFactory("module.abstractness");
         final var abstractnessCharacteristic = abstractnessDef.createCharacteristic(new SingleModuleCharacteristicParameters(TEST_MODULE_3));
 
-        final var shortestPathDef = registry.find("shortest.path.between.modules");
+        final var shortestPathDef = service.findFactory("shortest.path.between.modules");
         final var shortestPathCharacteristic = shortestPathDef.createCharacteristic(new PathBetweenModulesCharacteristicParameters(TEST_MODULE_3, BASE_MODULE));
 
         return List.of(abstractnessCharacteristic, shortestPathCharacteristic);

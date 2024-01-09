@@ -1,7 +1,7 @@
 package ru.joke.cdgraph.core.characteristics.impl.factors;
 
 import org.junit.jupiter.api.Test;
-import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.impl.SimpleCodeGraphCharacteristicService;
 import ru.joke.cdgraph.core.graph.impl.jpms.JavaModuleCodeGraph;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,10 +14,10 @@ public class AllModulesStabilityCharacteristicTest {
     public void test() {
         final var codeGraph = new JavaModuleCodeGraph(createCodeGraphDatasource(TEST_MODULE_1_PATH, TEST_MODULE_2_PATH, TEST_MODULE_3_PATH));
 
-        final var registry = new SimpleCodeGraphCharacteristicFactoryRegistry();
-        registry.register(new StabilityCharacteristicFactory());
+        final var service = new SimpleCodeGraphCharacteristicService();
+        service.registerFactory(new StabilityCharacteristicFactory());
 
-        final var characteristic = new AllModulesStabilityCharacteristic("1", registry);
+        final var characteristic = new AllModulesStabilityCharacteristic("1", service);
         final var result = characteristic.compute(codeGraph);
 
         assertNotNull(result.get(), "Stability factors collection must be not null");

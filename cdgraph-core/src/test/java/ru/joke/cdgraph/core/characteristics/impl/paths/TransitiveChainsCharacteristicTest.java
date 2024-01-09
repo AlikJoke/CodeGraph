@@ -31,7 +31,7 @@ public class TransitiveChainsCharacteristicTest extends SingleNodeCharacteristic
         makePathsChecks(TEST_MODULE_3, 11);
     }
 
-    private void makePathsChecks(final String moduleId, final  int expectedChainsCount) {
+    private void makePathsChecks(final String moduleId, final int expectedChainsCount) {
 
         final var params = new SingleModuleCharacteristicParameters(moduleId);
         final var characteristic = createCharacteristic(params);

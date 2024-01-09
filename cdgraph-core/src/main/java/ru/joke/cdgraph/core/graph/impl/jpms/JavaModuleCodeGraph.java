@@ -84,12 +84,12 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph<AbstractCodeGra
     }
 
     @Override
-    protected GraphNode findSingleRootNode(
+    protected GraphNode findOrCreateSingleRootNode(
             @Nonnull Map<String, GraphNode> nodesMap,
             @Nonnull Set<String> rootNodesIds,
             @Nonnull CodeGraphDataSource dataSource) {
         if (rootNodesIds.size() <= 1) {
-            return super.findSingleRootNode(nodesMap, rootNodesIds, dataSource);
+            return super.findOrCreateSingleRootNode(nodesMap, rootNodesIds, dataSource);
         }
 
         final Map<String, GraphTag<?>> tags = Map.of(IS_SYNTHETIC_TAG, new SimpleGraphTag<>(IS_SYNTHETIC_TAG, true));
@@ -100,6 +100,8 @@ public final class JavaModuleCodeGraph extends AbstractCodeGraph<AbstractCodeGra
                 .map(nodesMap::get)
                 .map(node -> new SimpleGraphNodeRelation(earNode, node, new SimpleRelationType(SYNTHETIC_RELATION_TYPE), tags))
                 .forEach(earNode.relations()::add);
+
+        nodesMap.putIfAbsent(earNode.id(), earNode);
 
         return earNode;
     }

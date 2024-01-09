@@ -29,6 +29,13 @@ public @interface CodeGraphCharacteristicParameter {
     String id();
 
     /**
+     * Returns the parameter description.
+     * @return the parameter description, can not be {@code null}.
+     */
+    @Nonnull
+    String description() default "";
+
+    /**
      * Returns whether the parameter value is required.
      * @return whether the parameter value is required, {@code true} if required.
      */

@@ -2,7 +2,7 @@ package ru.joke.cdgraph.core.characteristics.impl;
 
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoriesLoader;
 import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactory;
-import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicFactoryRegistry;
+import ru.joke.cdgraph.core.characteristics.CodeGraphCharacteristicService;
 
 import javax.annotation.Nonnull;
 import java.util.ServiceLoader;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  *
  * @author Alik
  * @see CodeGraphCharacteristicFactoriesLoader
- * @see CodeGraphCharacteristicFactoryRegistry
+ * @see CodeGraphCharacteristicService
  */
 public final class SPIBasedCodeGraphCharacteristicFactoriesLoader implements CodeGraphCharacteristicFactoriesLoader {
     @Nonnull

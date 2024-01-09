@@ -3,6 +3,7 @@ package ru.joke.cdgraph.core.graph.impl.jpms;
 import org.junit.jupiter.api.Test;
 import ru.joke.cdgraph.core.datasources.CodeGraphDataSource;
 import ru.joke.cdgraph.core.graph.*;
+import ru.joke.cdgraph.core.graph.impl.AbstractCodeGraphTestBase;
 import ru.joke.cdgraph.core.graph.impl.SimpleRelationType;
 
 import java.lang.module.ModuleDescriptor;
@@ -19,7 +20,7 @@ import static ru.joke.cdgraph.core.graph.impl.AbstractCodeGraph.VERSION_TAG;
 import static ru.joke.cdgraph.core.graph.impl.jpms.JavaModuleCodeGraph.REQUIRES_RELATION_TYPE;
 import static ru.joke.cdgraph.core.test.util.TestUtil.*;
 
-public class JavaModuleCodeGraphTest {
+public class JavaModuleCodeGraphTest extends AbstractCodeGraphTestBase {
 
     @Test
     public void testSingleModule() {
@@ -29,6 +30,8 @@ public class JavaModuleCodeGraphTest {
 
         assertNotNull(graph.findRootNode(), "Root node must be not null");
         makeTestModule1Checks(graph.findRootNode());
+
+        makeCloningChecks(graph);
     }
 
     @Test
@@ -37,6 +40,8 @@ public class JavaModuleCodeGraphTest {
 
         final CodeGraph graph = new JavaModuleCodeGraph(dataSource);
         makeTestModule2Checks(graph.findRootNode());
+
+        makeCloningChecks(graph);
     }
 
     @Test
@@ -47,8 +52,8 @@ public class JavaModuleCodeGraphTest {
 
         final var rootNode = graph.findRootNode();
         assertNotNull(rootNode, "Root node must be not null");
-        // 7 real modules and 1 synthetic
-        assertEquals(7 + 1, graph.findAllNodes().size(), "Nodes count must be equal");
+        // 8 real modules and 1 synthetic
+        assertEquals(8 + 1, graph.findAllNodes().size(), "Nodes count must be equal");
         assertEquals(dataSource.id(), rootNode.id(), "Synthetic module id must be equal");
 
         @SuppressWarnings("unchecked")
@@ -57,6 +62,8 @@ public class JavaModuleCodeGraphTest {
         assertTrue(syntheticTag.value(), "Synthetic tag value must be equal");
 
         assertEquals(2, rootNode.relations().size(), "Relations size from synthetic root node must be equal");
+
+        makeCloningChecks(graph);
     }
 
     @Test
@@ -84,6 +91,8 @@ public class JavaModuleCodeGraphTest {
         makeTestModule2Checks(test2ModuleRelation.target());
         makeTestModuleDependencyChecks(test2ModuleRelation, TEST_MODULE_3, Set.of(ModuleDescriptor.Requires.Modifier.TRANSITIVE));
         makeSqlModuleDependencyChecks(sqlModuleRelation, graph.findRootNode());
+
+        makeCloningChecks(graph);
     }
 
     @Test
