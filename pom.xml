@@ -14,7 +14,6 @@
         <module>cdgraph-console-starter</module>
         <module>cdgraph-starter-shared</module>
         <module>cdgraph-maven-plugin</module>
-        <module>cdgraph-server-starter</module>
     </modules>
 
     <properties>

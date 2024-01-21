@@ -22,5 +22,5 @@ The analysis can be performed both when assembling the project with Maven, and o
 When assembling the project, the analysis is carried out by connecting a specially developed plugin for Maven to your project and configuring it. 
 The plugin can be configured to abort the build if any characteristics of the graph are outside specified limits.
 
-Analysis of an already assembled distribution is carried out either through a console application, or by deploying a server application and accessing it using the REST API.
+Analysis of an already assembled distribution is carried out either through a console application.
 The console application, in addition to displaying information about characteristics, can visualize a graph and calculated characteristics using the GraphStream library.
